@@ -1,0 +1,8 @@
+doc/
+lib/
+obj/
+src/lsm.h
+demos/demo
+tests/mesh_tests
+*.dSYM
+.compiler_flags

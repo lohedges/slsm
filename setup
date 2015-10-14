@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# setup:
+# A bash script to set up the necessary files ready for a new CXX project.
+
+# Copyright (c) 2014, 2015  Lester Hedges <lester.hedges@gmail.com>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Default old project name.
+old=shapes
+
+# Check for arguments.
+if [ $# -lt 1  ]
+then
+    echo "Usage: ./$(basename $0) new"
+    echo "       ./$(basename $0) new old"
+    exit 1
+fi
+
+# New name is the first argument.
+new=$1
+
+# More than two arguments, old name is the second
+# argument (others are ignored).
+if [ $# -ge 2 ]
+then
+    old=$2
+fi
+
+# Create upper case project names.
+OLD=$(echo "$old" | tr a-z A-Z)
+NEW=$(echo "$new" | tr a-z A-Z)
+
+# Store operating system name.
+os=$(uname)
+
+# Find and replace in the required files.
+if [ "$os" = "Darwin" ] || [ "$os" = "FreeBSD" ]
+then
+    # Fix for BSD style sed.
+    sed -i "" "s#$old#$new#g" Makefile
+    sed -i "" "s#$OLD#$NEW#g" dox/Doxyfile
+    sed -i "" "s#$old#$new#g" cmake/CMakeLists.txt
+    sed -i "" "s#$OLD#$NEW#g" cmake/CMakeLists.txt
+    sed -i "" "s#$OLD#$NEW#g" cmake/dox/CMakeLists.txt
+    sed -i "" "s#$OLD#$NEW#g" cmake/dox/Doxyfile.in
+    sed -i "" "s#$old#$new#g" demos/*.cpp
+    sed -i "" "s#$old#$new#g" tests/*.cpp
+else
+    sed -i "s#$old#$new#g" Makefile
+    sed -i "s#$OLD#$NEW#g" dox/Doxyfile
+    sed -i "s#$old#$new#g" cmake/CMakeLists.txt
+    sed -i "s#$OLD#$NEW#g" cmake/CMakeLists.txt
+    sed -i "s#$OLD#$NEW#g" cmake/dox/CMakeLists.txt
+    sed -i "s#$OLD#$NEW#g" cmake/dox/Doxyfile.in
+    sed -i "s#$old#$new#g" demos/*.cpp
+    sed -i "s#$old#$new#g" tests/*.cpp
+fi
