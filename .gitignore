@@ -2,6 +2,9 @@ doc/
 lib/
 obj/
 peter/
+khalid/
+notes/
+web/
 src/lsm.h
 demos/demo
 tests/mesh_tests
