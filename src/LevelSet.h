@@ -9,9 +9,9 @@
 #include <algorithm>
 
 #include "Common.h"
-#include "Debug.h"
 #include "Hole.h"
 #include "Mesh.h"
+#include "FastMarchingMethod.h"
 
 /*! \file LevelSet.h
     \brief A class for the level set function.
@@ -21,7 +21,7 @@ class LevelSet
 {
 public:
     //! Constructor.
-    /*! \param mesh
+    /*! \param mesh_
             A reference to the fixed grid, finite-element mesh.
 
         \param bandWidth_
@@ -30,7 +30,7 @@ public:
 	LevelSet(Mesh&, unsigned int);
 
     //! Constructor.
-    /*! \param mesh
+    /*! \param mesh_
             A reference to the fixed grid, finite-element mesh.
 
         \param bandWidth_
@@ -44,6 +44,10 @@ public:
     //! Update the level set function.
     void update();
 
+    //! Re-initialise the level set function to a signed distance function using
+    //! the fast marching method.
+    void reinitialise();
+
     std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
     std::vector<double> gradient;           //!< The nodal gradient of the level set function.
     std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
@@ -53,33 +57,27 @@ public:
     unsigned int nMines;                    //!< The number of mine nodes.
 
 private:
+    Mesh& mesh;                             //!< A reference to the finite element mesh.
     unsigned int bandWidth;                 //!< The width of the narrow band region.
     unsigned int boundaryNode;              //!< The node that is currently closest to the zero isocontour.
     double minDistance;                     //!< Absolute minimum value of the signed distance function.
 
     //! Default initialisation of the level set function (Swiss cheese configuration).
-    /*! \param mesh
-            A reference to the fixed grid, finite-element mesh.
-     */
-    void initialise(const Mesh&);
+    void initialise();
 
     //! Initialise the level set from a vector of user-defined holes.
-    /*! \param mesh
-            A reference to the fixed grid, finite-element mesh.
-
+    /*/
         \param holes
             A vector of holes.
      */
-    void initialise(const Mesh&, const std::vector<Hole>&);
+    void initialise(const std::vector<Hole>&);
 
     //! Helper function for initialise methods.
     //! Initialises the level set function as the distance to the closest domain boundary.
-    /*! \param mesh
-            A reference to the fixed grid, finite-element mesh.
-     */
-    void closestDomainBoundary(const Mesh&);
+    void closestDomainBoundary();
 
-    void initialiseNarrowBand(Mesh&);
+    //! Initialise the narrow band region.
+    void initialiseNarrowBand();
 };
 
 #endif	/* _LEVELSET_H */

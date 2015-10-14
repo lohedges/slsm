@@ -5,8 +5,9 @@
 
 #include "LevelSet.h"
 
-LevelSet::LevelSet(Mesh& mesh, unsigned int bandWidth_) :
-    nNodes(mesh.nNodes),
+LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_) :
+    nNodes(mesh_.nNodes),
+    mesh(mesh_),
     bandWidth(bandWidth_)
 {
     errno = EINVAL;
@@ -21,10 +22,10 @@ LevelSet::LevelSet(Mesh& mesh, unsigned int bandWidth_) :
     mines.resize(int(0.2*nNodes));
 
     // Generate a Swiss cheese structure.
-    initialise(mesh);
+    initialise();
 
     // Initialise the narrow band.
-    initialiseNarrowBand(mesh);
+    initialiseNarrowBand();
 
     return;
 
@@ -32,8 +33,9 @@ error:
     exit(EXIT_FAILURE);
 }
 
-LevelSet::LevelSet(Mesh& mesh, unsigned int bandWidth_, const std::vector<Hole>& holes) :
-    nNodes(mesh.nNodes),
+LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_, const std::vector<Hole>& holes) :
+    nNodes(mesh_.nNodes),
+    mesh(mesh_),
     bandWidth(bandWidth_)
 {
     errno = EINVAL;
@@ -48,10 +50,10 @@ LevelSet::LevelSet(Mesh& mesh, unsigned int bandWidth_, const std::vector<Hole>&
     mines.resize(int(0.2*nNodes));
 
     // Initialise level set function from hole array.
-    initialise(mesh, holes);
+    initialise(holes);
 
     // Initialise the narrow band.
-    initialiseNarrowBand(mesh);
+    initialiseNarrowBand();
 
     return;
 
@@ -63,18 +65,81 @@ void LevelSet::update()
 {
 }
 
-void LevelSet::initialise(const Mesh& mesh)
+void LevelSet::reinitialise()
 {
-    // First initialise LSF based on domain boundary.
-    closestDomainBoundary(mesh);
+    // Initialise fast marching method object.
+    FastMarchingMethod fmm(mesh, false);
 
-    // Now add Swiss cheese hole arrangement.
+    // Re-initialise the signed distance function.
+    fmm.march(signedDistance);
 }
 
-void LevelSet::initialise(const Mesh& mesh, const std::vector<Hole>& holes)
+void LevelSet::initialise()
+{
+    // Generate a swiss cheese arrangement of holes.
+    // The holes have a default radius of 5.
+
+    // Number of holes in x and y directions.
+    unsigned int nx = std::round((double) mesh.width / 30);
+    unsigned int ny = std::round((double) mesh.height / 30);
+
+    // Number of holes.
+    unsigned int n1 = (nx * ny);                // outer grid
+    unsigned int n2 = ((nx - 1) * (ny - 1));    // inner grid
+    unsigned int nHoles = n1 + n2;
+
+    // Initialise a vector of holes.
+    std::vector<Hole> holes(nHoles);
+
+    // Hole separations.
+    double dx, dy;
+
+    // Check that mesh is large enough.
+    check(((nx > 2) && (ny > 2)), "Mesh is too small for Swiss cheese initialisation.");
+
+    // Initialise hole separations.
+    dx = ((double) mesh.width / (2 * nx));
+    dy = ((double) mesh.height / (2 * ny));
+
+    // Calculate hole coordinates. (outer grid)
+    for (unsigned int i=0;i<n1;i++)
+    {
+        // Work out x and y indices for hole.
+        unsigned x = i % nx;
+        unsigned int y = int(i / nx);
+
+        // Set hole coordinates and radius.
+        holes[i].coord.x = dx + (2 * x * dx);
+        holes[i].coord.y = dy + (2 * y * dy);
+        holes[i].r = 5;
+    }
+
+    // Calculate hole coordinates. (inner grid)
+    for (unsigned int i=0;i<n2;i++)
+    {
+        // Work out x and y indices for hole.
+        unsigned x = i % (nx - 1);
+        unsigned int y = int(i / (nx -1));
+
+        // Set hole coordinates and radius.
+        holes[i + n1].coord.x = 2 * (dx + (x * dx));
+        holes[i + n1].coord.y = 2 * (dy + (y * dy));
+        holes[i + n1].r = 5;
+    }
+
+    // Now pass the holes to the initialise method.
+    initialise(holes);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
+}
+
+void LevelSet::initialise(const std::vector<Hole>& holes)
 {
     // First initialise LSF based on domain boundary.
-    closestDomainBoundary(mesh);
+    closestDomainBoundary();
 
     // Now test signed distance against the surface of each hole.
     // Update signed distance function when distance to hole surface
@@ -104,7 +169,7 @@ void LevelSet::initialise(const Mesh& mesh, const std::vector<Hole>& holes)
     }
 }
 
-void LevelSet::closestDomainBoundary(const Mesh& mesh)
+void LevelSet::closestDomainBoundary()
 {
     // Initial LSF is distance from closest domain boundary.
     for (unsigned int i=0;i<nNodes;i++)
@@ -113,14 +178,14 @@ void LevelSet::closestDomainBoundary(const Mesh& mesh)
         unsigned int minX = std::min(mesh.nodes[i].coord.x, mesh.width - mesh.nodes[i].coord.x);
 
         // Closest edge in y.
-        unsigned int minY = std::min(mesh.nodes[i].coord.y, mesh.width - mesh.nodes[i].coord.y);
+        unsigned int minY = std::min(mesh.nodes[i].coord.y, mesh.height - mesh.nodes[i].coord.y);
 
         // Signed distance is the minimum of minX and minY;
         signedDistance[i] = double(std::min(minX, minY));
     }
 }
 
-void LevelSet::initialiseNarrowBand(Mesh& mesh)
+void LevelSet::initialiseNarrowBand()
 {
     unsigned int mineWidth = bandWidth - 1;
 
