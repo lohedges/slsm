@@ -179,6 +179,7 @@ void FastMarchingMethod::initialiseFrozen()
                         }
                     }
 
+                    errno = 0;
                     check(denominator != 0, "Divide by zero error.");
 
                     // Update velocity.
@@ -188,6 +189,7 @@ void FastMarchingMethod::initialiseFrozen()
         }
     }
 
+    errno = 0;
     check(nFrozen > 0, "There are no frozen nodes!");
 
     return;
@@ -417,7 +419,7 @@ double FastMarchingMethod::updateNode(unsigned int node)
     // Loop over all dimensions.
     for (unsigned int i=0;i<2;i++)
     {
-        // Initialize distances.
+        // Initialise distances.
         dist1 = maxDouble;
         dist2 = maxDouble;
 
@@ -533,6 +535,7 @@ void FastMarchingMethod::finaliseVelocity(unsigned int node)
         denominator += std::abs(dist[i]);
     }
 
+    errno = 0;
     check(denominator != 0, "Divide by zero error.");
 
     (*velocity)[node] = numerator / denominator;
@@ -548,8 +551,7 @@ double FastMarchingMethod::solveQuadratic(unsigned int node, const double& a, co
     c -= 1;
 
     // Initialise roots.
-    double r0 = 0;
-    double r1 = 0;
+    double r0, r1;
 
     // Quadratic equation.
     double det = b*b - 4*a*c;
