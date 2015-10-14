@@ -4,6 +4,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 
 #include "lsm.h"
 
@@ -15,50 +16,31 @@ int main(int argc, char** argv)
 #endif
 
     // Initialise a mesh.
-    Mesh mesh(10, 10, false);
+    Mesh mesh(160, 80, false);
 
     // Create a hole.
     std::vector<Hole> holes;
     holes.push_back(Hole(5, 5, 5));
 
-    // Initialise the level set function.
-    LevelSet levelSet(mesh, 3, holes);
+    // Initialise the level set function (from hole vector).
+    //LevelSet levelSet(mesh, 3, holes);
 
-    // Initialise a heap.
-    /*Heap heap(mesh.nNodes, true);
+    // Initialise the level set function (default Swiss cheese).
+    LevelSet levelSet(mesh, 3);
 
-    // Create a random vector.
-    std::vector<double> vec(10);
+    std::ifstream infile("input.txt");
+    unsigned int i = 0;
+    while (infile >> levelSet.signedDistance[i])
+        i++;
 
-    MersenneTwister rng;
-
-    for (unsigned int i=0;i<vec.size();i++)
-    {
-        vec[i] = rng();
-        std::cout << i << ' ' << vec[i] << '\n';
-    }
-    std::cout << '\n';
-
-    // Push values onto heap.
-    for (unsigned int i=0;i<vec.size();i++)
-    {
-        heap.push(i, std::abs(vec[i]));
-    }
-
-    std::cout << heap.size() << ' ' << heap.peek() << '\n';*/
-
-    FastMarchingMethod fmm(mesh, true);
-
-    std::vector<double> lsf(10);
-    std::vector<double> vel(10);
-
-    fmm.march(levelSet.signedDistance);
+    // Re-initialise the level set to a signed distance function.
+    levelSet.reinitialise();
 
     for (unsigned int i=0;i<levelSet.nNodes;i++)
     {
-        std::cout << mesh.nodes[i].coord.x << ' '
-            << mesh.nodes[i].coord.y << ' '
-            << levelSet.signedDistance[i] << '\n';
+        std::cout << mesh.nodes[i].coord.x
+            << ' ' << mesh.nodes[i].coord.y
+            << ' ' << levelSet.signedDistance[i] << '\n';
     }
 
     return (EXIT_SUCCESS);
