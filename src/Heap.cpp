@@ -23,6 +23,7 @@ Heap::Heap(unsigned int maxLength_, bool isTest_) :
 unsigned int Heap::push(unsigned int address_, double value)
 {
     // Make sure the heap isn't full.
+    errno = 0;
     check(heapLength < maxLength, "push: Heap is full!");
 
     // Add entry to the heap.
@@ -52,6 +53,7 @@ error:
 void Heap::pop(unsigned int& address_, double& value)
 {
     // Make sure the heap isn't empty.
+    errno = 0;
     check(heapLength != 0, "pop: Heap is empty!");
 
     // Remove entry from heap.
@@ -185,6 +187,7 @@ bool Heap::empty() const
 const double& Heap::peek() const
 {
     // Make sure the heap isn't empty.
+    errno = 0;
     check(heapLength != 0, "peek: Heap is empty!");
 
     return distance[heap[0]];
