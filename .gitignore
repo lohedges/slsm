@@ -1,6 +1,7 @@
 doc/
 lib/
 obj/
+peter/
 src/lsm.h
 demos/demo
 tests/mesh_tests
