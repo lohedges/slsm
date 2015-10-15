@@ -116,11 +116,11 @@ void Mesh::initialiseNeighbours(unsigned int node, unsigned int x, unsigned int 
     if (!isPeriodic)
     {
         // Node is on first or last row.
-        if (x == 0) nodes[node].neighbours[0] = -1;
-        else if (x == width) nodes[node].neighbours[1] = -1;
+        if (x == 0) nodes[node].neighbours[0] = nNodes;
+        else if (x == width) nodes[node].neighbours[1] = nNodes;
 
         // Node is on first or last column.
-        if (y == 0) nodes[node].neighbours[2] = -1;
-        else if (y == height) nodes[node].neighbours[3] = -1;
+        if (y == 0) nodes[node].neighbours[2] = nNodes;
+        else if (y == height) nodes[node].neighbours[3] = nNodes;
     }
 }

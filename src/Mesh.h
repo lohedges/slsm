@@ -28,7 +28,8 @@
     or down then left (shortest paths).
 
     For non-periodic meshes, neighbours that are outside of the domain are
-    given the value -1.
+    given the value nNodes, i.e. one past the end of the node array, which
+    runs from 0 to nNodes - 1.
 */
 
 // ASSOCIATED DATA TYPES
@@ -78,7 +79,7 @@ struct Element
 struct Node
 {
     Coord coord;                            //!< Node coordinate.
-    int neighbours[4];                      //!< Indices of nearest neighbour nodes.
+    unsigned int neighbours[4];             //!< Indices of nearest neighbour nodes.
     unsigned int elements[4];               //!< Indices of elements the node is connected to.
     unsigned int nElements;                 //!< Number of elements that the node is connected to (no periodicity).
     unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with a node.
