@@ -52,6 +52,8 @@ int testNodeConnectivity()
     // Initialise a 3x3 non-periodic mesh.
     Mesh npMesh(3, 3, false);
 
+    /********** Periodic Mesh Test **********/
+
     // Check nearest neighbours of 1st node (bottom left).
     check(mesh.nodes[0].neighbours[0] == 3, "Periodic mesh: Neighbour 0 of node 0 is incorrect!");
     check(mesh.nodes[0].neighbours[1] == 1, "Periodic mesh: Neighbour 1 of node 0 is incorrect!");
@@ -70,10 +72,12 @@ int testNodeConnectivity()
     check(mesh.nodes[15].neighbours[2] == 11, "Periodic mesh: Neighbour 2 of node 15 is incorrect!");
     check(mesh.nodes[15].neighbours[3] == 3, "Periodic mesh: Neighbour 3 of node 15 is incorrect!");
 
+    /********** Non-periodic Mesh Test **********/
+
     // Check nearest neighbours of 1st node (bottom left).
-    check(npMesh.nodes[0].neighbours[0] == -1, "Non-periodic mesh: Neighbour 0 of node 0 is incorrect!");
+    check(npMesh.nodes[0].neighbours[0] == mesh.nNodes, "Non-periodic mesh: Neighbour 0 of node 0 is incorrect!");
     check(npMesh.nodes[0].neighbours[1] == 1, "Non-periodic mesh: Neighbour 1 of node 0 is incorrect!");
-    check(npMesh.nodes[0].neighbours[2] == -1, "Non-periodic mesh: Neighbour 2 of node 0 is incorrect!");
+    check(npMesh.nodes[0].neighbours[2] == mesh.nNodes, "Non-periodic mesh: Neighbour 2 of node 0 is incorrect!");
     check(npMesh.nodes[0].neighbours[3] == 4, "Non-periodic mesh: Neighbour 3 of node 0 is incorrect!");
 
     // Check nearest neighbours of 5th node (bulk).
@@ -84,9 +88,31 @@ int testNodeConnectivity()
 
     // Check nearest neighbours of 15th node (top right).
     check(npMesh.nodes[15].neighbours[0] == 14, "Non-periodic mesh: Neighbour 0 of node 15 is incorrect!");
-    check(npMesh.nodes[15].neighbours[1] == -1, "Non-periodic mesh: Neighbour 1 of node 15 is incorrect!");
+    check(npMesh.nodes[15].neighbours[1] == mesh.nNodes, "Non-periodic mesh: Neighbour 1 of node 15 is incorrect!");
     check(npMesh.nodes[15].neighbours[2] == 11, "Non-periodic mesh: Neighbour 2 of node 15 is incorrect!");
-    check(npMesh.nodes[15].neighbours[3] == -1, "Non-periodic mesh: Neighbour 3 of node 15 is incorrect!");
+    check(npMesh.nodes[15].neighbours[3] == mesh.nNodes, "Non-periodic mesh: Neighbour 3 of node 15 is incorrect!");
+
+    return 0;
+
+error:
+    return 1;
+}
+
+int testReverseNodeConnectivity()
+{
+    // Initialise a 3x3 periodic mesh.
+    Mesh mesh(3, 3, true);
+
+    // Make sure opposite neighbour of each neighbour map back to node, e.g. the
+    // right-hand neighbour of a node's left-hand neighbour should point to the node.
+    check(mesh.nodes[mesh.nodes[5].neighbours[0]].neighbours[1] == 5,
+        "Reverse connectivity: Mapping between neighours 0 and 1 incorrect!");
+    check(mesh.nodes[mesh.nodes[5].neighbours[1]].neighbours[0] == 5,
+        "Reverse connectivity: Mapping between neighours 1 and 0 incorrect!");
+    check(mesh.nodes[mesh.nodes[5].neighbours[2]].neighbours[3] == 5,
+        "Reverse connectivity: Mapping between neighours 2 and 3 incorrect!");
+    check(mesh.nodes[mesh.nodes[5].neighbours[3]].neighbours[2] == 5,
+        "Reverse connectivity: Mapping between neighours 3 and 2 incorrect!");
 
     return 0;
 
@@ -146,6 +172,7 @@ int all_tests()
     mu_run_test(testMeshSize);
     mu_run_test(testNodeCoordinates);
     mu_run_test(testNodeConnectivity);
+    mu_run_test(testReverseNodeConnectivity);
     mu_run_test(testElementNodeConnectivity);
     mu_run_test(testNodeElementConnectivity);
 
