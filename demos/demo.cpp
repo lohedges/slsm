@@ -28,10 +28,13 @@ int main(int argc, char** argv)
     // Initialise the level set function (default Swiss cheese).
     LevelSet levelSet(mesh, 3);
 
-    std::ifstream infile("input.txt");
+    // Initialise io object.
+    InputOutput io;
+
+    /*std::ifstream infile("input.txt");
     unsigned int i = 0;
     while (infile >> levelSet.signedDistance[i])
-        i++;
+        i++;*/
 
     // Re-initialise the level set to a signed distance function.
     levelSet.reinitialise();
@@ -42,6 +45,9 @@ int main(int argc, char** argv)
             << ' ' << mesh.nodes[i].coord.y
             << ' ' << levelSet.signedDistance[i] << '\n';
     }
+
+    // Save Paraview LSF file.
+    io.saveLevelSetVTK(1, mesh, levelSet);
 
     return (EXIT_SUCCESS);
 }
