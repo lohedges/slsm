@@ -3,6 +3,8 @@
  * Author:	lester
  */
 
+// Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
+
 #include "Heap.h"
 
 Heap::Heap(unsigned int maxLength_, bool isTest_) :

@@ -3,6 +3,8 @@
  * Author:	lester
  */
 
+// Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
+
 #ifndef _HEAP_H
 #define _HEAP_H
 
@@ -34,7 +36,7 @@ public:
         \param isTest_
             Whether to perform self testing of the heap (optional).
      */
-	Heap(unsigned int, bool isTest_=false);
+	Heap(unsigned int, bool isTest_ = false);
 
     //! Push a value onto the heap.
     /*! \param address_
