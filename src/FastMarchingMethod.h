@@ -3,6 +3,8 @@
  * Author:	lester
  */
 
+// Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
+
 #ifndef _FASTMARCHINGMETHOD_H
 #define _FASTMARCHINGMETHOD_H
 
@@ -60,6 +62,9 @@ private:
 
     /// Whether velocity extension is active (distance extension if not).
     bool isVelocity;
+
+    /// Out of bounds neighbour flag.
+    unsigned int outOfBounds;
 
     /// The status of each node.
     std::vector<FMM_NodeStatus::FMM_NodeStatus> nodeStatus;
@@ -120,7 +125,7 @@ private:
         \return
             The correct root of the equation.
      */
-    double solveQuadratic(unsigned int, const double&, const double&, double&) const;
+    double solveQuadratic(unsigned int, const double&, const double&, const double&) const;
 
     const double doubleEpsilon = std::numeric_limits<double>::epsilon();
     const double maxDouble = std::numeric_limits<double>::max();

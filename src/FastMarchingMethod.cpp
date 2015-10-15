@@ -3,12 +3,15 @@
  * Author:	lester
  */
 
+// Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
+
 #include <iostream>
 #include "FastMarchingMethod.h"
 
 FastMarchingMethod::FastMarchingMethod(const Mesh& mesh_, bool isTest_) :
     mesh(mesh_),
-    isTest(isTest_)
+    isTest(isTest_),
+    outOfBounds(mesh.nNodes)
 {
     heap = nullptr;
 
@@ -113,10 +116,10 @@ void FastMarchingMethod::initialiseFrozen()
                 // Neighbours are ordered: left, right, down, up.
 
                 // Get index of neighbour.
-                int neighbour = mesh.nodes[i].neighbours[j];
+                unsigned int neighbour = mesh.nodes[i].neighbours[j];
 
                 // Make sure neighbour lies inside domain boundary.
-                if (neighbour != -1)
+                if (neighbour != outOfBounds)
                 {
                     // Level set changes sign along direction.
                     if ((signedDistanceCopy[i] * signedDistanceCopy[neighbour]) < 0)
@@ -148,7 +151,6 @@ void FastMarchingMethod::initialiseFrozen()
             {
                 double distSum = 0;
 
-                // Use Pythag. to calculate distance.
                 for (unsigned int j=0;j<2;j++)
                 {
                     if (dist[j] > 0)
@@ -227,10 +229,10 @@ void FastMarchingMethod::initialiseTrial()
             // Loop over all nearest neighbour nodes.
             for (unsigned int j=0;j<4;j++)
             {
-                int neighbour = mesh.nodes[i].neighbours[j];
+                unsigned int neighbour = mesh.nodes[i].neighbours[j];
 
                 // Neighbour lies within the domain boundary.
-                if (neighbour != -1)
+                if (neighbour != outOfBounds)
                 {
                     // Neighbour is frozen.
                     if (nodeStatus[neighbour] & FMM_NodeStatus::FROZEN)
@@ -335,10 +337,10 @@ void FastMarchingMethod::solve()
             for (unsigned int j=0;j<4;j++)
             {
                 // Get address of neighbour.
-                int naddr = mesh.nodes[addr].neighbours[j];
+                unsigned int naddr = mesh.nodes[addr].neighbours[j];
 
                 // Neighbour lies within domain boundary.
-                if (naddr != -1)
+                if (naddr != outOfBounds)
                 {
                     // Neighbour hasn't been frozen.
                     if (nodeStatus[naddr] != FMM_NodeStatus::FROZEN)
@@ -377,7 +379,7 @@ void FastMarchingMethod::solve()
                         naddr = mesh.nodes[naddr].neighbours[j];
 
                         // Next nearest neighbour lies within domain boundary.
-                        if (naddr != -1)
+                        if (naddr != outOfBounds)
                         {
                             // Neighbour is in the trial band.
                             if (nodeStatus[naddr] & FMM_NodeStatus::TRIAL)
@@ -430,10 +432,10 @@ double FastMarchingMethod::updateNode(unsigned int node)
             unsigned int index = 2*i + j;
 
             // First neighbour.
-            int n1 = mesh.nodes[node].neighbours[index];
+            unsigned int n1 = mesh.nodes[node].neighbours[index];
 
             // Neighbour is within the domain boundary.
-            if (n1 != -1)
+            if (n1 != outOfBounds)
             {
                 // Neighbour is frozen.
                 if (nodeStatus[n1] & FMM_NodeStatus::FROZEN)
@@ -444,10 +446,10 @@ double FastMarchingMethod::updateNode(unsigned int node)
                         dist1 = (*signedDistance)[n1];
 
                         // Second neighbour in same direction.
-                        int n2 = mesh.nodes[n1].neighbours[index];
+                        unsigned int n2 = mesh.nodes[n1].neighbours[index];
 
                         // Neighbour is within the domain boundary.
-                        if (n2 != -1)
+                        if (n2 != outOfBounds)
                         {
                             // Neighbour is frozen.
                             if (nodeStatus[n2] & FMM_NodeStatus::FROZEN)
@@ -465,6 +467,7 @@ double FastMarchingMethod::updateNode(unsigned int node)
             }
         }
 
+        // Second order finite difference.
         if (dist2 < maxDouble)
         {
             double tp = oneThird*(4*dist1 - dist2);
@@ -473,6 +476,7 @@ double FastMarchingMethod::updateNode(unsigned int node)
             b -= 2*aa*tp;
             c += aa*tp*tp;
         }
+        // First order finite difference.
         else if (dist1 < maxDouble)
         {
             a += 1;
@@ -480,6 +484,9 @@ double FastMarchingMethod::updateNode(unsigned int node)
             c += dist1*dist1;
         }
     }
+
+    // Update coefficient.
+    c -= 1;
 
     return solveQuadratic(node, a, b, c);
 }
@@ -505,10 +512,10 @@ void FastMarchingMethod::finaliseVelocity(unsigned int node)
         unsigned int dim = (i < 2) ? 0 : 1;
 
         // Get index of neighbour.
-        int neighbour = mesh.nodes[node].neighbours[i];
+        unsigned int neighbour = mesh.nodes[node].neighbours[i];
 
         // Neighbour is within domain boundary.
-        if (neighbour != -1)
+        if (neighbour != outOfBounds)
         {
             // Neighbour is frozen.
             if (nodeStatus[neighbour] & FMM_NodeStatus::FROZEN)
@@ -546,10 +553,8 @@ error:
     exit(EXIT_FAILURE);
 }
 
-double FastMarchingMethod::solveQuadratic(unsigned int node, const double& a, const double& b, double& c) const
+double FastMarchingMethod::solveQuadratic(unsigned int node, const double& a, const double& b, const double& c) const
 {
-    c -= 1;
-
     // Initialise roots.
     double r0, r1;
 
