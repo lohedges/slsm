@@ -24,6 +24,12 @@
 
     The heap is used to maintain an ascending order priority queue of unsigned
     node distances from the zero iso-contour of the level set.
+
+    For efficiency, the heap is stored as a contiguous std::vector array,
+    rather than a linked list. The constructor needs to know the maximum number
+    of entries that will be added to the heap. This will number be computed in
+    the FastMarchingMethod::initialiseHeap method (which calculates the number
+    of far field nodes).
 */
 
 class Heap
