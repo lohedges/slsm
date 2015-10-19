@@ -126,7 +126,7 @@ void FastMarchingMethod::initialiseFrozen()
                     {
                         isBorder = true;
 
-                        // Calculate the distance to the zero contour.
+                        // Calculate the distance to the zero contour (linear interpolation).
                         double d = signedDistanceCopy[i] / (signedDistanceCopy[i] - signedDistanceCopy[neighbour]);
 
                         // Set dimension (neighbours 0 and 1 are x dimension, 2 and 3 are y).
@@ -150,6 +150,8 @@ void FastMarchingMethod::initialiseFrozen()
             if (isBorder)
             {
                 double distSum = 0;
+
+                // Calculate perpendicular distance to boundary (Pythag.)
 
                 for (unsigned int j=0;j<2;j++)
                 {
@@ -558,14 +560,14 @@ double FastMarchingMethod::solveQuadratic(unsigned int node, const double& a, co
     // Initialise roots.
     double r0, r1;
 
-    // Quadratic equation.
-    double det = b*b - 4*a*c;
+    // Calculate discriminant.
+    double discrim = b*b - 4*a*c;
 
-    // Solve roots.
-    if (det > 0)
+    // Solve for roots.
+    if (discrim > 0)
     {
-        r0 = (-b + sqrt(det)) / (2.0 * a);
-        r1 = (-b - sqrt(det)) / (2.0 * a);
+        r0 = (-b + sqrt(discrim)) / (2.0 * a);
+        r1 = (-b - sqrt(discrim)) / (2.0 * a);
     }
     else return 0;
 
