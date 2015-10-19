@@ -440,7 +440,7 @@ double FastMarchingMethod::updateNode(unsigned int node)
                 // Neighbour is frozen.
                 if (nodeStatus[n1] & FMM_NodeStatus::FROZEN)
                 {
-                    if ((*signedDistance)[n1] < dist1)
+                    if (std::abs((*signedDistance)[n1]) < std::abs(dist1))
                     {
                         // Store distance.
                         dist1 = (*signedDistance)[n1];
