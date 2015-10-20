@@ -17,6 +17,9 @@
     The grid is assumed to be two-dimensional and is comprised of
     square elements of unit side.
 
+    Elements are comprised of four nodes, labelled in anticlockwise order
+    from the bottom left, i.e. bottom left, bottom right, top right, top left.
+
     Each node has four nearest neighbours ordered as left, right, down, up.
     Diagonal neighbours can be accessed by looking at neighbours of neighbours,
     e.g. for the lower left diagonal of node i
@@ -48,6 +51,7 @@ namespace NodeStatus
         OUTSIDE         = (1 << 1),         //!< Node lies outside the boundary.
         BOUNDARY        = (1 << 2),         //!< Node is cut by the boundary.
         MASKED          = (1 << 3),         //!< Node is masked (for inserting obstacles, etc.)
+        CUT             = (INSIDE|OUTSIDE), //!< Node pair cuts the boundary.
     };
 }
 
@@ -72,6 +76,8 @@ struct Element
 {
     double area;                            //!< Material area fraction.
     unsigned int nodes[4];                  //!< Indices for nodes of the element.
+    unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.
+    unsigned int nBoundarySegments;         //!< The number of boundary segments associated with the element.
     ElementStatus::ElementStatus status;    //!< Whether the node (or it's centre) lies inside or outside the structure.
 };
 
@@ -82,8 +88,8 @@ struct Node
     unsigned int neighbours[4];             //!< Indices of nearest neighbour nodes.
     unsigned int elements[4];               //!< Indices of elements the node is connected to.
     unsigned int nElements;                 //!< Number of elements that the node is connected to (no periodicity).
-    unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with a node.
-    unsigned int nBoundaryPoints;           //!< The number of boundary points associated with a node.
+    unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with the node.
+    unsigned int nBoundaryPoints;           //!< The number of boundary points associated with the node.
     bool isActive;                          //!< Whether the node is active (part of narrow band, and not fixed).
     bool isMine;                            //!< Whether the node lies on the edge of the narrow band.
     NodeStatus::NodeStatus status;          //!< Whether node is outside, inside, or on the boundary.
