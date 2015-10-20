@@ -128,8 +128,8 @@ int testElementNodeConnectivity()
     // Check the four nodes of the 1st element.
     check(mesh.elements[0].nodes[0] == 0, "Node 0 of element 0 is incorrect!");
     check(mesh.elements[0].nodes[1] == 1, "Node 1 of element 0 is incorrect!");
-    check(mesh.elements[0].nodes[2] == 4, "Node 2 of element 0 is incorrect!");
-    check(mesh.elements[0].nodes[3] == 5, "Node 3 of element 0 is incorrect!");
+    check(mesh.elements[0].nodes[2] == 5, "Node 2 of element 0 is incorrect!");
+    check(mesh.elements[0].nodes[3] == 4, "Node 3 of element 0 is incorrect!");
 
     return 0;
 
