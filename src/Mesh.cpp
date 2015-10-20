@@ -83,11 +83,11 @@ void Mesh::initialiseElements()
         // Node on bottom right corner of element.
         elements[i].nodes[1] = x + 1 + (y * w);
 
-        // Node on top left corner of element.
-        elements[i].nodes[2] = x + ((y + 1) * w);
+        // Node on top right corner of element.
+        elements[i].nodes[2] = x + 1 + ((y + 1) * w);
 
         // Node on top right corner of element.
-        elements[i].nodes[3] = x + 1 + ((y + 1) * w);
+        elements[i].nodes[3] = x + ((y + 1) * w);
 
         // Fill reverse connectivity arrays (node --> element)
         for (unsigned int j=0;j<4;j++)
