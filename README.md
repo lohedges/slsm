@@ -42,7 +42,7 @@ default OS X build (due to complaints abount ambiguous calls to abs). If
 g++ is also installed, you can override the default compiler by running:
 
 ```bash
-$ CXX=g++ make devel
+$ CXX=g++ make build
 ```
 
 ## Compiling and linking
