@@ -32,10 +32,10 @@ int main(int argc, char** argv)
     InputOutput io;
 
     // Read Peter's level set.
-    std::ifstream infile("input.txt");
+    /*std::ifstream infile("input.txt");
     unsigned int i = 0;
     while (infile >> levelSet.signedDistance[i])
-        i++;
+        i++;*/
 
     // Re-initialise the level set to a signed distance function.
     levelSet.reinitialise();
@@ -46,14 +46,12 @@ int main(int argc, char** argv)
     // Discretise the boundary.
     boundary.discretise();
 
-    for (unsigned int i=0;i<boundary.nPoints;i++)
-    {
-        std::cout << boundary.points[i].x
-            << ' ' << boundary.points[i].y << '\n';
-    }
-
-    // Save Paraview LSF file.
+    // Save LSF info (ParaView and txt file).
     io.saveLevelSetVTK(1, mesh, levelSet);
+    io.saveLevelSetTXT(1, mesh, levelSet);
+
+    // Save boundary points (txt file).
+    io.saveBoundaryTXT(1, boundary);
 
     return (EXIT_SUCCESS);
 }
