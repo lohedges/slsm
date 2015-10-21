@@ -30,7 +30,7 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
 
     pFile = fopen(fileName.str().c_str(), "w");
 
-    // Set up paraview header information.
+    // Set up ParaView header information.
     fprintf(pFile, "# vtk DataFile Version 3.0\n");
     fprintf(pFile, "Para0\n");
     fprintf(pFile, "ASCII\n");
@@ -48,6 +48,40 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
     fprintf(pFile, "LOOKUP_TABLE default\n");
     for (unsigned int i=0;i<mesh.nNodes;i++)
         fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
+
+    fclose(pFile);
+}
+
+void InputOutput::saveLevelSetTXT(const unsigned int& datapoint, const Mesh& mesh,
+    const LevelSet& levelSet, const std::string& outputDirectory, bool isXY) const
+{
+    std::ostringstream fileName, num;
+
+    num.str("");
+    num.width(4);
+    num.fill('0');
+    num << std::right << datapoint;
+
+    fileName.str("");
+    if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+    fileName << "lsf_" << num.str() << ".txt";
+
+    saveLevelSetTXT(fileName, mesh, levelSet, isXY);
+}
+
+void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
+    const Mesh& mesh, const LevelSet& levelSet, bool isXY) const
+{
+    FILE *pFile;
+
+    pFile = fopen(fileName.str().c_str(), "w");
+
+    // Print out the nodal signed distance information.
+    for (unsigned int i=0;i<mesh.nNodes;i++)
+    {
+        if (isXY) fprintf(pFile, "%lf %lf ", mesh.nodes[i].coord.x, mesh.nodes[i].coord.y);
+        fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
+    }
 
     fclose(pFile);
 }
