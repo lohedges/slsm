@@ -442,6 +442,7 @@ double FastMarchingMethod::updateNode(unsigned int node)
                 // Neighbour is frozen.
                 if (nodeStatus[n1] & FMM_NodeStatus::FROZEN)
                 {
+                    // Make sure neighbour is closer to the zero contour (upwind).
                     if (std::abs((*signedDistance)[n1]) < std::abs(dist1))
                     {
                         // Store distance.
@@ -456,8 +457,8 @@ double FastMarchingMethod::updateNode(unsigned int node)
                             // Neighbour is frozen.
                             if (nodeStatus[n2] & FMM_NodeStatus::FROZEN)
                             {
-                                if (((*signedDistance)[n2] <= dist1 && dist1 >= 0) ||
-                                    ((*signedDistance)[n2] >= dist1 && dist1 <= 0))
+                                // Make sure neighbour is closer to the zero contour (upwind).
+                                if (std::abs((*signedDistance)[n2] <= std::abs(dist1)))
                                 {
                                     // Store distance.
                                     dist2 = (*signedDistance)[n2];
