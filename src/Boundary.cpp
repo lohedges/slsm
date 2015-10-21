@@ -209,8 +209,8 @@ void Boundary::discretise()
                 }
             }
 
-            // If there are four cut edges, then determine which boundary node pairs form
-            // the boundary.
+            // If there are four cut edges, then determine which
+            // boundary node pairs form the boundary.
             else if (nCut == 4)
             {
                 double lsfSum = 0;
@@ -290,8 +290,8 @@ void Boundary::discretise()
                 mesh.elements[i].status = (lsfSum > 0) ? ElementStatus::CENTRE_INSIDE : ElementStatus::CENTRE_OUTSIDE;
             }
 
-            // If no edges are cut and element is not inside structure then the boundary
-            // segment must cross the diagonal.
+            // If no edges are cut and element is not inside structure
+            // then the boundary segment must cross the diagonal.
             else if ((nCut == 0) && (mesh.elements[i].status != ElementStatus::INSIDE))
             {
                 // Find the two boundary nodes.
@@ -309,8 +309,8 @@ void Boundary::discretise()
 
                 // Create boundary segment.
                 BoundarySegment segment;
-                segment.node1 = mesh.nNodes + boundaryPoints[0];
-                segment.node1 = mesh.nNodes + boundaryPoints[1];
+                segment.node1 = boundaryPoints[0];
+                segment.node2 = boundaryPoints[1];
                 segment.element = i;
 
                 // Create element to segment lookup.
