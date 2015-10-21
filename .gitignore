@@ -6,7 +6,7 @@ khalid/
 notes/
 web/
 src/lsm.h
-demos/demo
+demos/lsm
 tests/mesh_tests
 *.dSYM
 .compiler_flags
