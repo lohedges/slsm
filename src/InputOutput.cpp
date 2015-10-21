@@ -30,6 +30,9 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
 
     pFile = fopen(fileName.str().c_str(), "w");
 
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
+
     // Set up ParaView header information.
     fprintf(pFile, "# vtk DataFile Version 3.0\n");
     fprintf(pFile, "Para0\n");
@@ -50,6 +53,11 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
         fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
 
     fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
 }
 
 void InputOutput::saveLevelSetTXT(const unsigned int& datapoint, const Mesh& mesh,
@@ -76,6 +84,9 @@ void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
 
     pFile = fopen(fileName.str().c_str(), "w");
 
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
+
     // Write the nodal signed distance to file.
     for (unsigned int i=0;i<mesh.nNodes;i++)
     {
@@ -84,9 +95,14 @@ void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
     }
 
     fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
 }
 
-void InputOutput::saveBoundaryTXT(const unsigned int& datapoint,
+void InputOutput::saveBoundaryPointsTXT(const unsigned int& datapoint,
     const Boundary& boundary, const std::string& outputDirectory) const
 {
     std::ostringstream fileName, num;
@@ -98,20 +114,110 @@ void InputOutput::saveBoundaryTXT(const unsigned int& datapoint,
 
     fileName.str("");
     if (!outputDirectory.empty()) fileName << outputDirectory << "/";
-    fileName << "boundary_" << num.str() << ".txt";
+    fileName << "boundary-points_" << num.str() << ".txt";
 
-    saveBoundaryTXT(fileName, boundary);
+    saveBoundaryPointsTXT(fileName, boundary);
 }
 
-void InputOutput::saveBoundaryTXT(const std::ostringstream& fileName, const Boundary& boundary) const
+void InputOutput::saveBoundaryPointsTXT(const std::ostringstream& fileName, const Boundary& boundary) const
 {
     FILE *pFile;
 
     pFile = fopen(fileName.str().c_str(), "w");
+
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
     // Write the boundary points to file.
     for (unsigned int i=0;i<boundary.nPoints;i++)
         fprintf(pFile, "%lf %lf\n", boundary.points[i].x, boundary.points[i].y);
 
     fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
+}
+
+void InputOutput::saveBoundarySegmentsTXT(const unsigned int& datapoint,
+    const Mesh& mesh, const Boundary& boundary, const std::string& outputDirectory) const
+{
+    std::ostringstream fileName, num;
+
+    num.str("");
+    num.width(4);
+    num.fill('0');
+    num << std::right << datapoint;
+
+    fileName.str("");
+    if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+    fileName << "boundary-segments_" << num.str() << ".txt";
+
+    saveBoundarySegmentsTXT(fileName, mesh, boundary);
+}
+
+void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
+    const Mesh& mesh, const Boundary& boundary) const
+{
+    FILE *pFile;
+
+    pFile = fopen(fileName.str().c_str(), "w");
+
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
+
+    // Write the boundary points to file.
+    for (unsigned int i=0;i<boundary.nSegments;i++)
+    {
+        // Start and end nodes of the segment.
+        unsigned int n1 = boundary.segments[i].node1;
+        unsigned int n2 = boundary.segments[i].node2;
+
+        // Coordinates.
+        double x, y;
+
+        // First point.
+
+        // Node is a boundary point.
+        if (n1 >= mesh.nNodes)
+        {
+            n1 -= mesh.nNodes;
+            x = boundary.points[n1].x;
+            y = boundary.points[n1].y;
+        }
+        else
+        {
+            x = mesh.nodes[n1].coord.x;
+            y = mesh.nodes[n1].coord.y;
+        }
+
+        // Write boundary point to file.
+        fprintf(pFile, "%lf %lf\n", x, y);
+
+        // Second point.
+
+        // Node is a boundary point.
+        if (n2 >= mesh.nNodes)
+        {
+            n2 -= mesh.nNodes;
+            x = boundary.points[n2].x;
+            y = boundary.points[n2].y;
+        }
+        else
+        {
+            x = mesh.nodes[n2].coord.x;
+            y = mesh.nodes[n2].coord.y;
+        }
+
+        // Write boundary point to file.
+        fprintf(pFile, "%lf %lf\n", x, y);
+    }
+
+    fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
 }

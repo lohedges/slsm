@@ -31,7 +31,8 @@ public:
         \param outputDirectory
             The output directory path (optional).
      */
-    void saveLevelSetVTK(const unsigned int&, const Mesh&, const LevelSet&, const std::string& outputDirectory = "") const;
+    void saveLevelSetVTK(const unsigned int&, const Mesh&,
+        const LevelSet&, const std::string& outputDirectory = "") const;
 
     //! Save the level set function as a ParaView VTK file.
     /*! \param fileName
@@ -89,7 +90,7 @@ public:
         \param outputDirectory
             The output directory path (optional).
      */
-    void saveBoundaryTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
+    void saveBoundaryPointsTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
 
     //! Save boundary points as a plain text file.
     /*! \param fileName
@@ -98,7 +99,35 @@ public:
         \param boundary
             A reference to the boundary object.
      */
-    void saveBoundaryTXT(const std::ostringstream&, const Boundary&) const;
+    void saveBoundaryPointsTXT(const std::ostringstream&, const Boundary&) const;
+
+    //! Save boundary segments as a plain text file.
+    /*! \param datapoint
+            The datapoint of the current optimisation trajectory.
+
+        \param mesh
+            A reference to the finite element mesh.
+
+        \param boundary
+            A reference to the boundary object.
+
+        \param outputDirectory
+            The output directory path (optional).
+     */
+    void saveBoundarySegmentsTXT(const unsigned int&, const Mesh&,
+        const Boundary&, const std::string& outputDirectory = "") const;
+
+    //! Save boundary points as a plain text file.
+    /*! \param fileName
+            The name of the data file.
+
+        \param mesh
+            A reference to the finite element mesh.
+
+        \param boundary
+            A reference to the boundary object.
+     */
+    void saveBoundarySegmentsTXT(const std::ostringstream&, const Mesh&, const Boundary&) const;
 };
 
 #endif	/* _INPUTOUTPUT_H */
