@@ -78,6 +78,27 @@ public:
             Whether to also output the nodal x/y coordinates (optional).
      */
     void saveLevelSetTXT(const std::ostringstream&, const Mesh&, const LevelSet&, bool isXY = false) const;
+
+    //! Save boundary points as a plain text file.
+    /*! \param datapoint
+            The datapoint of the current optimisation trajectory.
+
+        \param boundary
+            A reference to the boundary object.
+
+        \param outputDirectory
+            The output directory path (optional).
+     */
+    void saveBoundaryTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
+
+    //! Save boundary points as a plain text file.
+    /*! \param fileName
+            The name of the data file.
+
+        \param boundary
+            A reference to the boundary object.
+     */
+    void saveBoundaryTXT(const std::ostringstream&, const Boundary&) const;
 };
 
 #endif	/* _INPUTOUTPUT_H */

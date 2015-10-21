@@ -19,7 +19,7 @@ void InputOutput::saveLevelSetVTK(const unsigned int& datapoint,
 
     fileName.str("");
     if (!outputDirectory.empty()) fileName << outputDirectory << "/";
-    fileName << "lsf_" << num.str() << ".vtk";
+    fileName << "level-set_" << num.str() << ".vtk";
 
     saveLevelSetVTK(fileName, mesh, levelSet);
 }
@@ -42,7 +42,7 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
     for (unsigned int i=0;i<=mesh.height;i++) {fprintf(pFile, "%d ", i);}
     fprintf(pFile, "\nZ_COORDINATES 1 int\n0\n\n");
 
-    // Print out the nodal signed distance information.
+    // Write the nodal signed distance to file.
     fprintf(pFile, "POINT_DATA %d\n", mesh.nNodes);
     fprintf(pFile, "SCALARS level-set float 1\n");
     fprintf(pFile, "LOOKUP_TABLE default\n");
@@ -64,7 +64,7 @@ void InputOutput::saveLevelSetTXT(const unsigned int& datapoint, const Mesh& mes
 
     fileName.str("");
     if (!outputDirectory.empty()) fileName << outputDirectory << "/";
-    fileName << "lsf_" << num.str() << ".txt";
+    fileName << "level-set_" << num.str() << ".txt";
 
     saveLevelSetTXT(fileName, mesh, levelSet, isXY);
 }
@@ -76,12 +76,42 @@ void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
 
     pFile = fopen(fileName.str().c_str(), "w");
 
-    // Print out the nodal signed distance information.
+    // Write the nodal signed distance to file.
     for (unsigned int i=0;i<mesh.nNodes;i++)
     {
         if (isXY) fprintf(pFile, "%lf %lf ", mesh.nodes[i].coord.x, mesh.nodes[i].coord.y);
         fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
     }
+
+    fclose(pFile);
+}
+
+void InputOutput::saveBoundaryTXT(const unsigned int& datapoint,
+    const Boundary& boundary, const std::string& outputDirectory) const
+{
+    std::ostringstream fileName, num;
+
+    num.str("");
+    num.width(4);
+    num.fill('0');
+    num << std::right << datapoint;
+
+    fileName.str("");
+    if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+    fileName << "boundary_" << num.str() << ".txt";
+
+    saveBoundaryTXT(fileName, boundary);
+}
+
+void InputOutput::saveBoundaryTXT(const std::ostringstream& fileName, const Boundary& boundary) const
+{
+    FILE *pFile;
+
+    pFile = fopen(fileName.str().c_str(), "w");
+
+    // Write the boundary points to file.
+    for (unsigned int i=0;i<boundary.nPoints;i++)
+        fprintf(pFile, "%lf %lf\n", boundary.points[i].x, boundary.points[i].y);
 
     fclose(pFile);
 }
