@@ -211,7 +211,7 @@ void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
         }
 
         // Write boundary point to file.
-        fprintf(pFile, "%lf %lf\n", x, y);
+        fprintf(pFile, "%lf %lf\n\n", x, y);
     }
 
     fclose(pFile);
