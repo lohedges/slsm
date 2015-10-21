@@ -5,7 +5,6 @@
 
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
 
-#include <iostream>
 #include "FastMarchingMethod.h"
 
 FastMarchingMethod::FastMarchingMethod(const Mesh& mesh_, bool isTest_) :
