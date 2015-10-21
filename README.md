@@ -37,13 +37,23 @@ a target, i.e.
 $ make
 ```
 
-Note that a bug in clang means that the code will likely not compile on a
+Due to a bug in `clang` it's likely that the code will not compile on a
 default OS X build (due to complaints abount ambiguous calls to abs). If
-g++ is also installed, you can override the default compiler by running:
+`g++` is also installed, you can override the default compiler by running:
 
 ```bash
 $ CXX=g++ make build
 ```
+
+Note that `g++` may well be aliased to `clang`, in which case you will
+need to pass the full name of the `g++` executable, e.g. for the latest
+`g++` from MacPorts
+
+```bash
+$ CXX=g++-mp-4.9 make build
+```
+
+Alternatively, don't use OS X :-)
 
 ## Compiling and linking
 To use LibLSM with a C/C++ code first include the LibLSM header file somewhere
