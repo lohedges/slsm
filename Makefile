@@ -65,7 +65,7 @@ project := lsm
 project_upper := `echo $(project) | tr a-z A-Z`
 
 # C++ compiler.
-CXX := g++
+CXX ?= g++
 
 # Installation path.
 PREFIX ?= /usr/local
