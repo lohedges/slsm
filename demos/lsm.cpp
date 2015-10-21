@@ -48,10 +48,11 @@ int main(int argc, char** argv)
 
     // Save LSF info (ParaView and txt file).
     io.saveLevelSetVTK(1, mesh, levelSet);
-    io.saveLevelSetTXT(1, mesh, levelSet);
+    io.saveLevelSetTXT(1, mesh, levelSet, "", true);
 
-    // Save boundary points (txt file).
-    io.saveBoundaryTXT(1, boundary);
+    // Save boundary points and segments (txt file).
+    io.saveBoundaryPointsTXT(1, boundary);
+    io.saveBoundarySegmentsTXT(1, mesh, boundary);
 
     return (EXIT_SUCCESS);
 }
