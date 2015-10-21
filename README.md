@@ -37,6 +37,14 @@ a target, i.e.
 $ make
 ```
 
+Note that a bug in clang means that the code will likely not compile on a
+default OS X build (due to complaints abount ambiguous calls to abs). If
+g++ is also installed, you can override the default compiler by running:
+
+```bash
+$ CXX=g++ make devel
+```
+
 ## Compiling and linking
 To use LibLSM with a C/C++ code first include the LibLSM header file somewhere
 in the code.
