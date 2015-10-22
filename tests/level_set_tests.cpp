@@ -69,6 +69,10 @@ int testSignedDistance()
     check((levelSet.signedDistance[90] == d), "Signed distance mismatch!");
     check((levelSet.signedDistance[96] == d), "Signed distance mismatch!");
 
+    // Check central node. This should be have signed distance
+    // of minus the hole radius.
+    check((levelSet.signedDistance[60] == -hole.r), "Signed distance mismatch!");
+
     return 0;
 
 error:
