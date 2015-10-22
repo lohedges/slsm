@@ -39,6 +39,9 @@ int testUpwindFiniteDifference()
     // Re-initialise the signed distance function.
     levelSet.reinitialise();
 
+    // Set error number.
+    errno = 0;
+
     // Check signed distance against expected values.
     for (unsigned int i=0;i<levelSet.nNodes;i++)
         check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");

@@ -10,6 +10,9 @@ int testMeshSize()
     // Initialise a 3x3 periodic mesh.
     Mesh mesh(3, 3, true);
 
+    // Set error number.
+    errno = 0;
+
     check(mesh.width == 3, "Mesh width is incorrect!");
     check(mesh.height == 3, "Mesh height is incorrect!");
     check(mesh.nElements == 9, "Number of elements is incorrect!");
@@ -25,6 +28,9 @@ int testNodeCoordinates()
 {
     // Initialise a 3x3 periodic mesh.
     Mesh mesh(3, 3, true);
+
+    // Set error number.
+    errno = 0;
 
     // Check coordinates of 1st node (bottom left).
     check(mesh.nodes[0].coord.x == 0, "x coordinate of node 0 is incorrect!");
@@ -51,6 +57,9 @@ int testNodeConnectivity()
 
     // Initialise a 3x3 non-periodic mesh.
     Mesh npMesh(3, 3, false);
+
+    // Set error number.
+    errno = 0;
 
     /********** Periodic Mesh Test **********/
 
@@ -103,6 +112,9 @@ int testReverseNodeConnectivity()
     // Initialise a 3x3 periodic mesh.
     Mesh mesh(3, 3, true);
 
+    // Set error number.
+    errno = 0;
+
     // Make sure opposite neighbour of each neighbour map back to node, e.g. the
     // right-hand neighbour of a node's left-hand neighbour should point to the node.
     check(mesh.nodes[mesh.nodes[5].neighbours[0]].neighbours[1] == 5,
@@ -125,6 +137,9 @@ int testElementNodeConnectivity()
     // Initialise a 3x3 periodic mesh.
     Mesh mesh(3, 3, true);
 
+    // Set error number.
+    errno = 0;
+
     // Check the four nodes of the 1st element.
     check(mesh.elements[0].nodes[0] == 0, "Node 0 of element 0 is incorrect!");
     check(mesh.elements[0].nodes[1] == 1, "Node 1 of element 0 is incorrect!");
@@ -141,6 +156,9 @@ int testNodeElementConnectivity()
 {
     // Initialise a 3x3 periodic mesh.
     Mesh mesh(3, 3, true);
+
+    // Set error number.
+    errno = 0;
 
     // Check the elements connected to the 1st node (one element connected).
     check(mesh.nodes[0].nElements == 1, "Number of elements connected to node 0 is incorrect!");
@@ -168,7 +186,6 @@ int all_tests()
 {
     mu_suite_start();
 
-    errno = 0;
     mu_run_test(testMeshSize);
     mu_run_test(testNodeCoordinates);
     mu_run_test(testNodeConnectivity);

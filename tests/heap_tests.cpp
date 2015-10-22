@@ -16,6 +16,9 @@ int testPush()
     // Initialise heap.
     Heap heap(10, true);
 
+    // Set error number.
+    errno = 0;
+
     // Add entries to the heap.
     for (int i=0;i<10;i++)
     {
@@ -64,6 +67,9 @@ int testPop()
     // Push values onto the heap.
     for (unsigned int i=0;i<vec.size();i++)
         heapPtr[i] = heap.push(i, vec[i]);
+
+    // Set error number.
+    errno = 0;
 
     // Now pop off values.
     for (unsigned int i=0;i<vec.size();i++)
@@ -114,6 +120,9 @@ int testSet()
     // Set 5th value to large negative number.
     heap.set(heapPtr[4], -100);
 
+    // Set error number.
+    errno = 0;
+
     // Check that top entry is correct.
     check(heap.peek() == -100, "Heap set: incorrect value!");
 
@@ -127,7 +136,6 @@ int all_tests()
 {
     mu_suite_start();
 
-    errno = 0;
     mu_run_test(testPush);
     mu_run_test(testPop);
     mu_run_test(testSet);
