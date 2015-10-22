@@ -130,8 +130,8 @@ void Boundary::discretise()
                 {
                     // Create boundary segment.
                     BoundarySegment segment;
-                    segment.node1 = n1;
-                    segment.node2 = n2;
+                    segment.start = n1;
+                    segment.end = n2;
                     segment.element = i;
 
                     // Create element to segment lookup.
@@ -152,8 +152,8 @@ void Boundary::discretise()
                 // Create boundary segment.
                 // Here the start and end "nodes" are actually boundary points.
                 BoundarySegment segment;
-                segment.node1 = mesh.nNodes + boundaryPoints[0];
-                segment.node2 = mesh.nNodes + boundaryPoints[1];
+                segment.start = mesh.nNodes + boundaryPoints[0];
+                segment.end = mesh.nNodes + boundaryPoints[1];
                 segment.element = i;
 
                 // Create element to segment lookup.
@@ -193,8 +193,8 @@ void Boundary::discretise()
                         {
                             // Create boundary segment.
                             BoundarySegment segment;
-                            segment.node1 = mesh.nNodes + boundaryPoints[0];
-                            segment.node2 = node;
+                            segment.start = mesh.nNodes + boundaryPoints[0];
+                            segment.end = node;
                             segment.element = i;
 
                             // Create element to segment lookup.
@@ -234,8 +234,8 @@ void Boundary::discretise()
                 if (((status & NodeStatus::INSIDE) && (lsfSum > 0)) ||
                     ((status & NodeStatus::OUTSIDE) && (lsfSum < 0)))
                 {
-                    segment.node1 = mesh.nNodes + boundaryPoints[0];
-                    segment.node2 = mesh.nNodes + boundaryPoints[1];
+                    segment.start = mesh.nNodes + boundaryPoints[0];
+                    segment.end = mesh.nNodes + boundaryPoints[1];
                     segment.element = i;
 
                     // Create element to segment lookup.
@@ -246,8 +246,8 @@ void Boundary::discretise()
                     segments.push_back(segment);
                     nSegments++;
 
-                    segment.node1 = mesh.nNodes + boundaryPoints[2];
-                    segment.node2 = mesh.nNodes + boundaryPoints[3];
+                    segment.start = mesh.nNodes + boundaryPoints[2];
+                    segment.end = mesh.nNodes + boundaryPoints[3];
                     segment.element = i;
 
                     // Create element to segment lookup.
@@ -261,8 +261,8 @@ void Boundary::discretise()
 
                 else
                 {
-                    segment.node1 = mesh.nNodes + boundaryPoints[0];
-                    segment.node2 = mesh.nNodes + boundaryPoints[3];
+                    segment.start = mesh.nNodes + boundaryPoints[0];
+                    segment.end = mesh.nNodes + boundaryPoints[3];
                     segment.element = i;
 
                     // Create element to segment lookup.
@@ -273,8 +273,8 @@ void Boundary::discretise()
                     segments.push_back(segment);
                     nSegments++;
 
-                    segment.node1 = mesh.nNodes + boundaryPoints[1];
-                    segment.node2 = mesh.nNodes + boundaryPoints[2];
+                    segment.start = mesh.nNodes + boundaryPoints[1];
+                    segment.end = mesh.nNodes + boundaryPoints[2];
                     segment.element = i;
 
                     // Create element to segment lookup.
@@ -309,8 +309,8 @@ void Boundary::discretise()
 
                 // Create boundary segment.
                 BoundarySegment segment;
-                segment.node1 = boundaryPoints[0];
-                segment.node2 = boundaryPoints[1];
+                segment.start = boundaryPoints[0];
+                segment.end = boundaryPoints[1];
                 segment.element = i;
 
                 // Create element to segment lookup.
