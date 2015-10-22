@@ -60,21 +60,26 @@ void Boundary::discretise()
                     Coord point;
 
                     // Work out the coordinates of the point (depends on which edge we are considering).
+
+                    // Bottom edge.
                     if (j == 0)
                     {
                         point.x = mesh.nodes[n1].coord.x + d;
                         point.y = mesh.nodes[n1].coord.y;
                     }
+                    // Right edge.
                     else if (j == 1)
                     {
                         point.x = mesh.nodes[n1].coord.x;
                         point.y = mesh.nodes[n1].coord.y + d;
                     }
+                    // Top edge.
                     else if (j == 2)
                     {
                         point.x = mesh.nodes[n1].coord.x - d;
                         point.y = mesh.nodes[n1].coord.y;
                     }
+                    // Left edge.
                     else
                     {
                         point.x = mesh.nodes[n1].coord.x;
