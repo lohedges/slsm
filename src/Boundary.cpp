@@ -54,8 +54,6 @@ void Boundary::discretise()
                     double d = levelSet.signedDistance[n1]
                              / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
-                    d = std::abs(d);
-
                     // Create the boundary point.
                     Coord point;
 
