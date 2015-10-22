@@ -56,7 +56,6 @@ int all_tests()
 {
     mu_suite_start();
 
-    errno = 0;
     mu_run_test(testUpwindFiniteDifference);
 
     return 0;
