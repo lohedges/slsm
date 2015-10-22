@@ -1,5 +1,5 @@
 /*
- * File:   level_set_tests.cpp
+ * File:   fast_marching_tests.cpp
  * Author: lester
  */
 
