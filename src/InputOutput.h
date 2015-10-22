@@ -12,6 +12,11 @@
 
 #include "Boundary.h"
 
+/*! \file InputOutput.h
+    \brief A class for reading and writing data.
+ */
+
+//! A class for reading and writing data.
 class InputOutput
 {
 public:

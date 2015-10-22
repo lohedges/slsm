@@ -170,26 +170,26 @@ void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
     // Write the boundary points to file.
     for (unsigned int i=0;i<boundary.nSegments;i++)
     {
-        // Start and end nodes of the segment.
-        unsigned int n1 = boundary.segments[i].node1;
-        unsigned int n2 = boundary.segments[i].node2;
+        // Start and end points of the segment.
+        unsigned int start = boundary.segments[i].start;
+        unsigned int end = boundary.segments[i].end;
 
         // Coordinates.
         double x, y;
 
         // First point.
 
-        // Node is a boundary point.
-        if (n1 >= mesh.nNodes)
+        // Start is a boundary point.
+        if (start >= mesh.nNodes)
         {
-            n1 -= mesh.nNodes;
-            x = boundary.points[n1].x;
-            y = boundary.points[n1].y;
+            start -= mesh.nNodes;
+            x = boundary.points[start].x;
+            y = boundary.points[start].y;
         }
         else
         {
-            x = mesh.nodes[n1].coord.x;
-            y = mesh.nodes[n1].coord.y;
+            x = mesh.nodes[start].coord.x;
+            y = mesh.nodes[start].coord.y;
         }
 
         // Write boundary point to file.
@@ -197,17 +197,17 @@ void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
 
         // Second point.
 
-        // Node is a boundary point.
-        if (n2 >= mesh.nNodes)
+        // End is a boundary point.
+        if (end >= mesh.nNodes)
         {
-            n2 -= mesh.nNodes;
-            x = boundary.points[n2].x;
-            y = boundary.points[n2].y;
+            end -= mesh.nNodes;
+            x = boundary.points[end].x;
+            y = boundary.points[end].y;
         }
         else
         {
-            x = mesh.nodes[n2].coord.x;
-            y = mesh.nodes[n2].coord.y;
+            x = mesh.nodes[end].coord.x;
+            y = mesh.nodes[end].coord.y;
         }
 
         // Write boundary point to file.
