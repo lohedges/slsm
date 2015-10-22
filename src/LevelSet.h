@@ -17,6 +17,26 @@
     \brief A class for the level set function.
 */
 
+/*! \brief A class for the level set function.
+
+  The level set is represented as a signed distance function from the zero
+  countour. Positive values are inside the structure, negative values are
+  outside.
+
+  The class provides methods for initialising and re-initialising the signed
+  distance function. The default initialisation uses a set of linearly spaced
+  circular holes to create the classic "Swiss cheese" starting configuration.
+  Alternatively, the user can pass the constructor a vector of holes that
+  will be used to define the initial structure.
+
+  Re-initialisation of the signed distance function is performed using an
+  implementation of the Fast Marching Method. A second-order stencil is used
+  for the upwind finite difference scheme where possible.
+
+  Functionality is also provided for tracking nodes that are part of the
+  narrow band region around the zero contour, as well as mine nodes at
+  the edge of the narrow band.
+ */
 class LevelSet
 {
 public:

@@ -8,6 +8,10 @@
 
 #include "Common.h"
 
+/*! \file Hole.h
+    \brief A simple circular hole data type.
+ */
+
 //! Class for handling circular holes.
 class Hole
 {
@@ -36,8 +40,11 @@ public:
      */
     Hole(Coord&, double);
 
-    Coord coord;                            //!< Coordinates.
-    double r;                               //!< Radius.
+    /// Coordinates.
+    Coord coord;
+
+    /// Radius.
+    double r;
 };
 
 #endif	/* _HOLE_H */

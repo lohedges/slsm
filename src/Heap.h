@@ -14,7 +14,10 @@
 #include "Debug.h"
 
 /*! \file Heap.h
-    \brief A implementation of a heap data structure (binary tree).
+    \brief An implementation of a heap data structure (binary tree).
+ */
+
+/*! \brief An implementation of a heap data structure (binary tree).
 
     The heap is stored as a contiguous vector array. The children of a given
     entry i are indexed as follows:
@@ -30,8 +33,7 @@
     of entries that will be added to the heap. This will number be computed in
     the FastMarchingMethod::initialiseHeap method (which calculates the number
     of far field nodes).
-*/
-
+ */
 class Heap
 {
 public:

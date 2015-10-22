@@ -15,16 +15,10 @@
 #include "LevelSet.h"
 
 /*! \file FastMarchingMethod.h
-    \brief A implementation of a Fast Marching Method for finding
-    approximate solutions to boundary value problems of the Eikonal
-    equation:
-
-        F(x) | grad T(x) | = 1
-
-    This object can be used to reinitialise the level set to a signed
-    distance function, or to compute extension velocities using know
-    values at the boundary.
+    \brief An implementation of the Fast Marching Method.
  */
+
+// ASSOCIATED DATA TYPES
 
 //! Whether a node lies inside, outside, or on the boundary.
 namespace FMM_NodeStatus
@@ -40,6 +34,18 @@ namespace FMM_NodeStatus
     };
 }
 
+// MAIN CLASS
+
+/*! An implementation of the Fast Marching Method for finding
+    approximate solutions to boundary value problems of the Eikonal
+    equation:
+
+        F(x) | grad T(x) | = 1
+
+    This object can be used to reinitialise the level set to a signed
+    distance function, or to compute extension velocities using know
+    values at the boundary.
+ */
 class FastMarchingMethod
 {
 public:

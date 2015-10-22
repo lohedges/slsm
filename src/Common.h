@@ -6,6 +6,10 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
+/*! \file Common.h
+    \brief Common data types.
+ */
+
 //! Two-dimensional coordinate information.
 struct Coord
 {

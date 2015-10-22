@@ -12,28 +12,7 @@
 
 /*! \file Mesh.h
     \brief A class for the fixed grid, finite-element mesh.
-
-    Stores connectivty information between grid elements and nodes.
-    The grid is assumed to be two-dimensional and is comprised of
-    square elements of unit side.
-
-    Elements are comprised of four nodes, labelled in anticlockwise order
-    from the bottom left, i.e. bottom left, bottom right, top right, top left.
-
-    Each node has four nearest neighbours ordered as left, right, down, up.
-    Diagonal neighbours can be accessed by looking at neighbours of neighbours,
-    e.g. for the lower left diagonal of node i
-
-    node = nodes[nodes[i].neighbours[0]].neigbours[2];
-
-    Note that diagonal nodes can be accessed in multiple ways, e.g.
-    for the lower left diagonal of node i we could go left then down,
-    or down then left (shortest paths).
-
-    For non-periodic meshes, neighbours that are outside of the domain are
-    given the value nNodes, i.e. one past the end of the node array, which
-    runs from 0 to nNodes - 1.
-*/
+ */
 
 // ASSOCIATED DATA TYPES
 
@@ -97,6 +76,29 @@ struct Node
 
 // MAIN CLASS
 
+/*!\brief A class for the fixed grid, finite-element mesh.
+
+    Stores connectivty information between grid elements and nodes.
+    The grid is assumed to be two-dimensional and is comprised of
+    square elements of unit side.
+
+    Elements are comprised of four nodes, labelled in anticlockwise order
+    from the bottom left, i.e. bottom left, bottom right, top right, top left.
+
+    Each node has four nearest neighbours ordered as left, right, down, up.
+    Diagonal neighbours can be accessed by looking at neighbours of neighbours,
+    e.g. for the lower left diagonal of node i
+
+    node = nodes[nodes[i].neighbours[0]].neigbours[2];
+
+    Note that diagonal nodes can be accessed in multiple ways, e.g.
+    for the lower left diagonal of node i we could go left then down,
+    or down then left (shortest paths).
+
+    For non-periodic meshes, neighbours that are outside of the domain are
+    given the value nNodes, i.e. one past the end of the node array, which
+    runs from 0 to nNodes - 1.
+ */
 class Mesh
 {
 public:
