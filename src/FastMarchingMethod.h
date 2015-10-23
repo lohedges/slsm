@@ -61,7 +61,19 @@ public:
     //! Destructor.
     ~FastMarchingMethod();
 
+    //! Excecute Fast Marching for reinitialisation of the signed distance function.
+    /*! \param signedDistance_
+            The nodal signed distance function (level set).
+     */
     void march(std::vector<double>&);
+
+    //! Excecute Fast Marching for velocity extension.
+    /*! \param signedDistance_
+            The nodal signed distance function (level set).
+
+        \param velocity_
+            The nodal velocities.
+     */
     void march(std::vector<double>&, std::vector<double>&);
 
 private:
