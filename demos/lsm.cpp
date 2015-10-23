@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     // Re-initialise the level set to a signed distance function.
     levelSet.reinitialise();
 
-    // Initalise the boundary object.
+    // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
 
     // Discretise the boundary.
