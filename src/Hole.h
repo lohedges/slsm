@@ -47,4 +47,4 @@ public:
     double r;
 };
 
-#endif	/* _HOLE_H */
+#endif  /* _HOLE_H */

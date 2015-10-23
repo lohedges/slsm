@@ -62,7 +62,7 @@ public:
     ~FastMarchingMethod();
 
     void march(std::vector<double>&);
-	void march(std::vector<double>&, std::vector<double>&);
+    void march(std::vector<double>&, std::vector<double>&);
 
 private:
     /// A const reference to the finite element mesh.
@@ -148,4 +148,4 @@ private:
     const double maxDouble = std::numeric_limits<double>::max();
 };
 
-#endif	/* _FASTMARCHINGMETHOD_H */
+#endif  /* _FASTMARCHINGMETHOD_H */

@@ -98,4 +98,4 @@ private:
     void initialiseNarrowBand();
 };
 
-#endif	/* _LEVELSET_H */
+#endif  /* _LEVELSET_H */

@@ -81,4 +81,4 @@ private:
     void computeMeshStatus();
 };
 
-#endif	/* _BOUNDARY_H */
+#endif  /* _BOUNDARY_H */

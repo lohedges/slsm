@@ -17,4 +17,4 @@ struct Coord
     double y;   //!< The y coordinate.
 };
 
-#endif	/* _COMMON_H */
+#endif  /* _COMMON_H */

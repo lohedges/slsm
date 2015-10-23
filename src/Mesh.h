@@ -174,4 +174,4 @@ private:
     void initialiseNeighbours(unsigned int, unsigned int, unsigned int);
 };
 
-#endif	/* _MESH_H */
+#endif  /* _MESH_H */

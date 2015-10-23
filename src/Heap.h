@@ -44,7 +44,7 @@ public:
         \param isTest_
             Whether to perform self testing of the heap (optional).
      */
-	Heap(unsigned int, bool isTest_ = false);
+    Heap(unsigned int, bool isTest_ = false);
 
     //! Push a value onto the heap.
     /*! \param address_
@@ -138,4 +138,4 @@ private:
     bool isTest;
 };
 
-#endif	/* _HEAP_H */
+#endif  /* _HEAP_H */
