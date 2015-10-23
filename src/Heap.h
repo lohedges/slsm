@@ -17,7 +17,7 @@
     \brief An implementation of a heap data structure (binary tree).
  */
 
-/*! \brief An implementation of a heap data structure (binary tree).
+/*! An implementation of a heap data structure (binary tree).
 
     The heap is stored as a contiguous vector array. The children of a given
     entry i are indexed as follows:
