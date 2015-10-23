@@ -77,6 +77,9 @@ public:
     void set(unsigned int, double);
 
     //! Test whether the heap is empty.
+    /*! \return
+            Whether the heap is empty (true) or contains entries (false).
+     */
     bool empty() const;
 
     //! Return the value of the top entry in the heap.
