@@ -16,13 +16,18 @@
 
 // ASSOCIATED DATA TYPES
 
+// The following are implementations of strongly typed enums. This allows
+// for better scoping and name sharing between enumerations. This can also
+// be achieved in C++11 using "enum classes", although it's not currently
+// supported by all compilers.
+
 //! Whether a node lies inside, outside, or on the boundary.
 namespace NodeStatus
 {
     // Left bit shift enumerated types to allow the creation
     // of sets and simple bit masking operations.
     // For example, to test whether a node is neither inside or outside...
-    // if (node.status ! (NodeStatus::Inside|NodeStatus::Outside))
+    // if (node.status ^ (NodeStatus::Inside|NodeStatus::Outside))
     enum NodeStatus
     {
         NONE            = 0,                //!< No status.
