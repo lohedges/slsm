@@ -41,7 +41,7 @@ fi
 # Check whether a path is specified.
 if [ $# -eq 2 ]
 then
-	PATH_SET=true
+    PATH_SET=true
 fi
 
 # Create Header and Source names.
