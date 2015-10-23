@@ -195,22 +195,11 @@ void LevelSet::initialiseNarrowBand()
     // Reset the number of mines.
     nMines = 0;
 
-    // Reset minimum distance to zero isocontour.
-    minDistance = 1e6;
-
     // Loop over all nodes.
     for (unsigned int i=0;i<nNodes;i++)
     {
         // Absolute value of the signed distance function.
         double absoluteSignedDistance = std::abs(signedDistance[i]);
-
-        // Check whether the current node is the closest
-        // to the boundary (zero isocontour).
-        if (absoluteSignedDistance < minDistance)
-        {
-            minDistance = absoluteSignedDistance;
-            boundaryNode = i;
-        }
 
         // Node lies inside band.
         if (absoluteSignedDistance < bandWidth)

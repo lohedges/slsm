@@ -79,8 +79,6 @@ public:
 private:
     Mesh& mesh;                             //!< A reference to the finite element mesh.
     unsigned int bandWidth;                 //!< The width of the narrow band region.
-    unsigned int boundaryNode;              //!< The node that is currently closest to the zero isocontour.
-    double minDistance;                     //!< Absolute minimum value of the signed distance function.
 
     //! Default initialisation of the level set function (Swiss cheese configuration).
     void initialise();
