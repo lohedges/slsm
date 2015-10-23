@@ -47,7 +47,7 @@ public:
         \param bandWidth_
             The width of the narrow band region.
      */
-	LevelSet(Mesh&, unsigned int);
+    LevelSet(Mesh&, unsigned int);
 
     //! Constructor.
     /*! \param mesh_
@@ -59,7 +59,7 @@ public:
         \param holes
             A vector of holes.
      */
-	LevelSet(Mesh&, unsigned int, const std::vector<Hole>&);
+    LevelSet(Mesh&, unsigned int, const std::vector<Hole>&);
 
     //! Update the level set function.
     void update();
