@@ -43,7 +43,7 @@ namespace FMM_NodeStatus
         F(x) | grad T(x) | = 1
 
     This object can be used to reinitialise the level set to a signed
-    distance function, or to compute extension velocities using know
+    distance function, or to compute extension velocities using known
     values at the boundary.
  */
 class FastMarchingMethod
