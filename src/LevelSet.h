@@ -1,6 +1,6 @@
 /*
- * File:	LevelSet.h
- * Author:	lester
+ * File:    LevelSet.h
+ * Author:  lester
  */
 
 #ifndef _LEVELSET_H

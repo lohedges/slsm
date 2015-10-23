@@ -1,6 +1,6 @@
 /*
- * File:	Heap.h
- * Author:	lester
+ * File:    Heap.h
+ * Author:  lester
  */
 
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm

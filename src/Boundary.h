@@ -1,6 +1,6 @@
 /*
- * File:	Boundary.h
- * Author:	lester
+ * File:    Boundary.h
+ * Author:  lester
  */
 
 #ifndef _BOUNDARY_H
@@ -51,7 +51,7 @@ public:
         \param levelSet_
             A reference to the level set object.
      */
-	Boundary(Mesh&, LevelSet&);
+    Boundary(Mesh&, LevelSet&);
 
     //! Use linear interpolation to compute the discretised boundary
     //! (zero contour) of the level set.

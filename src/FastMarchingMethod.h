@@ -1,6 +1,6 @@
 /*
- * File:	FastMarchingMethod.h
- * Author:	lester
+ * File:    FastMarchingMethod.h
+ * Author:  lester
  */
 
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm

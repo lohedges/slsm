@@ -1,6 +1,6 @@
 /*
- * File:	Mesh.h
- * Author:	lester
+ * File:    Mesh.h
+ * Author:  lester
  */
 
 #ifndef _MESH_H
@@ -117,7 +117,7 @@ public:
         \param isPeriodic_
             Whether the grid is periodic.
      */
-	Mesh(unsigned int, unsigned int, bool);
+    Mesh(unsigned int, unsigned int, bool);
 
     //! For a given x-y coordinate, find the index of the closest node.
     /*! \param x

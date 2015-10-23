@@ -1,6 +1,6 @@
 /*
- * File:	Hole.cpp
- * Author:	lester
+ * File:    Hole.cpp
+ * Author:  lester
  */
 
 #include "Hole.h"

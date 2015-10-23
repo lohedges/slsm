@@ -1,6 +1,6 @@
 /*
- * File:	InputOutput.h
- * Author:	lester
+ * File:    InputOutput.h
+ * Author:  lester
  */
 
 #ifndef _INPUTOUTPUT_H
@@ -21,7 +21,7 @@ class InputOutput
 {
 public:
     //! Constructor.
-	InputOutput();
+    InputOutput();
 
     //! Save the level set function as a ParaView VTK file.
     /*! \param datapoint

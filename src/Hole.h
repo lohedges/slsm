@@ -1,6 +1,6 @@
 /*
- * File:	Hole.h
- * Author:	lester
+ * File:    Hole.h
+ * Author:  lester
  */
 
 #ifndef _HOLE_H

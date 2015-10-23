@@ -1,6 +1,6 @@
 /*
- * File:	InputOutput.cpp
- * Author:	lester
+ * File:    InputOutput.cpp
+ * Author:  lester
  */
 
 #include "InputOutput.h"
