@@ -7,14 +7,20 @@
 
 Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
 {
+    // Allocate memory for boundary points and segments.
+    // 20% of node count is a reasonable estimate. Will need to check that
+    // this limit isn't exceeded.
+
+    // Make sure that memory is sufficient (for small test systems).
+    unsigned int size = std::max(mesh.nNodes, ((unsigned int) 0.2*mesh.nNodes));
+
+    // Resize vectors.
+    points.resize(size);
+    segments.resize(size);
 }
 
 void Boundary::discretise()
 {
-    // Reserve memory for boundary points and segments.
-    points.reserve(0.2*mesh.nNodes);
-    segments.reserve(0.2*mesh.nNodes);
-
     // Reset the number of points and segments.
     nPoints = nSegments = 0;
 
@@ -107,9 +113,6 @@ void Boundary::discretise()
 
                     if (!isAdded)
                     {
-                        // Add boundary point.
-                        points.push_back(point);
-
                         // Create node to boundary point lookup.
                         mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
                         mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
@@ -120,6 +123,7 @@ void Boundary::discretise()
                         boundaryPoints[nCut] = nPoints;
 
                         // Increment number of boundary points.
+                        points[nPoints] = point;
                         nPoints++;
                     }
 
@@ -142,7 +146,7 @@ void Boundary::discretise()
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments.push_back(segment);
+                    segments[nSegments] = segment;
                     nSegments++;
                 }
             }
@@ -164,7 +168,7 @@ void Boundary::discretise()
                 mesh.elements[i].nBoundarySegments++;
 
                 // Add segment to vector.
-                segments.push_back(segment);
+                segments[nSegments] = segment;
                 nSegments++;
             }
 
@@ -205,7 +209,7 @@ void Boundary::discretise()
                             mesh.elements[i].nBoundarySegments++;
 
                             // Add segment to vector.
-                            segments.push_back(segment);
+                            segments[nSegments] = segment;
                             nSegments++;
                         }
                     }
@@ -246,7 +250,7 @@ void Boundary::discretise()
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments.push_back(segment);
+                    segments[nSegments] = segment;
                     nSegments++;
 
                     segment.start = mesh.nNodes + boundaryPoints[2];
@@ -258,7 +262,7 @@ void Boundary::discretise()
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments.push_back(segment);
+                    segments[nSegments] = segment;
                     nSegments++;
                 }
 
@@ -273,7 +277,7 @@ void Boundary::discretise()
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments.push_back(segment);
+                    segments[nSegments] = segment;
                     nSegments++;
 
                     segment.start = mesh.nNodes + boundaryPoints[1];
@@ -285,7 +289,7 @@ void Boundary::discretise()
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments.push_back(segment);
+                    segments[nSegments] = segment;
                     nSegments++;
                 }
 
@@ -321,7 +325,7 @@ void Boundary::discretise()
                 mesh.elements[i].nBoundarySegments++;
 
                 // Add segment to vector.
-                segments.push_back(segment);
+                segments[nSegments] = segment;
                 nSegments++;
             }
         }
