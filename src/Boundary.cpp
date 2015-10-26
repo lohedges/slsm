@@ -8,11 +8,12 @@
 Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
 {
     // Allocate memory for boundary points and segments.
-    // 20% of node count is a reasonable estimate. Will need to check that
-    // this limit isn't exceeded.
+    // 20% of node count is a reasonable estimate.
+    // Will need to check that this limit isn't exceeded.
 
     // Make sure that memory is sufficient (for small test systems).
-    unsigned int size = std::max(mesh.nNodes, ((unsigned int) 0.2*mesh.nNodes));
+    int size = 0.2*mesh.nNodes;
+    size = std::max(4, size);
 
     // Resize vectors.
     points.resize(size);
