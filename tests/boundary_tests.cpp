@@ -30,7 +30,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[1] = -1;
 
-    // Place nodes on top edge of element outside zero contour.
+    // Place nodes on top edge of element inside zero contour.
     levelSet.signedDistance[2] = 1;
     levelSet.signedDistance[3] = 1;
 
@@ -58,7 +58,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[2] = -1;
 
-    // Place nodes on right edge of element outside zero contour.
+    // Place nodes on right edge of element inside zero contour.
     levelSet.signedDistance[1] = 1;
     levelSet.signedDistance[3] = 1;
 
@@ -86,7 +86,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[3] = -1;
 
-    // Place bottom right and top left nodes outside zero contour.
+    // Place bottom right and top left nodes inside zero contour.
     levelSet.signedDistance[1] = 1;
     levelSet.signedDistance[2] = 1;
 
@@ -146,7 +146,7 @@ int testBoundarySegments()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[1] = -1;
 
-    // Place nodes on top edge of element outside zero contour.
+    // Place nodes on top edge of element inside zero contour.
     levelSet.signedDistance[2] = 1;
     levelSet.signedDistance[3] = 1;
 
@@ -179,10 +179,10 @@ int testBoundarySegments()
     // Place bottom left node on zero contour.
     levelSet.signedDistance[0] = 0;
 
-    // Place bottom right node on inside zero contour.
+    // Place bottom right node on outside zero contour.
     levelSet.signedDistance[1] = -1;
 
-    // Place nodes on top edge of element outside zero contour.
+    // Place nodes on top edge of element inside zero contour.
     levelSet.signedDistance[2] = 1;
     levelSet.signedDistance[3] = 1;
 
@@ -215,10 +215,10 @@ int testBoundarySegments()
     levelSet.signedDistance[0] = 0;
     levelSet.signedDistance[3] = 0;
 
-    // Place bottom right node inside.
+    // Place bottom right node outside.
     levelSet.signedDistance[2] = -1;
 
-    // Place top left node outside.
+    // Place top left node inside.
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
@@ -269,7 +269,7 @@ int testBoundarySymmetry()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[3] = -1;
 
-    // Place bottom right and top left nodes outside zero contour.
+    // Place bottom right and top left nodes inside zero contour.
     levelSet.signedDistance[1] = 1;
     levelSet.signedDistance[2] = 1;
 
@@ -357,7 +357,7 @@ int testConnectivity()
     levelSet.signedDistance[0] = -1;
     levelSet.signedDistance[3] = -1;
 
-    // Place bottom right and top left nodes outside zero contour.
+    // Place bottom right and top left nodes inside zero contour.
     levelSet.signedDistance[1] = 1;
     levelSet.signedDistance[2] = 1;
 
