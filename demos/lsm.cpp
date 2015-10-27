@@ -46,6 +46,13 @@ int main(int argc, char** argv)
     // Discretise the boundary.
     boundary.discretise();
 
+    // Compute element areas.
+    boundary.computeAreaFractions();
+
+    // Print some statistics.
+    std::cout << "Boundary length:   " << boundary.length << '\n';
+    std::cout << "Material fraction: " << (boundary.area / (mesh.width*mesh.height)) << '\n';
+
     // Save LSF info (ParaView and txt file).
     io.saveLevelSetVTK(1, mesh, levelSet);
     io.saveLevelSetTXT(1, mesh, levelSet, "", true);
