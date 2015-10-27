@@ -25,6 +25,9 @@ void Boundary::discretise()
     // Reset the number of points and segments.
     nPoints = nSegments = 0;
 
+    // Zero the boundary length.
+    length = 0;
+
     // Compute the status of nodes and elements in the finite element mesh.
     computeMeshStatus();
 
@@ -142,6 +145,12 @@ void Boundary::discretise()
                     segment.end = n2;
                     segment.element = i;
 
+                    // Compute the length of the boundary segment.
+                    segment.length = segmentLength(segment);
+
+                    // Update total boundary length.
+                    length += segment.length;
+
                     // Create element to segment lookup.
                     mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
                     mesh.elements[i].nBoundarySegments++;
@@ -163,6 +172,12 @@ void Boundary::discretise()
                 segment.start = mesh.nNodes + boundaryPoints[0];
                 segment.end = mesh.nNodes + boundaryPoints[1];
                 segment.element = i;
+
+                // Compute the length of the boundary segment.
+                segment.length = segmentLength(segment);
+
+                // Update total boundary length.
+                length += segment.length;
 
                 // Create element to segment lookup.
                 mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
@@ -205,6 +220,12 @@ void Boundary::discretise()
                             segment.end = node;
                             segment.element = i;
 
+                            // Compute the length of the boundary segment.
+                            segment.length = segmentLength(segment);
+
+                            // Update total boundary length.
+                            length += segment.length;
+
                             // Create element to segment lookup.
                             mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
                             mesh.elements[i].nBoundarySegments++;
@@ -246,6 +267,12 @@ void Boundary::discretise()
                     segment.end = mesh.nNodes + boundaryPoints[1];
                     segment.element = i;
 
+                    // Compute the length of the boundary segment.
+                    segment.length = segmentLength(segment);
+
+                    // Update total boundary length.
+                    length += segment.length;
+
                     // Create element to segment lookup.
                     mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
                     mesh.elements[i].nBoundarySegments++;
@@ -257,6 +284,12 @@ void Boundary::discretise()
                     segment.start = mesh.nNodes + boundaryPoints[2];
                     segment.end = mesh.nNodes + boundaryPoints[3];
                     segment.element = i;
+
+                    // Compute the length of the boundary segment.
+                    segment.length = segmentLength(segment);
+
+                    // Update total boundary length.
+                    length += segment.length;
 
                     // Create element to segment lookup.
                     mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
@@ -273,6 +306,12 @@ void Boundary::discretise()
                     segment.end = mesh.nNodes + boundaryPoints[3];
                     segment.element = i;
 
+                    // Compute the length of the boundary segment.
+                    segment.length = segmentLength(segment);
+
+                    // Update total boundary length.
+                    length += segment.length;
+
                     // Create element to segment lookup.
                     mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
                     mesh.elements[i].nBoundarySegments++;
@@ -284,6 +323,12 @@ void Boundary::discretise()
                     segment.start = mesh.nNodes + boundaryPoints[1];
                     segment.end = mesh.nNodes + boundaryPoints[2];
                     segment.element = i;
+
+                    // Compute the length of the boundary segment.
+                    segment.length = segmentLength(segment);
+
+                    // Update total boundary length.
+                    length += segment.length;
 
                     // Create element to segment lookup.
                     mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
@@ -321,6 +366,12 @@ void Boundary::discretise()
                 segment.end = boundaryPoints[1];
                 segment.element = i;
 
+                // Compute the length of the boundary segment.
+                segment.length = segmentLength(segment);
+
+                // Update total boundary length.
+                length += segment.length;
+
                 // Create element to segment lookup.
                 mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
                 mesh.elements[i].nBoundarySegments++;
@@ -330,6 +381,29 @@ void Boundary::discretise()
                 nSegments++;
             }
         }
+    }
+}
+
+void Boundary::computeAreaFractions()
+{
+    // Zero the total area fraction.
+    area = 0;
+
+    for (unsigned int i=0;i<mesh.nElements;i++)
+    {
+        // Element is inside structure.
+        if (mesh.elements[i].status & ElementStatus::INSIDE)
+            mesh.elements[i].area = 1.0;
+
+        // Element is outside structure.
+        else if (mesh.elements[i].status & ElementStatus::OUTSIDE)
+            mesh.elements[i].area = 0.0;
+
+        // Element is cut by the boundary.
+        else mesh.elements[i].area = cutArea(mesh.elements[i]);
+
+        // Add the area to the running total.
+        area += mesh.elements[i].area;
     }
 }
 
@@ -347,9 +421,9 @@ void Boundary::computeMeshStatus()
         }
         else if (levelSet.signedDistance[i] < 0)
         {
-            mesh.nodes[i].status = NodeStatus::INSIDE;
+            mesh.nodes[i].status = NodeStatus::OUTSIDE;
         }
-        else mesh.nodes[i].status = NodeStatus::OUTSIDE;
+        else mesh.nodes[i].status = NodeStatus::INSIDE;
     }
 
     // Calculate element status.
@@ -380,4 +454,215 @@ void Boundary::computeMeshStatus()
         // Otherwise no status.
         else mesh.elements[i].status = ElementStatus::NONE;
     }
+}
+
+double Boundary::cutArea(const Element& element)
+{
+    // Number of polygon vertices.
+    unsigned int nVertices = 0;
+
+    // Work out element centre point.
+    centre.x = mesh.nodes[element.nodes[0]].coord.x + 0.5;
+    centre.y = mesh.nodes[element.nodes[0]].coord.y + 0.5;
+
+    // Polygon vertices (maximum of six).
+    std::vector<Coord> vertices(6);
+
+    // Whether we're searching for nodes that are inside or outside the boundary.
+    NodeStatus::NodeStatus status;
+
+    if (element.status & ElementStatus::CENTRE_OUTSIDE) status = NodeStatus::OUTSIDE;
+    else status = NodeStatus::INSIDE;
+
+    // Check all nodes of the element.
+    for (unsigned int i=0;i<4;i++)
+    {
+        // Node index;
+        unsigned int node = element.nodes[i];
+
+        // Node matches status.
+        if (mesh.nodes[node].status & status)
+        {
+            // Add coordinates to vertex array.
+            vertices[nVertices].x = mesh.nodes[node].coord.x;
+            vertices[nVertices].y = mesh.nodes[node].coord.y;
+
+            // Increment number of vertices.
+            nVertices++;
+        }
+
+        // Node is on the boundary.
+        else if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
+        {
+            // Next node.
+            unsigned int n1 = (i == 3) ? 0 : (i + 1);
+            n1 = element.nodes[n1];
+
+            // Previous node.
+            unsigned int n2 = (i == 0) ? 3 : (i - 1);
+            n2 = element.nodes[n2];
+
+            // Check that node isn't part of a boundary segment, i.e. both of its
+            // neighbours are inside the structure.
+            if ((mesh.nodes[n1].status & NodeStatus::INSIDE) &&
+                (mesh.nodes[n2].status & NodeStatus::INSIDE))
+            {
+                // Add coordinates to vertex array.
+                vertices[nVertices].x = mesh.nodes[node].coord.x;
+                vertices[nVertices].y = mesh.nodes[node].coord.y;
+
+                // Increment number of vertices.
+                nVertices++;
+            }
+        }
+    }
+
+    // Add boundary segment start and end points.
+    for (unsigned int i=0;i<element.nBoundarySegments;i++)
+    {
+        // Segment index.
+        unsigned int segment = element.boundarySegments[i];
+
+        // Start point is a boundary point.
+        if (segments[segment].start >= mesh.nNodes)
+        {
+            // Add coordinates to points array.
+            vertices[nVertices].x = points[segments[segment].start - mesh.nNodes].x;
+            vertices[nVertices].y = points[segments[segment].start - mesh.nNodes].y;
+        }
+
+        // Start point is a node.
+        else
+        {
+            // Add coordinates to points array.
+            vertices[nVertices].x = mesh.nodes[segments[segment].start].coord.x;
+            vertices[nVertices].y = mesh.nodes[segments[segment].start].coord.y;
+        }
+
+        // Increment number of vertices.
+        nVertices++;
+
+        // End point is a boundary point.
+        if (segments[segment].end >= mesh.nNodes)
+        {
+            // Add coordinates to points array.
+            vertices[nVertices].x = points[segments[segment].end - mesh.nNodes].x;
+            vertices[nVertices].y = points[segments[segment].end - mesh.nNodes].y;
+        }
+
+        // End point is a node.
+        else
+        {
+            // Add coordinates to points array.
+            vertices[nVertices].x = mesh.nodes[segments[segment].end].coord.x;
+            vertices[nVertices].y = mesh.nodes[segments[segment].end].coord.y;
+        }
+
+        // Increment number of vertices.
+        nVertices++;
+    }
+
+    // Return area of the polygon.
+    if (element.status & ElementStatus::CENTRE_OUTSIDE)
+        return (1.0 - polygonArea(vertices, nVertices));
+    else
+        return polygonArea(vertices, nVertices);
+}
+
+bool Boundary::isClockwise(const Coord& point1, const Coord& point2) const
+{
+    if ((point1.x - centre.x) >= 0 && (point2.x - centre.x) < 0)
+        return false;
+
+    if ((point1.x - centre.x) < 0 && (point2.x - centre.x) >= 0)
+        return true;
+
+    if ((point1.x - centre.x) == 0 && (point2.x - centre.x) == 0)
+    {
+        if ((point1.y - centre.y) >= 0 || (point2.y - centre.y) >= 0)
+            return (point1.y > point2.y) ? false : true;
+
+        return (point2.y > point1.y) ? false : true;
+    }
+
+    // Compute the cross product of the vectors (centre --> point1) x (centre --> point2).
+    double det = (point1.x - centre.x) * (point2.y - centre.y)
+               - (point2.x - centre.x) * (point1.y - centre.y);
+
+    if (det < 0) return false;
+    else return true;
+
+    // Points are on the same line from the centre, check which point is
+    // close to the centre.
+
+    double d1 = (point1.x - centre.x) * (point1.x - centre.x)
+              + (point1.y - centre.y) * (point1.y - centre.y);
+
+    double d2 = (point2.x - centre.x) * (point2.x - centre.x)
+              + (point2.y - centre.y) * (point2.y - centre.y);
+
+    return (d1 > d2) ? false : true;
+}
+
+double Boundary::polygonArea(std::vector<Coord>& vertices, const unsigned int& nVertices) const
+{
+    double area = 0;
+
+    // Sort vertices in anticlockwise order.
+    std::sort(vertices.begin(), vertices.begin() + nVertices, std::bind(&Boundary::isClockwise,
+        this, std::placeholders::_1, std::placeholders::_2));
+
+    // Loop over all vertices.
+    for (unsigned int i=0;i<nVertices;i++)
+    {
+        // Next point around (looping back to beginning).
+        unsigned int j = (i == (nVertices - 1)) ? 0 : (i + 1);
+
+        area += vertices[i].x * vertices[j].y;
+        area -= vertices[j].x * vertices[i].y;
+    }
+
+    area *= 0.5;
+
+    return (std::abs(area));
+}
+
+double Boundary::segmentLength(const BoundarySegment& segment)
+{
+    // Coordinates for start and end points.
+    Coord p1, p2;
+
+    // Start point is a boundary point.
+    if (segment.start >= mesh.nNodes)
+    {
+        p1.x = points[segment.start - mesh.nNodes].x;
+        p1.y = points[segment.start - mesh.nNodes].y;
+    }
+
+    // Start point is a node.
+    else
+    {
+        p1.x = mesh.nodes[segment.start].coord.x;
+        p1.y = mesh.nodes[segment.start].coord.y;
+    }
+
+    // End point is a boundary point.
+    if (segment.end >= mesh.nNodes)
+    {
+        p2.x = points[segment.end - mesh.nNodes].x;
+        p2.y = points[segment.end - mesh.nNodes].y;
+    }
+
+    // End point is a node.
+    else
+    {
+        p2.x = mesh.nodes[segment.end].coord.x;
+        p2.y = mesh.nodes[segment.end].coord.y;
+    }
+
+    // Compute separation in x and y dimension.
+    double dx = p1.x - p2.x;
+    double dy = p1.y - p2.y;
+
+    return (sqrt(dx*dx + dy*dy));
 }

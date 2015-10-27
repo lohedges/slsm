@@ -6,6 +6,8 @@
 #ifndef _BOUNDARY_H
 #define _BOUNDARY_H
 
+#include <functional>
+
 #include "Common.h"
 #include "LevelSet.h"
 
@@ -57,6 +59,9 @@ public:
     //! (zero contour) of the level set.
     void discretise();
 
+    //! Calculate the material area fraction in each element.
+    void computeAreaFractions();
+
     /// Vector of boundary points.
     std::vector<Coord> points;
 
@@ -69,6 +74,12 @@ public:
     /// The number of boundary segments.
     unsigned int nSegments;
 
+    /// The total length of the boundary.
+    double length;
+
+    /// The total area fraction of the mesh.
+    double area;
+
 private:
     /// A reference to the finite element mesh.
     Mesh& mesh;
@@ -76,9 +87,54 @@ private:
     /// A reference to the level set object.
     LevelSet& levelSet;
 
+    /// The centre of the current element.
+    Coord centre;
+
     //! Determine the status of the elements and nodes of the
     //! finite element grid.
     void computeMeshStatus();
+
+    //! Calculate the material area for an element cut by the boundary.
+    /*! \param element
+            A reference to the element.
+
+        \return
+            The area fraction.
+     */
+    double cutArea(const Element&);
+
+    //! Whether a point is clockwise of another.
+    /*! \param point1
+            The coordinates of the first point.
+
+        \param point2
+            The coordinates of the second point.
+
+        \return
+            Whether the first point is clockwise of the second.
+     */
+    bool isClockwise(const Coord&, const Coord&) const;
+
+    //! Return the area of a polygon.
+    /*! \param vertices
+            A clockwise ordered vector of polygon vertices.
+
+        \param nVertices
+            The number of vertices.
+
+        \return
+            The area of the polygon.
+     */
+    double polygonArea(std::vector<Coord>&, const unsigned int&) const;
+
+    //! Return the length of a boundary segment.
+    /*! \param segment
+            A reference to the boundary segment.
+
+        \return
+            The length of the bounary segment.
+     */
+    double segmentLength(const BoundarySegment&);
 };
 
 #endif  /* _BOUNDARY_H */
