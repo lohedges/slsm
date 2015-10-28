@@ -101,7 +101,7 @@ private:
      */
     double cutArea(const Element&);
 
-    //! Whether a point is clockwise of another.
+    //! Whether a point is clockwise of another. The origin point is 12 o'clock.
     /*! \param point1
             The coordinates of the first point.
 

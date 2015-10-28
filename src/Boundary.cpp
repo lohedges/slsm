@@ -589,7 +589,7 @@ bool Boundary::isClockwise(const Coord& point1, const Coord& point2, const Coord
     else return true;
 
     // Points are on the same line from the centre, check which point is
-    // close to the centre.
+    // closer to the centre.
 
     double d1 = (point1.x - centre.x) * (point1.x - centre.x)
               + (point1.y - centre.y) * (point1.y - centre.y);
@@ -656,7 +656,7 @@ double Boundary::segmentLength(const BoundarySegment& segment)
         p2.y = mesh.nodes[segment.end].coord.y;
     }
 
-    // Compute separation in x and y dimension.
+    // Compute separation in x and y directions.
     double dx = p1.x - p2.x;
     double dy = p1.y - p2.y;
 
