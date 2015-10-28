@@ -61,5 +61,9 @@ int main(int argc, char** argv)
     io.saveBoundaryPointsTXT(1, boundary);
     io.saveBoundarySegmentsTXT(1, mesh, boundary);
 
+    // Save element area fractions.
+    io.saveAreaFractionsVTK(1, mesh);
+    io.saveAreaFractionsTXT(1, mesh, "", true);
+
     return (EXIT_SUCCESS);
 }
