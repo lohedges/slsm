@@ -221,3 +221,97 @@ void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
 error:
     exit(EXIT_FAILURE);
 }
+
+void InputOutput::saveAreaFractionsVTK(const unsigned int& datapoint,
+    const Mesh& mesh, const std::string& outputDirectory) const
+{
+    std::ostringstream fileName, num;
+
+    num.str("");
+    num.width(4);
+    num.fill('0');
+    num << std::right << datapoint;
+
+    fileName.str("");
+    if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+    fileName << "area_" << num.str() << ".vtk";
+
+    saveAreaFractionsVTK(fileName, mesh);
+}
+
+void InputOutput::saveAreaFractionsVTK(const std::ostringstream& fileName, const Mesh& mesh) const
+{
+    FILE *pFile;
+
+    pFile = fopen(fileName.str().c_str(), "w");
+
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
+
+    // Set up ParaView header information.
+    fprintf(pFile, "# vtk DataFile Version 3.0\n");
+    fprintf(pFile, "Para0\n");
+    fprintf(pFile, "ASCII\n");
+    fprintf(pFile, "DATASET RECTILINEAR_GRID\n");
+    fprintf(pFile, "DIMENSIONS %d %d %d\n", 1 + mesh.width, 1 + mesh.height, 1);
+    fprintf(pFile, "X_COORDINATES %d int\n", 1 + mesh.width);
+    for (unsigned int i=0;i<=mesh.width;i++) {fprintf(pFile, "%d ", i);}
+    fprintf(pFile, "\nY_COORDINATES %d int\n", 1 + mesh.height);
+    for (unsigned int i=0;i<=mesh.height;i++) {fprintf(pFile, "%d ", i);}
+    fprintf(pFile, "\nZ_COORDINATES 1 int\n0\n\n");
+
+    // Write the element area fractions to file.
+    fprintf(pFile, "CELL_DATA %d\n", mesh.nElements);
+    fprintf(pFile, "SCALARS area float 1\n");
+    fprintf(pFile, "LOOKUP_TABLE default\n");
+    for (unsigned int i=0;i<mesh.nElements;i++)
+        fprintf(pFile, "%lf\n", mesh.elements[i].area);
+
+    fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
+}
+
+void InputOutput::saveAreaFractionsTXT(const unsigned int& datapoint,
+    const Mesh& mesh, const std::string& outputDirectory, bool isXY) const
+{
+    std::ostringstream fileName, num;
+
+    num.str("");
+    num.width(4);
+    num.fill('0');
+    num << std::right << datapoint;
+
+    fileName.str("");
+    if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+    fileName << "area_" << num.str() << ".txt";
+
+    saveAreaFractionsTXT(fileName, mesh, isXY);
+}
+
+void InputOutput::saveAreaFractionsTXT(const std::ostringstream& fileName, const Mesh& mesh, bool isXY) const
+{
+    FILE *pFile;
+
+    pFile = fopen(fileName.str().c_str(), "w");
+
+    if (pFile == NULL)
+        sentinel("Write error, cannot open file %s", fileName.str().c_str())
+
+    // Write the element area fractions to file.
+    for (unsigned int i=0;i<mesh.nElements;i++)
+    {
+        if (isXY) fprintf(pFile, "%lf %lf ", mesh.elements[i].coord.x, mesh.elements[i].coord.y);
+        fprintf(pFile, "%lf\n", mesh.elements[i].area);
+    }
+
+    fclose(pFile);
+
+    return;
+
+error:
+    exit(EXIT_FAILURE);
+}

@@ -122,7 +122,7 @@ public:
     void saveBoundarySegmentsTXT(const unsigned int&, const Mesh&,
         const Boundary&, const std::string& outputDirectory = "") const;
 
-    //! Save boundary points as a plain text file.
+    //! Save boundary segments as a plain text file.
     /*! \param fileName
             The name of the data file.
 
@@ -133,6 +133,55 @@ public:
             A reference to the boundary object.
      */
     void saveBoundarySegmentsTXT(const std::ostringstream&, const Mesh&, const Boundary&) const;
+
+    //! Save the element area fractions as a ParaView VTK file.
+    /*! \param datapoint
+            The datapoint of the current optimisation trajectory.
+
+        \param mesh
+            A reference to the finite element mesh.
+
+        \param outputDirectory
+            The output directory path (optional).
+     */
+    void saveAreaFractionsVTK(const unsigned int&, const Mesh&, const std::string& outputDirectory = "") const;
+
+    //! Save the element area fractions as a ParaView VTK file.
+    /*! \param fileName
+            The name of the data file.
+
+        \param mesh
+            A reference to the finite element mesh.
+     */
+    void saveAreaFractionsVTK(const std::ostringstream&, const Mesh&) const;
+
+    //! Save element area fractions as a plain text file.
+    /*! \param datapoint
+            The datapoint of the current optimisation trajectory.
+
+        \param mesh
+            A reference to the finite element mesh.
+
+        \param outputDirectory
+            The output directory path (optional).
+
+        \param isXY
+            Whether to also output the element x/y coordinates (optional).
+     */
+    void saveAreaFractionsTXT(const unsigned int&, const Mesh&,
+        const std::string& outputDirectory = "", bool isXY = false) const;
+
+    //! Save element area fractions as a plain text file.
+    /*! \param fileName
+            The name of the data file.
+
+        \param mesh
+            A reference to the finite element mesh.
+
+        \param isXY
+            Whether to also output the element x/y coordinates (optional).
+     */
+    void saveAreaFractionsTXT(const std::ostringstream&, const Mesh&, bool isXY = false) const;
 };
 
 #endif  /* _INPUTOUTPUT_H */
