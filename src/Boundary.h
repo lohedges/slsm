@@ -57,7 +57,6 @@ public:
     Boundary(Mesh&, LevelSet&);
 
     //! Use linear interpolation to compute the discretised boundary
-    //! (zero contour) of the level set.
     void discretise();
 
     //! Calculate the material area fraction in each element.
@@ -88,8 +87,7 @@ private:
     /// A reference to the level set object.
     LevelSet& levelSet;
 
-    //! Determine the status of the elements and nodes of the
-    //! finite element grid.
+    //! Determine the status of the elements and nodes of the finite element grid.
     void computeMeshStatus();
 
     //! Calculate the material area for an element cut by the boundary.

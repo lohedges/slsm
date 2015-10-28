@@ -65,8 +65,7 @@ public:
     //! Update the level set function.
     void update();
 
-    //! Re-initialise the level set function to a signed distance function using
-    //! the fast marching method.
+    //! Re-initialise the level set to a signed distance function.
     void reinitialise();
 
     std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
