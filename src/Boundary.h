@@ -87,9 +87,6 @@ private:
     /// A reference to the level set object.
     LevelSet& levelSet;
 
-    /// The centre of the current element.
-    Coord centre;
-
     //! Determine the status of the elements and nodes of the
     //! finite element grid.
     void computeMeshStatus();
@@ -110,10 +107,13 @@ private:
         \param point2
             The coordinates of the second point.
 
+        \param centre
+            The coordinates of the element centre.
+
         \return
             Whether the first point is clockwise of the second.
      */
-    bool isClockwise(const Coord&, const Coord&) const;
+    bool isClockwise(const Coord&, const Coord&, const Coord&) const;
 
     //! Return the area of a polygon.
     /*! \param vertices
@@ -122,10 +122,13 @@ private:
         \param nVertices
             The number of vertices.
 
+        \param centre
+            The coordinates of the element centre.
+
         \return
             The area of the polygon.
      */
-    double polygonArea(std::vector<Coord>&, const unsigned int&) const;
+    double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
 
     //! Return the length of a boundary segment.
     /*! \param segment

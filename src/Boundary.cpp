@@ -461,10 +461,6 @@ double Boundary::cutArea(const Element& element)
     // Number of polygon vertices.
     unsigned int nVertices = 0;
 
-    // Work out element centre point.
-    centre.x = mesh.nodes[element.nodes[0]].coord.x + 0.5;
-    centre.y = mesh.nodes[element.nodes[0]].coord.y + 0.5;
-
     // Polygon vertices (maximum of six).
     std::vector<Coord> vertices(6);
 
@@ -564,12 +560,12 @@ double Boundary::cutArea(const Element& element)
 
     // Return area of the polygon.
     if (element.status & ElementStatus::CENTRE_OUTSIDE)
-        return (1.0 - polygonArea(vertices, nVertices));
+        return (1.0 - polygonArea(vertices, nVertices, element.coord));
     else
-        return polygonArea(vertices, nVertices);
+        return polygonArea(vertices, nVertices, element.coord);
 }
 
-bool Boundary::isClockwise(const Coord& point1, const Coord& point2) const
+bool Boundary::isClockwise(const Coord& point1, const Coord& point2, const Coord& centre) const
 {
     if ((point1.x - centre.x) >= 0 && (point2.x - centre.x) < 0)
         return false;
@@ -604,13 +600,13 @@ bool Boundary::isClockwise(const Coord& point1, const Coord& point2) const
     return (d1 > d2) ? false : true;
 }
 
-double Boundary::polygonArea(std::vector<Coord>& vertices, const unsigned int& nVertices) const
+double Boundary::polygonArea(std::vector<Coord>& vertices, const unsigned int& nVertices, const Coord& centre) const
 {
     double area = 0;
 
     // Sort vertices in anticlockwise order.
     std::sort(vertices.begin(), vertices.begin() + nVertices, std::bind(&Boundary::isClockwise,
-        this, std::placeholders::_1, std::placeholders::_2));
+        this, std::placeholders::_1, std::placeholders::_2, centre));
 
     // Loop over all vertices.
     for (unsigned int i=0;i<nVertices;i++)
