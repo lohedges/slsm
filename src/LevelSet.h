@@ -6,7 +6,8 @@
 #ifndef _LEVELSET_H
 #define _LEVELSET_H
 
-#include <algorithm>
+#include <cmath>
+#include <cstdlib>
 
 #include "Common.h"
 #include "Hole.h"
