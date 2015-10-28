@@ -58,6 +58,7 @@ namespace ElementStatus
 //! Structure containing attributes for an individual grid element.
 struct Element
 {
+    Coord coord;                            //!< Element coordinate (centre).
     double area;                            //!< Material area fraction.
     unsigned int nodes[4];                  //!< Indices for nodes of the element.
     unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.

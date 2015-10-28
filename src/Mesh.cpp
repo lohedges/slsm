@@ -75,6 +75,10 @@ void Mesh::initialiseElements()
         x = i % width;
         y = int(i / width);
 
+        // Store coordinates of elemente centre.
+        elements[i].coord.x = x + 0.5;
+        elements[i].coord.y = y + 0.5;
+
         // Store connectivity (element --> node)
 
         // Node on bottom left corner of element.
