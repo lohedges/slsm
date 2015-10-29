@@ -118,19 +118,21 @@ calculating signed distances and extension velocities.
 ### Boundary
 An object for the discretised boundary. The `discretise` method solves for
 a set of boundary points and segments given the current mesh and level set.
+Following this, the `computeAreaFractions` method can determine the material
+area fraction in each of the finite element cells.
 
 ### InputOutput
-Provides functionality for reading and writing data structures. Currently only
-writes level set information in ParaView readable VTK format. Methods should
-be able to read/write files in the current directory, or from a user defined
-path.
+Provides functionality for reading and writing data structures. Currently
+able to write: level set information, boundary points and segments, and
+material area fractions. Data can be written as plain text (.txt) or in
+ParaView readable VTK format. Methods should be able to read/write files
+in the current directory, or from a user defined path.
 
 ## To Do
 Next on the agenda...
 
-* Add tests for `LevelSet`, `FastMarchingMethod`, and `Boundary` objects.
-* Add method to compute element are fractions to `Boundary` object.
 * Start working on `Sensitivity` object.
+* Understand the SLP sub-problem in Peter's code.
 
 ## Limitations
 * Limited to two-dimensional systems.
