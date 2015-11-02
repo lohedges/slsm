@@ -65,7 +65,7 @@ struct Element
     unsigned int nodes[4];                  //!< Indices for nodes of the element.
     unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.
     unsigned int nBoundarySegments;         //!< The number of boundary segments associated with the element.
-    ElementStatus::ElementStatus status;    //!< Whether the element (or it's centre) lies inside or outside the structure.
+    ElementStatus::ElementStatus status;    //!< Whether the element (or its centre) lies inside or outside the structure.
 };
 
 //! Structure containing attributes for an individual grid node.
