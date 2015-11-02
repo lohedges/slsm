@@ -399,6 +399,132 @@ error:
     return 1;
 }
 
+int testAreaFraction()
+{
+    // Initialise a 1x1 non-periodic mesh.
+    Mesh mesh(1, 1, false);
+
+    // Push hole into a vector container.
+    std::vector<Hole> holes;
+    holes.push_back(Hole(1, 1, 1));
+
+    // Initialise the level set object.
+    LevelSet levelSet(mesh, 3, holes);
+
+    // Initialise the boundary object.
+    Boundary boundary(mesh, levelSet);
+
+    // Set error number.
+    errno = 0;
+
+    // Sub test 1:
+    // Horizontal boundary cutting through the middle of the element.
+
+    // Place nodes on bottom edge of element outside zero contour.
+    levelSet.signedDistance[0] = -1;
+    levelSet.signedDistance[1] = -1;
+
+    // Place nodes on top edge of element inside zero contour.
+    levelSet.signedDistance[2] = 1;
+    levelSet.signedDistance[3] = 1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Calculate the element area.
+    boundary.computeAreaFractions();
+
+    // Check that the element is half filled.
+    check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+
+    // Sub test 2:
+    // Vertical boundary cutting through the middle of the element.
+
+    // Place nodes on left edge of element outside zero contour.
+    levelSet.signedDistance[0] = -1;
+    levelSet.signedDistance[2] = -1;
+
+    // Place nodes on right edge of element inside zero contour.
+    levelSet.signedDistance[1] = 1;
+    levelSet.signedDistance[3] = 1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Calculate the element area.
+    boundary.computeAreaFractions();
+
+    // Check that the element is half filled.
+    check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+
+    // Sub test 3:
+    // Zero contour along diagonal.
+
+    // Place bottom left and top right nodes on zero contour.
+    levelSet.signedDistance[0] = 0;
+    levelSet.signedDistance[3] = 0;
+
+    // Place bottom right node inside and top left node outside.
+    levelSet.signedDistance[1] = 1;
+    levelSet.signedDistance[2] = -1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Calculate the element area.
+    boundary.computeAreaFractions();
+
+    // Check that the element is half filled.
+    check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+
+    // Sub test 4:
+    // Zero contour along diagonal in top right quadrant.
+
+    // Place bottom left, bottom right, and top left nodes inside.
+    levelSet.signedDistance[0] = 1;
+    levelSet.signedDistance[1] = 1;
+    levelSet.signedDistance[2] = 1;
+
+    // Place top right node outside.
+    levelSet.signedDistance[3] = -1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Calculate the element area.
+    boundary.computeAreaFractions();
+
+    // Check the element area.
+    // Full element minus half a quarter element, i.e. 1.0 - 1/8 = 0.875.
+    check((mesh.elements[0].area == 0.875), "Element area fraction is incorrect!");
+
+    // Sub test 4:
+    // Invert the level set variables from sub-test 3.
+    // The element area should now be one minus the answer above, i.e. 1/8.
+
+    // Place bottom left, bottom right, and top left nodes outside.
+    levelSet.signedDistance[0] = -1;
+    levelSet.signedDistance[1] = -1;
+    levelSet.signedDistance[2] = -1;
+
+    // Place top right node inside.
+    levelSet.signedDistance[3] = 1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Calculate the element area.
+    boundary.computeAreaFractions();
+
+    // Check the element area.
+    check((mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");
+
+    return 0;
+
+error:
+    return 1;
+}
+
 int all_tests()
 {
     mu_suite_start();
@@ -407,6 +533,7 @@ int all_tests()
     mu_run_test(testBoundarySegments);
     mu_run_test(testBoundarySymmetry);
     mu_run_test(testConnectivity);
+    mu_run_test(testAreaFraction);
 
     return 0;
 }
