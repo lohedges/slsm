@@ -28,7 +28,7 @@ namespace NodeStatus
     // Left bit shift enumerated types to allow the creation
     // of sets and simple bit masking operations.
     // For example, to test whether a node is neither inside or outside...
-    // if (node.status ^ (NodeStatus::Inside|NodeStatus::Outside))
+    // if (node.status ^ (NodeStatus::INSIDE|NodeStatus::OUTSIDE))
     enum NodeStatus
     {
         NONE            = 0,                //!< No status.
