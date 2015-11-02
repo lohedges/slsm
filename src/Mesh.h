@@ -6,6 +6,7 @@
 #ifndef _MESH_H
 #define _MESH_H
 
+#include <cmath>
 #include <vector>
 
 #include "Common.h"
@@ -59,6 +60,7 @@ namespace ElementStatus
 struct Element
 {
     Coord coord;                            //!< Element coordinate (centre).
+    Coord gaussPoints[4];                   //!< Gauss points.
     double area;                            //!< Material area fraction.
     unsigned int nodes[4];                  //!< Indices for nodes of the element.
     unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.

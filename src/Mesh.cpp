@@ -68,6 +68,11 @@ void Mesh::initialiseElements()
     // Number of nodes along width of mesh (number of elements plus one)
     unsigned int w = width + 1;
 
+    // Relative node coordinates of the element.
+    Coord nodeCoords[4] = {{-1, -1}, {1., -1}, {1, 1}, {-1, 1}};
+
+    double invSqrtThree = 1.0 / sqrt(3.0);
+
     // Loop over all elements.
     for (unsigned int i=0;i<nElements;i++)
     {
@@ -78,6 +83,13 @@ void Mesh::initialiseElements()
         // Store coordinates of elemente centre.
         elements[i].coord.x = x + 0.5;
         elements[i].coord.y = y + 0.5;
+
+        // Store Guass point coordinates.
+        for (unsigned int j=0;j<4;j++)
+        {
+            elements[i].gaussPoints[j].x = elements[i].coord.x + (invSqrtThree * 0.5 * nodeCoords[j].x);
+            elements[i].gaussPoints[j].y = elements[i].coord.y + (invSqrtThree * 0.5 * nodeCoords[j].y);
+        }
 
         // Store connectivity (element --> node)
 
