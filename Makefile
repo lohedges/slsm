@@ -65,10 +65,10 @@ project := lsm
 project_upper := `echo $(project) | tr a-z A-Z`
 
 # C++ compiler.
-CXX ?= g++
+CXX := g++
 
 # Installation path.
-PREFIX ?= /usr/local
+PREFIX := /usr/local
 
 # External libraries.
 LIBS :=
@@ -185,10 +185,10 @@ help:
 	@echo
 	$(call boldcolorecho, 4, "Tips")
 	@echo " To set a different installation path run"
-	@echo "     PREFIX=path make install"
+	@echo "     make PREFIX=path install"
 	@echo
 	@echo " Additional CXXFLAGS can be passed using OPTFLAGS, e.g."
-	@echo "     OPTFLAGS=-Wall make devel"
+	@echo "     make OPTFLAGS=-Wall devel"
 	@echo
 	@echo " Targets can be chained together, e.g."
 	@echo "     make release doc test"
