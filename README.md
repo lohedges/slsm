@@ -83,7 +83,7 @@ $ make devel test
 ```
 
 ## Demos
-Current there is a single demo showing how to instantiate objects and perform
+Currently there is a single demo showing how to instantiate objects and perform
 calculations.
 
 * `demos/lsm.cpp`
