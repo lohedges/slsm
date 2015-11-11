@@ -23,7 +23,7 @@ $ make install
 ```
 
 By default, the library installs to `/usr/local`. Therefore, you may need admin
-priveleges for the final `make install` step above. An alternative is to change
+privileges for the final `make install` step above. An alternative is to change
 the install location:
 
 ```bash
