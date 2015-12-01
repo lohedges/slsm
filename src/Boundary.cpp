@@ -64,60 +64,15 @@ void Boundary::discretise()
                     double d = levelSet.signedDistance[n1]
                              / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
-                    // Create the boundary point.
+                    // Initialise the boundary point.
                     Coord point;
 
-                    // Work out the coordinates of the point (depends on which edge we are considering).
-
-                    // Bottom edge.
-                    if (j == 0)
-                    {
-                        point.x = mesh.nodes[n1].coord.x + d;
-                        point.y = mesh.nodes[n1].coord.y;
-                    }
-                    // Right edge.
-                    else if (j == 1)
-                    {
-                        point.x = mesh.nodes[n1].coord.x;
-                        point.y = mesh.nodes[n1].coord.y + d;
-                    }
-                    // Top edge.
-                    else if (j == 2)
-                    {
-                        point.x = mesh.nodes[n1].coord.x - d;
-                        point.y = mesh.nodes[n1].coord.y;
-                    }
-                    // Left edge.
-                    else
-                    {
-                        point.x = mesh.nodes[n1].coord.x;
-                        point.y = mesh.nodes[n1].coord.y - d;
-                    }
-
                     // Make sure that the boundary point hasn't already been added.
-                    bool isAdded = false;
+                    unsigned int index = isAdded(point, n1, j, d);
 
-                    for (unsigned int k=0;k<mesh.nodes[n1].nBoundaryPoints;k++)
+                    // Boundary point is new.
+                    if (index >= 0)
                     {
-                        // Index of the kth boundary point connected to node n1.
-                        unsigned int index = mesh.nodes[n1].boundaryPoints[k];
-
-                        // Point already exists.
-                        if ((std::abs(point.x - points[index].x) < 1e-6) &&
-                            (std::abs(point.y - points[index].y) < 1e-6))
-                        {
-                            // Store existing boundary point.
-                            boundaryPoints[nCut] = index;
-
-                            // Flag boundary point as already added.
-                            isAdded = true;
-                            break;
-                        }
-                    }
-
-                    if (!isAdded)
-                    {
-                        // Create node to boundary point lookup.
                         mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
                         mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
                         mesh.nodes[n1].nBoundaryPoints++;
@@ -129,6 +84,11 @@ void Boundary::discretise()
                         // Increment number of boundary points.
                         points[nPoints] = point;
                         nPoints++;
+                    }
+                    else
+                    {
+                        // Store existing boundary point.
+                        boundaryPoints[nCut] = index;
                     }
 
                     // Increment number of cut edges.
@@ -454,6 +414,63 @@ void Boundary::computeMeshStatus()
         // Otherwise no status.
         else mesh.elements[i].status = ElementStatus::NONE;
     }
+}
+
+int Boundary::isAdded(Coord& point, const unsigned int& node, const unsigned int& edge, const double& distance)
+{
+    // Point lies on a mesh node.
+    if (distance == 0)
+    {
+        point.x = mesh.nodes[node].coord.x;
+        point.y = mesh.nodes[node].coord.y;
+    }
+
+    else
+    {
+        // Work out the coordinates of the point (depends on which edge we are considering).
+
+        // Bottom edge.
+        if (edge == 0)
+        {
+            point.x = mesh.nodes[node].coord.x + distance;
+            point.y = mesh.nodes[node].coord.y;
+        }
+        // Right edge.
+        else if (edge == 1)
+        {
+            point.x = mesh.nodes[node].coord.x;
+            point.y = mesh.nodes[node].coord.y + distance;
+        }
+        // Top edge.
+        else if (edge == 2)
+        {
+            point.x = mesh.nodes[node].coord.x - distance;
+            point.y = mesh.nodes[node].coord.y;
+        }
+        // Left edge.
+        else
+        {
+            point.x = mesh.nodes[node].coord.x;
+            point.y = mesh.nodes[node].coord.y - distance;
+        }
+    }
+
+    for (unsigned int i=0;i<mesh.nodes[node].nBoundaryPoints;i++)
+    {
+        // Index of the ith boundary point connected to the node.
+        unsigned int index = mesh.nodes[node].boundaryPoints[i];
+
+        // Point already exists.
+        if ((std::abs(point.x - points[index].x) < 1e-6) &&
+            (std::abs(point.y - points[index].y) < 1e-6))
+        {
+            // Boundary point is already added, return index.
+            return index;
+        }
+    }
+
+    // If we've made it this far, then point is new.
+    return -1;
 }
 
 double Boundary::cutArea(const Element& element)

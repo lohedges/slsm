@@ -90,6 +90,24 @@ private:
     //! Determine the status of the elements and nodes of the finite element grid.
     void computeMeshStatus();
 
+    //! Check whether a boundary point has already been added.
+    /*! \param point
+            The coordinates of the boundary point (to be determined).
+
+        \param node
+            The index of the adjacent node.
+
+        \param edge
+            The index of the element edge.
+
+        \param distance
+            The distance from the node.
+
+        \return
+            The index of the boundary point if previously added, minus one if not.
+     */
+    int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
+
     //! Calculate the material area for an element cut by the boundary.
     /*! \param element
             A reference to the element.
