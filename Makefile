@@ -31,20 +31,30 @@
 ############################### MACROS ########################################
 
 define colorecho
-	@tput setaf $1
-	@echo $2
-	@tput sgr0
+	if [[ -t 1 ]]; then	\
+		tput setaf $1;	\
+		echo $2;        \
+		tput sgr0;      \
+	else				\
+		echo $2;        \
+	fi
 endef
 
 define boldcolorecho
-	@tput bold
-	@tput setaf $1
-	@echo $2
-	@tput sgr0
+	if [[ -t 1 ]]; then	\
+		tput bold;      \
+		tput setaf $1;	\
+		echo $2;        \
+		tput sgr0;      \
+	else				\
+		echo $2;        \
+	fi
 endef
 
 define inlinecolorecho
-	tput setaf $1; echo $2; tput sgr0
+	if [[ -t 1 ]]; then                     \
+		tput setaf $1; echo $2; tput sgr0;  \
+	fi
 endef
 
 ############################## VARIABLES ######################################
