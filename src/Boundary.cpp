@@ -64,14 +64,14 @@ void Boundary::discretise()
                     double d = levelSet.signedDistance[n1]
                              / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
-                    // Initialise the boundary point.
+                    // Initialise boundary point.
                     Coord point;
 
                     // Make sure that the boundary point hasn't already been added.
-                    unsigned int index = isAdded(point, n1, j, d);
+                    int index = isAdded(point, n1, j, d);
 
                     // Boundary point is new.
-                    if (index >= 0)
+                    if (index < 0)
                     {
                         mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
                         mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
@@ -418,43 +418,36 @@ void Boundary::computeMeshStatus()
 
 int Boundary::isAdded(Coord& point, const unsigned int& node, const unsigned int& edge, const double& distance)
 {
-    // Point lies on a mesh node.
-    if (distance == 0)
+    // Work out the coordinates of the point (depends on which edge we are considering).
+    // Set edge and distance equal to zero when considering boundary points lying exactly
+    // on top of a mesh node.
+
+    // Bottom edge.
+    if (edge == 0)
     {
-        point.x = mesh.nodes[node].coord.x;
+        point.x = mesh.nodes[node].coord.x + distance;
         point.y = mesh.nodes[node].coord.y;
     }
-
+    // Right edge.
+    else if (edge == 1)
+    {
+        point.x = mesh.nodes[node].coord.x;
+        point.y = mesh.nodes[node].coord.y + distance;
+    }
+    // Top edge.
+    else if (edge == 2)
+    {
+        point.x = mesh.nodes[node].coord.x - distance;
+        point.y = mesh.nodes[node].coord.y;
+    }
+    // Left edge.
     else
     {
-        // Work out the coordinates of the point (depends on which edge we are considering).
-
-        // Bottom edge.
-        if (edge == 0)
-        {
-            point.x = mesh.nodes[node].coord.x + distance;
-            point.y = mesh.nodes[node].coord.y;
-        }
-        // Right edge.
-        else if (edge == 1)
-        {
-            point.x = mesh.nodes[node].coord.x;
-            point.y = mesh.nodes[node].coord.y + distance;
-        }
-        // Top edge.
-        else if (edge == 2)
-        {
-            point.x = mesh.nodes[node].coord.x - distance;
-            point.y = mesh.nodes[node].coord.y;
-        }
-        // Left edge.
-        else
-        {
-            point.x = mesh.nodes[node].coord.x;
-            point.y = mesh.nodes[node].coord.y - distance;
-        }
+        point.x = mesh.nodes[node].coord.x;
+        point.y = mesh.nodes[node].coord.y - distance;
     }
 
+    // Check all points adjacent to the node.
     for (unsigned int i=0;i<mesh.nodes[node].nBoundaryPoints;i++)
     {
         // Index of the ith boundary point connected to the node.
