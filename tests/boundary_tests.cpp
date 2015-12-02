@@ -7,6 +7,10 @@
 
 int testBoundaryPoints()
 {
+    // Tests for the correct assignent of boundary points.
+    //  1) Check that there are the correct number of boundary points and segments.
+    //  2) Check that boundary point coordinates are correct.
+
     // Initialise a 1x1 non-periodic mesh.
     Mesh mesh(1, 1, false);
 
@@ -115,6 +119,33 @@ int testBoundaryPoints()
     check((std::abs(boundary.points[3].x) < 1e-6), "Position of boundary point is incorrect!");
     check((std::abs(boundary.points[3].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
+    // Sub test 4:
+    // An element with a single segment formed from the diagonal between
+    // the bottom left and top right nodes (nodes 0 and 3).
+
+    // Place bottom left and top right nodes on zero contour.
+    levelSet.signedDistance[0] = 0;
+    levelSet.signedDistance[3] = 0;
+
+    // Place bottom right node outside.
+    levelSet.signedDistance[1] = -1;
+
+    // Place top left node inside.
+    levelSet.signedDistance[2] = 1;
+
+    // Discretise the boundary.
+    boundary.discretise();
+
+    // Check the positions of the boundary points.
+
+    // First point.
+    check((std::abs(boundary.points[0].x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+
+    // Second point.
+    check((std::abs(boundary.points[1].x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+
     return 0;
 
 error:
@@ -123,6 +154,10 @@ error:
 
 int testBoundarySegments()
 {
+    // Tests for the correct assignent of boundary segments.
+    //  1) Check for correct indexing of start and end points.
+    //  2) Check that segments are assigned to the correct element.
+
     // Initialise a 1x1 non-periodic mesh.
     Mesh mesh(1, 1, false);
 
@@ -159,15 +194,11 @@ int testBoundarySegments()
 
     // Check the boundary segment.
 
-    // N.B.
-    // All start and end points should be boundary points, so the indexing is
-    // shifted by nNodes.
-
     // Start point.
-    check((boundary.segments[0].start == mesh.nNodes), "Start point of segment 0 is incorrect!");
+    check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    check((boundary.segments[0].end == (mesh.nNodes + 1)), "End point of segment 0 is incorrect!");
+    check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
     check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
@@ -190,33 +221,33 @@ int testBoundarySegments()
     boundary.discretise();
 
     // Check the number of points and segments.
-    check((boundary.nPoints == 1), "The number of boundary points is incorrect!");
+    check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
     check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Check the boundary segment.
     // The start point will be the boundary point lying between nodes 1 and 2 on
-    // the right edge of the element.
-    // The end point of the segment should be the lower left node of the grid.
+    // the right edge of the element. The end point of the segment should lie on
+    // the lower left node of the grid.
 
     // Start point.
-    check((boundary.segments[0].start == mesh.nNodes), "Start point of segment 0 is incorrect!");
+    check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    check((boundary.segments[0].end == 0), "End point of segment 0 is incorrect!");
+    check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
     check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
 
     // Sub test 2:
-    // An element with no boundary points and a single segment formed from
-    // the diagonal between the bottom left and top right nodes.
+    // An element with a single segment formed from the diagonal between
+    // the bottom left and top right nodes (nodes 0 and 3).
 
     // Place bottom left and top right nodes on zero contour.
     levelSet.signedDistance[0] = 0;
     levelSet.signedDistance[3] = 0;
 
     // Place bottom right node outside.
-    levelSet.signedDistance[2] = -1;
+    levelSet.signedDistance[1] = -1;
 
     // Place top left node inside.
     levelSet.signedDistance[2] = 1;
@@ -224,19 +255,17 @@ int testBoundarySegments()
     // Discretise the boundary.
     boundary.discretise();
 
-    // Check the boundary segment.
-    // There should be no cut edges, i.e. no boundary points.
-    // The single boundary segment should lie along the diagonal between
-    // nodes 0 and 3 (which lie on the zero contour).
+    // Check the boundary segment. The single boundary segment should lie
+    // along the diagonal between nodes 0 and 3 (which lie on the zero contour).
 
-    check((boundary.nPoints == 0), "The number of boundary points is incorrect!");
+    check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
     check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Start point.
     check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    check((boundary.segments[0].end == (mesh.nNodes - 1)), "End point of segment 0 is incorrect!");
+    check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
     check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
