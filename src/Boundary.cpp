@@ -99,11 +99,54 @@ void Boundary::discretise()
                 else if ((mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
                     (mesh.nodes[n2].status & NodeStatus::BOUNDARY))
                 {
+                    // Initialise boundary point.
+                    Coord point;
+
                     // Create boundary segment.
                     BoundarySegment segment;
-                    segment.start = n1;
-                    segment.end = n2;
+
+                    // Assign element index.
                     segment.element = i;
+
+                    // Make sure that the start boundary point hasn't already been added.
+                    int index = isAdded(point, n1, 0, 0);
+
+                    // Boundary point is new.
+                    if (index < 0)
+                    {
+                        // Set index equal to current number of points.
+                        index = nPoints;
+
+                        mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
+                        mesh.nodes[n1].nBoundaryPoints++;
+
+                        // Increment number of boundary points.
+                        points[nPoints] = point;
+                        nPoints++;
+                    }
+
+                    // Assign start point index.
+                    segment.start = index;
+
+                    // Make sure that the end boundary point hasn't already been added.
+                    index = isAdded(point, n2, 0, 0);
+
+                    // Boundary point is new.
+                    if (index < 0)
+                    {
+                        // Set index equal to current number of points.
+                        index = nPoints;
+
+                        mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
+                        mesh.nodes[n2].nBoundaryPoints++;
+
+                        // Increment number of boundary points.
+                        points[nPoints] = point;
+                        nPoints++;
+                    }
+
+                    // Assign end point index.
+                    segment.end = index;
 
                     // Compute the length of the boundary segment.
                     segment.length = segmentLength(segment);
@@ -127,10 +170,9 @@ void Boundary::discretise()
             if (nCut == 2)
             {
                 // Create boundary segment.
-                // Here the start and end "nodes" are actually boundary points.
                 BoundarySegment segment;
-                segment.start = mesh.nNodes + boundaryPoints[0];
-                segment.end = mesh.nNodes + boundaryPoints[1];
+                segment.start = boundaryPoints[0];
+                segment.end = boundaryPoints[1];
                 segment.element = i;
 
                 // Compute the length of the boundary segment.
@@ -176,9 +218,31 @@ void Boundary::discretise()
                         {
                             // Create boundary segment.
                             BoundarySegment segment;
-                            segment.start = mesh.nNodes + boundaryPoints[0];
-                            segment.end = node;
+                            segment.start = boundaryPoints[0];
                             segment.element = i;
+
+                            // Initialise boundary point.
+                            Coord point;
+
+                            // Make sure that the end boundary point hasn't already been added.
+                            int index = isAdded(point, node, 0, 0);
+
+                            // Boundary point is new.
+                            if (index < 0)
+                            {
+                                // Set index equal to current number of points.
+                                index = nPoints;
+
+                                mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
+                                mesh.nodes[node].nBoundaryPoints++;
+
+                                // Increment number of boundary points.
+                                points[nPoints] = point;
+                                nPoints++;
+                            }
+
+                            // Assign end point index.
+                            segment.end = index;
 
                             // Compute the length of the boundary segment.
                             segment.length = segmentLength(segment);
@@ -223,8 +287,8 @@ void Boundary::discretise()
                 if (((status & NodeStatus::INSIDE) && (lsfSum > 0)) ||
                     ((status & NodeStatus::OUTSIDE) && (lsfSum < 0)))
                 {
-                    segment.start = mesh.nNodes + boundaryPoints[0];
-                    segment.end = mesh.nNodes + boundaryPoints[1];
+                    segment.start = boundaryPoints[0];
+                    segment.end = boundaryPoints[1];
                     segment.element = i;
 
                     // Compute the length of the boundary segment.
@@ -241,8 +305,8 @@ void Boundary::discretise()
                     segments[nSegments] = segment;
                     nSegments++;
 
-                    segment.start = mesh.nNodes + boundaryPoints[2];
-                    segment.end = mesh.nNodes + boundaryPoints[3];
+                    segment.start = boundaryPoints[2];
+                    segment.end = boundaryPoints[3];
                     segment.element = i;
 
                     // Compute the length of the boundary segment.
@@ -262,8 +326,8 @@ void Boundary::discretise()
 
                 else
                 {
-                    segment.start = mesh.nNodes + boundaryPoints[0];
-                    segment.end = mesh.nNodes + boundaryPoints[3];
+                    segment.start = boundaryPoints[0];
+                    segment.end = boundaryPoints[3];
                     segment.element = i;
 
                     // Compute the length of the boundary segment.
@@ -280,8 +344,8 @@ void Boundary::discretise()
                     segments[nSegments] = segment;
                     nSegments++;
 
-                    segment.start = mesh.nNodes + boundaryPoints[1];
-                    segment.end = mesh.nNodes + boundaryPoints[2];
+                    segment.start = boundaryPoints[1];
+                    segment.end = boundaryPoints[2];
                     segment.element = i;
 
                     // Compute the length of the boundary segment.
@@ -307,11 +371,14 @@ void Boundary::discretise()
             // then the boundary segment must cross the diagonal.
             else if ((nCut == 0) && (mesh.elements[i].status != ElementStatus::INSIDE))
             {
+                // Node index.
+                unsigned int node;
+
                 // Find the two boundary nodes.
                 for (unsigned int j=0;j<4;j++)
                 {
                     // Node index.
-                    unsigned int node = mesh.elements[i].nodes[j];
+                    node = mesh.elements[i].nodes[j];
 
                     if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
                     {
@@ -322,9 +389,52 @@ void Boundary::discretise()
 
                 // Create boundary segment.
                 BoundarySegment segment;
-                segment.start = boundaryPoints[0];
-                segment.end = boundaryPoints[1];
                 segment.element = i;
+
+                // Initialise boundary point.
+                Coord point;
+
+                // Make sure that the start boundary point hasn't already been added.
+                node = boundaryPoints[0];
+                int index = isAdded(point, node, 0, 0);
+
+                // Boundary point is new.
+                if (index < 0)
+                {
+                    // Set index equal to current number of points.
+                    index = nPoints;
+
+                    mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
+                    mesh.nodes[node].nBoundaryPoints++;
+
+                    // Increment number of boundary points.
+                    points[nPoints] = point;
+                    nPoints++;
+                }
+
+                // Assign start point index.
+                segment.start = index;
+
+                // Make sure that the end boundary point hasn't already been added.
+                node = boundaryPoints[1];
+                index = isAdded(point, node, 0, 0);
+
+                // Boundary point is new.
+                if (index < 0)
+                {
+                    // Set index equal to current number of points.
+                    index = nPoints;
+
+                    mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
+                    mesh.nodes[node].nBoundaryPoints++;
+
+                    // Increment number of boundary points.
+                    points[nPoints] = point;
+                    nPoints++;
+                }
+
+                // Assign end point index.
+                segment.end = index;
 
                 // Compute the length of the boundary segment.
                 segment.length = segmentLength(segment);
@@ -529,40 +639,16 @@ double Boundary::cutArea(const Element& element)
         // Segment index.
         unsigned int segment = element.boundarySegments[i];
 
-        // Start point is a boundary point.
-        if (segments[segment].start >= mesh.nNodes)
-        {
-            // Add coordinates to points array.
-            vertices[nVertices].x = points[segments[segment].start - mesh.nNodes].x;
-            vertices[nVertices].y = points[segments[segment].start - mesh.nNodes].y;
-        }
-
-        // Start point is a node.
-        else
-        {
-            // Add coordinates to points array.
-            vertices[nVertices].x = mesh.nodes[segments[segment].start].coord.x;
-            vertices[nVertices].y = mesh.nodes[segments[segment].start].coord.y;
-        }
+        // Add start point coordinates to vertices array.
+        vertices[nVertices].x = points[segments[segment].start].x;
+        vertices[nVertices].y = points[segments[segment].start].y;
 
         // Increment number of vertices.
         nVertices++;
 
-        // End point is a boundary point.
-        if (segments[segment].end >= mesh.nNodes)
-        {
-            // Add coordinates to points array.
-            vertices[nVertices].x = points[segments[segment].end - mesh.nNodes].x;
-            vertices[nVertices].y = points[segments[segment].end - mesh.nNodes].y;
-        }
-
-        // End point is a node.
-        else
-        {
-            // Add coordinates to points array.
-            vertices[nVertices].x = mesh.nodes[segments[segment].end].coord.x;
-            vertices[nVertices].y = mesh.nodes[segments[segment].end].coord.y;
-        }
+        // Add end point coordinates to vertices array.
+        vertices[nVertices].x = points[segments[segment].end].x;
+        vertices[nVertices].y = points[segments[segment].end].y;
 
         // Increment number of vertices.
         nVertices++;
@@ -638,33 +724,11 @@ double Boundary::segmentLength(const BoundarySegment& segment)
     // Coordinates for start and end points.
     Coord p1, p2;
 
-    // Start point is a boundary point.
-    if (segment.start >= mesh.nNodes)
-    {
-        p1.x = points[segment.start - mesh.nNodes].x;
-        p1.y = points[segment.start - mesh.nNodes].y;
-    }
+    p1.x = points[segment.start].x;
+    p1.y = points[segment.start].y;
 
-    // Start point is a node.
-    else
-    {
-        p1.x = mesh.nodes[segment.start].coord.x;
-        p1.y = mesh.nodes[segment.start].coord.y;
-    }
-
-    // End point is a boundary point.
-    if (segment.end >= mesh.nNodes)
-    {
-        p2.x = points[segment.end - mesh.nNodes].x;
-        p2.y = points[segment.end - mesh.nNodes].y;
-    }
-
-    // End point is a node.
-    else
-    {
-        p2.x = mesh.nodes[segment.end].coord.x;
-        p2.y = mesh.nodes[segment.end].coord.y;
-    }
+    p2.x = points[segment.end].x;
+    p2.y = points[segment.end].y;
 
     // Compute separation in x and y directions.
     double dx = p1.x - p2.x;

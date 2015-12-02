@@ -178,37 +178,15 @@ void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
         double x, y;
 
         // First point.
-
-        // Start is a boundary point.
-        if (start >= mesh.nNodes)
-        {
-            start -= mesh.nNodes;
-            x = boundary.points[start].x;
-            y = boundary.points[start].y;
-        }
-        else
-        {
-            x = mesh.nodes[start].coord.x;
-            y = mesh.nodes[start].coord.y;
-        }
+        x = boundary.points[start].x;
+        y = boundary.points[start].y;
 
         // Write boundary point to file.
         fprintf(pFile, "%lf %lf\n", x, y);
 
         // Second point.
-
-        // End is a boundary point.
-        if (end >= mesh.nNodes)
-        {
-            end -= mesh.nNodes;
-            x = boundary.points[end].x;
-            y = boundary.points[end].y;
-        }
-        else
-        {
-            x = mesh.nodes[end].coord.x;
-            y = mesh.nodes[end].coord.y;
-        }
+        x = boundary.points[end].x;
+        y = boundary.points[end].y;
 
         // Write boundary point to file.
         fprintf(pFile, "%lf %lf\n\n", x, y);
