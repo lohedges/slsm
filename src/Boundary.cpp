@@ -82,7 +82,7 @@ void Boundary::discretise()
                         boundaryPoints[nCut] = nPoints;
 
                         // Increment number of boundary points.
-                        points[nPoints] = point;
+                        points[nPoints].coord = point;
                         nPoints++;
                     }
                     else
@@ -121,7 +121,7 @@ void Boundary::discretise()
                         mesh.nodes[n1].nBoundaryPoints++;
 
                         // Increment number of boundary points.
-                        points[nPoints] = point;
+                        points[nPoints].coord = point;
                         nPoints++;
                     }
 
@@ -141,7 +141,7 @@ void Boundary::discretise()
                         mesh.nodes[n2].nBoundaryPoints++;
 
                         // Increment number of boundary points.
-                        points[nPoints] = point;
+                        points[nPoints].coord = point;
                         nPoints++;
                     }
 
@@ -237,7 +237,7 @@ void Boundary::discretise()
                                 mesh.nodes[node].nBoundaryPoints++;
 
                                 // Increment number of boundary points.
-                                points[nPoints] = point;
+                                points[nPoints].coord = point;
                                 nPoints++;
                             }
 
@@ -408,7 +408,7 @@ void Boundary::discretise()
                     mesh.nodes[node].nBoundaryPoints++;
 
                     // Increment number of boundary points.
-                    points[nPoints] = point;
+                    points[nPoints].coord = point;
                     nPoints++;
                 }
 
@@ -429,7 +429,7 @@ void Boundary::discretise()
                     mesh.nodes[node].nBoundaryPoints++;
 
                     // Increment number of boundary points.
-                    points[nPoints] = point;
+                    points[nPoints].coord = point;
                     nPoints++;
                 }
 
@@ -564,8 +564,8 @@ int Boundary::isAdded(Coord& point, const unsigned int& node, const unsigned int
         unsigned int index = mesh.nodes[node].boundaryPoints[i];
 
         // Point already exists.
-        if ((std::abs(point.x - points[index].x) < 1e-6) &&
-            (std::abs(point.y - points[index].y) < 1e-6))
+        if ((std::abs(point.x - points[index].coord.x) < 1e-6) &&
+            (std::abs(point.y - points[index].coord.y) < 1e-6))
         {
             // Boundary point is already added, return index.
             return index;
@@ -640,15 +640,15 @@ double Boundary::cutArea(const Element& element)
         unsigned int segment = element.boundarySegments[i];
 
         // Add start point coordinates to vertices array.
-        vertices[nVertices].x = points[segments[segment].start].x;
-        vertices[nVertices].y = points[segments[segment].start].y;
+        vertices[nVertices].x = points[segments[segment].start].coord.x;
+        vertices[nVertices].y = points[segments[segment].start].coord.y;
 
         // Increment number of vertices.
         nVertices++;
 
         // Add end point coordinates to vertices array.
-        vertices[nVertices].x = points[segments[segment].end].x;
-        vertices[nVertices].y = points[segments[segment].end].y;
+        vertices[nVertices].x = points[segments[segment].end].coord.x;
+        vertices[nVertices].y = points[segments[segment].end].coord.y;
 
         // Increment number of vertices.
         nVertices++;
@@ -724,11 +724,11 @@ double Boundary::segmentLength(const BoundarySegment& segment)
     // Coordinates for start and end points.
     Coord p1, p2;
 
-    p1.x = points[segment.start].x;
-    p1.y = points[segment.start].y;
+    p1.x = points[segment.start].coord.x;
+    p1.y = points[segment.start].coord.y;
 
-    p2.x = points[segment.end].x;
-    p2.y = points[segment.end].y;
+    p2.x = points[segment.end].coord.x;
+    p2.y = points[segment.end].coord.y;
 
     // Compute separation in x and y directions.
     double dx = p1.x - p2.x;

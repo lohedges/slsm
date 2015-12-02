@@ -18,11 +18,18 @@
 
 // ASSOCIATED DATA TYPES
 
+//! \brief A container for storing information associated with a boundary point.
+struct BoundaryPoint
+{
+    Coord coord;                //!< Coordinate of the boundary point.
+    double length;              //!< Length associated with boundary point.
+};
+
 //! \brief A container for storing information associated with a boundary segment.
 struct BoundarySegment
 {
-    unsigned int start;         //!< Index of start point (node or boundary point).
-    unsigned int end;           //!< Index of end point (node or boundary point).
+    unsigned int start;         //!< Index of start point.
+    unsigned int end;           //!< Index of end point.
     unsigned int element;       //!< The element cut by the boundary segment.
     double length;              //!< Length of the boundary segment.
     double weight;              //!< Weighting factor for boundary segment.
@@ -37,12 +44,9 @@ struct BoundarySegment
     points by simple linear interpolation when the level set changes sign
     between the nodes on an element edge.
 
-    The points vector holds coordinates for the interpolated boundary points.
-    Boundary segment data is stored in the segments vector. Note that the
-    start and end points of a boundary segment can either be a node, or a
-    boundary point. If a point is a node, the index will lie in the range
-    0 to mesh.nNodes - 1, if it's a boundary point then it will be between
-    mesh.nNodes and mesh.nNodes + nPoints - 1.
+    The points vector holds coordinates for boundary points (both those lying
+    exactly on nodes of the finite element mesh, and the interpolated points).
+    Boundary segment data is stored in the segments vector.
  */
 class Boundary
 {
@@ -63,7 +67,7 @@ public:
     void computeAreaFractions();
 
     /// Vector of boundary points.
-    std::vector<Coord> points;
+    std::vector<BoundaryPoint> points;
 
     /// Vector of boundary segments.
     std::vector<BoundarySegment> segments;
