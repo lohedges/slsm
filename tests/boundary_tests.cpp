@@ -48,12 +48,12 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    check((std::abs(boundary.points[0].x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 2:
     // Vertical boundary cutting through the middle of the element.
@@ -76,12 +76,12 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    check((std::abs(boundary.points[0].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 3:
     // Two boundary segements cutting through upper and lower triangles.
@@ -104,20 +104,20 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    check((std::abs(boundary.points[0].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    check((std::abs(boundary.points[2].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[2].y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    check((std::abs(boundary.points[3].x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[3].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 4:
     // An element with a single segment formed from the diagonal between
@@ -139,12 +139,12 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    check((std::abs(boundary.points[0].x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     return 0;
 
@@ -314,20 +314,20 @@ int testBoundarySymmetry()
     // Check the positions of the boundary points.
 
     // First point.
-    check((std::abs(boundary.points[0].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    check((std::abs(boundary.points[2].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[2].y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    check((std::abs(boundary.points[3].x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[3].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Invert the signed distance function.
     for (unsigned int i=0;i<4;i++)
@@ -343,20 +343,20 @@ int testBoundarySymmetry()
     check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
 
     // First point.
-    check((std::abs(boundary.points[0].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[0].y) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    check((std::abs(boundary.points[1].x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[1].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    check((std::abs(boundary.points[2].x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[2].y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    check((std::abs(boundary.points[3].x) < 1e-6), "Position of boundary point is incorrect!");
-    check((std::abs(boundary.points[3].y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     return 0;
 
