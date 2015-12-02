@@ -83,6 +83,7 @@ void Boundary::discretise()
 
                         // Increment number of boundary points.
                         points[nPoints].coord = point;
+                        points[nPoints].length = 0;
                         nPoints++;
                     }
                     else
@@ -122,6 +123,7 @@ void Boundary::discretise()
 
                         // Increment number of boundary points.
                         points[nPoints].coord = point;
+                        points[nPoints].length = 0;
                         nPoints++;
                     }
 
@@ -142,6 +144,7 @@ void Boundary::discretise()
 
                         // Increment number of boundary points.
                         points[nPoints].coord = point;
+                        points[nPoints].length = 0;
                         nPoints++;
                     }
 
@@ -238,6 +241,7 @@ void Boundary::discretise()
 
                                 // Increment number of boundary points.
                                 points[nPoints].coord = point;
+                                points[nPoints].length = 0;
                                 nPoints++;
                             }
 
@@ -409,6 +413,7 @@ void Boundary::discretise()
 
                     // Increment number of boundary points.
                     points[nPoints].coord = point;
+                    points[nPoints].length = 0;
                     nPoints++;
                 }
 
@@ -430,6 +435,7 @@ void Boundary::discretise()
 
                     // Increment number of boundary points.
                     points[nPoints].coord = point;
+                    points[nPoints].length = 0;
                     nPoints++;
                 }
 
@@ -452,6 +458,9 @@ void Boundary::discretise()
             }
         }
     }
+
+    // Work out boundary integral length associated with each boundary point.
+    computePointLengths();
 }
 
 void Boundary::computeAreaFractions()
@@ -735,4 +744,15 @@ double Boundary::segmentLength(const BoundarySegment& segment)
     double dy = p1.y - p2.y;
 
     return (sqrt(dx*dx + dy*dy));
+}
+
+void Boundary::computePointLengths()
+{
+    // Loop over all boundary segments.
+    for (unsigned int i=0;i<nSegments;i++)
+    {
+        // Add half segment length to each boundary point.
+        points[segments[i].start].length += 0.5 * segments[i].length;
+        points[segments[i].end].length += 0.5 * segments[i].length;
+    }
 }

@@ -159,6 +159,9 @@ private:
             The length of the bounary segment.
      */
     double segmentLength(const BoundarySegment&);
+
+    //! Compute the (potentially weighted) integral length for each boundary point.
+    void computePointLengths();
 };
 
 #endif  /* _BOUNDARY_H */
