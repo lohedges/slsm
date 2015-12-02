@@ -130,7 +130,8 @@ void InputOutput::saveBoundaryPointsTXT(const std::ostringstream& fileName, cons
 
     // Write the boundary points to file.
     for (unsigned int i=0;i<boundary.nPoints;i++)
-        fprintf(pFile, "%lf %lf\n", boundary.points[i].coord.x, boundary.points[i].coord.y);
+        fprintf(pFile, "%lf %lf %lf\n",
+            boundary.points[i].coord.x, boundary.points[i].coord.y, boundary.points[i].length);
 
     fclose(pFile);
 
