@@ -37,6 +37,10 @@
   Functionality is also provided for tracking nodes that are part of the
   narrow band region around the zero contour, as well as mine nodes at
   the edge of the narrow band.
+
+  Note that the level set grid need not be the same resolution as the
+  finite-element mesh. However, for the simple two-dimensional problems
+  considered here we will use a grid of the same size.
  */
 class LevelSet
 {
