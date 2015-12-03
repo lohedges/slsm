@@ -21,18 +21,21 @@
 //! \brief A container for storing information associated with a boundary point.
 struct BoundaryPoint
 {
-    Coord coord;                //!< Coordinate of the boundary point.
-    double length;              //!< Length associated with boundary point.
+    Coord coord;                        //!< Coordinate of the boundary point.
+    double length;                      //!< Integral length of the boundary point.
+    double negativeLimit;               //!< Movement limit in negative direction (inwards).
+    double positiveLimit;               //!< Movement limit in positive direction (outwards).
+    std::vector<double> sensitivity;    //!< Objective and constraint sensitivities.
 };
 
 //! \brief A container for storing information associated with a boundary segment.
 struct BoundarySegment
 {
-    unsigned int start;         //!< Index of start point.
-    unsigned int end;           //!< Index of end point.
-    unsigned int element;       //!< The element cut by the boundary segment.
-    double length;              //!< Length of the boundary segment.
-    double weight;              //!< Weighting factor for boundary segment.
+    unsigned int start;                 //!< Index of start point.
+    unsigned int end;                   //!< Index of end point.
+    unsigned int element;               //!< The element cut by the boundary segment.
+    double length;                      //!< Length of the boundary segment.
+    double weight;                      //!< Weighting factor for boundary segment.
 };
 
 // MAIN CLASS
