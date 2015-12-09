@@ -81,7 +81,7 @@ CXX := g++
 PREFIX := /usr/local
 
 # External libraries.
-LIBS :=
+LIBS := -lnlopt
 
 # Path for source files.
 src_dir := src
