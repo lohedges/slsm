@@ -26,7 +26,7 @@ struct BoundaryPoint
     double negativeLimit;               //!< Movement limit in negative direction (inwards).
     double positiveLimit;               //!< Movement limit in positive direction (outwards).
     bool isDomain;                      //!< Whether the point lies close to the domain boundary.
-    std::vector<double> sensitivity;    //!< Objective and constraint sensitivities.
+    std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
 };
 
 //! \brief A container for storing information associated with a boundary segment.

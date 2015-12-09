@@ -465,6 +465,10 @@ void Boundary::discretise()
         }
     }
 
+    // Resize points and segments vectors.
+    points.resize(nPoints);
+    segments.resize(nSegments);
+
     // Work out boundary integral length associated with each boundary point.
     computePointLengths();
 }
@@ -598,6 +602,9 @@ void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
     point.length = 0;
     point.isDomain = false;
 
+    // Assume two sensitivities to start with (objective and a single constraint).
+    point.sensitivities.resize(2);
+
     // Initialise movement (velocity) limits (half grid spacing in each direction).
     point.negativeLimit = -0.5;
     point.positiveLimit = 0.5;
@@ -619,7 +626,10 @@ void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
     if (minBoundary < 0.5)
     {
         point.negativeLimit = -minBoundary;
-        point.isDomain = true;
+
+        // Point is exactly on domain boundary.
+        if (minBoundary < 1e-6)
+            point.isDomain = true;
     }
 }
 
