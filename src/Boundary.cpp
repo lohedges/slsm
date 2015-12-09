@@ -64,11 +64,11 @@ void Boundary::discretise()
                     double d = levelSet.signedDistance[n1]
                              / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
-                    // Initialise boundary point.
-                    Coord point;
+                    // Initialise boundary point coordinate.
+                    Coord coord;
 
                     // Make sure that the boundary point hasn't already been added.
-                    int index = isAdded(point, n1, j, d);
+                    int index = isAdded(coord, n1, j, d);
 
                     // Boundary point is new.
                     if (index < 0)
@@ -81,9 +81,10 @@ void Boundary::discretise()
                         // Store boundary point for cut edge.
                         boundaryPoints[nCut] = nPoints;
 
+                        // Initialise boundary point.
+                        initialisePoint(points[nPoints], coord);
+
                         // Increment number of boundary points.
-                        points[nPoints].coord = point;
-                        points[nPoints].length = 0;
                         nPoints++;
                     }
                     else
@@ -100,8 +101,8 @@ void Boundary::discretise()
                 else if ((mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
                     (mesh.nodes[n2].status & NodeStatus::BOUNDARY))
                 {
-                    // Initialise boundary point.
-                    Coord point;
+                    // Initialise boundary point coordinate.
+                    Coord coord;
 
                     // Create boundary segment.
                     BoundarySegment segment;
@@ -110,7 +111,7 @@ void Boundary::discretise()
                     segment.element = i;
 
                     // Make sure that the start boundary point hasn't already been added.
-                    int index = isAdded(point, n1, 0, 0);
+                    int index = isAdded(coord, n1, 0, 0);
 
                     // Boundary point is new.
                     if (index < 0)
@@ -121,9 +122,10 @@ void Boundary::discretise()
                         mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
                         mesh.nodes[n1].nBoundaryPoints++;
 
+                        // Initialise boundary point.
+                        initialisePoint(points[nPoints], coord);
+
                         // Increment number of boundary points.
-                        points[nPoints].coord = point;
-                        points[nPoints].length = 0;
                         nPoints++;
                     }
 
@@ -131,7 +133,7 @@ void Boundary::discretise()
                     segment.start = index;
 
                     // Make sure that the end boundary point hasn't already been added.
-                    index = isAdded(point, n2, 0, 0);
+                    index = isAdded(coord, n2, 0, 0);
 
                     // Boundary point is new.
                     if (index < 0)
@@ -142,9 +144,10 @@ void Boundary::discretise()
                         mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
                         mesh.nodes[n2].nBoundaryPoints++;
 
+                        // Initialise boundary point.
+                        initialisePoint(points[nPoints], coord);
+
                         // Increment number of boundary points.
-                        points[nPoints].coord = point;
-                        points[nPoints].length = 0;
                         nPoints++;
                     }
 
@@ -224,11 +227,11 @@ void Boundary::discretise()
                             segment.start = boundaryPoints[0];
                             segment.element = i;
 
-                            // Initialise boundary point.
-                            Coord point;
+                            // Initialise boundary point coordinate.
+                            Coord coord;
 
                             // Make sure that the end boundary point hasn't already been added.
-                            int index = isAdded(point, node, 0, 0);
+                            int index = isAdded(coord, node, 0, 0);
 
                             // Boundary point is new.
                             if (index < 0)
@@ -239,9 +242,10 @@ void Boundary::discretise()
                                 mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
                                 mesh.nodes[node].nBoundaryPoints++;
 
+                                // Initialise boundary point.
+                                initialisePoint(points[nPoints], coord);
+
                                 // Increment number of boundary points.
-                                points[nPoints].coord = point;
-                                points[nPoints].length = 0;
                                 nPoints++;
                             }
 
@@ -395,12 +399,12 @@ void Boundary::discretise()
                 BoundarySegment segment;
                 segment.element = i;
 
-                // Initialise boundary point.
-                Coord point;
+                // Initialise boundary point coordinate.
+                Coord coord;
 
                 // Make sure that the start boundary point hasn't already been added.
                 node = boundaryPoints[0];
-                int index = isAdded(point, node, 0, 0);
+                int index = isAdded(coord, node, 0, 0);
 
                 // Boundary point is new.
                 if (index < 0)
@@ -411,9 +415,10 @@ void Boundary::discretise()
                     mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
                     mesh.nodes[node].nBoundaryPoints++;
 
+                    // Initialise boundary point.
+                    initialisePoint(points[nPoints], coord);
+
                     // Increment number of boundary points.
-                    points[nPoints].coord = point;
-                    points[nPoints].length = 0;
                     nPoints++;
                 }
 
@@ -422,7 +427,7 @@ void Boundary::discretise()
 
                 // Make sure that the end boundary point hasn't already been added.
                 node = boundaryPoints[1];
-                index = isAdded(point, node, 0, 0);
+                index = isAdded(coord, node, 0, 0);
 
                 // Boundary point is new.
                 if (index < 0)
@@ -433,9 +438,10 @@ void Boundary::discretise()
                     mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
                     mesh.nodes[node].nBoundaryPoints++;
 
+                    // Initialise boundary point.
+                    initialisePoint(points[nPoints], coord);
+
                     // Increment number of boundary points.
-                    points[nPoints].coord = point;
-                    points[nPoints].length = 0;
                     nPoints++;
                 }
 
@@ -583,6 +589,38 @@ int Boundary::isAdded(Coord& point, const unsigned int& node, const unsigned int
 
     // If we've made it this far, then point is new.
     return -1;
+}
+
+void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
+{
+    // Initialise position, length, and isDomain.
+    point.coord = coord;
+    point.length = 0;
+    point.isDomain = false;
+
+    // Initialise movement (velocity) limits (half grid spacing in each direction).
+    point.negativeLimit = -0.5;
+    point.positiveLimit = 0.5;
+
+    // Check whether point lies within half a grid spacing of the domain boundary.
+    // If so, modify the lower movement limit so that point can't move outside of
+    // the domain.
+
+    // Closest distance to domain boundary in x.
+    double minX = std::min(coord.x, mesh.width - coord.x);
+
+    // Closest distance to domain boundary in y.
+    double minY = std::min(coord.y, mesh.height - coord.y);
+
+    // Closest distance to any domain boundary.
+    double minBoundary = std::min(minX, minY);
+
+    // Modify lower move limit.
+    if (minBoundary < 0.5)
+    {
+        point.negativeLimit = -minBoundary;
+        point.isDomain = true;
+    }
 }
 
 double Boundary::cutArea(const Element& element)

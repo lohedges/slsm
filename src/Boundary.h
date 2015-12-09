@@ -25,6 +25,7 @@ struct BoundaryPoint
     double length;                      //!< Integral length of the boundary point.
     double negativeLimit;               //!< Movement limit in negative direction (inwards).
     double positiveLimit;               //!< Movement limit in positive direction (outwards).
+    bool isDomain;                      //!< Whether the point lies close to the domain boundary.
     std::vector<double> sensitivity;    //!< Objective and constraint sensitivities.
 };
 
@@ -114,6 +115,15 @@ private:
             The index of the boundary point if previously added, minus one if not.
      */
     int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
+
+    //! Initialise a boundary point.
+    /*! \param point
+            A reference to a boundary point.
+
+        \param coord
+            The position vector of the boundary point.
+     */
+    void initialisePoint(BoundaryPoint&, const Coord&);
 
     //! Calculate the material area for an element cut by the boundary.
     /*! \param element
