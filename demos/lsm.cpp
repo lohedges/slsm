@@ -65,5 +65,12 @@ int main(int argc, char** argv)
     io.saveAreaFractionsVTK(1, mesh);
     io.saveAreaFractionsTXT(1, mesh, "", true);
 
+    // Test optimisation class.
+    std::vector<double> tmp1, tmp2, tmp3;
+    tmp1.resize(boundary.points.size());
+    tmp2.resize(1);
+    tmp3.resize(2);
+    Optimise optimise(boundary.points, tmp2, tmp3, tmp1);
+
     return (EXIT_SUCCESS);
 }
