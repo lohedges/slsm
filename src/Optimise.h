@@ -12,6 +12,7 @@
 
 // ASSOCIATED DATA TYPES
 
+//! Wrapper structure for interfacing with NLOpt.
 struct NLOptWrapper
 {
     unsigned int index;     //!< Function index (0 = objective, 1, 2, ... = constraints).
