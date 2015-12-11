@@ -139,13 +139,13 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
         {
             if (!isSideLimit[i])
             {
-                gradient[j] += (boundaryPoints[i].sensitivities[j]
+                gradient[j] += (boundaryPoints[i].sensitivities[index]
                             * boundaryPoints[i].sensitivities[j]
                             * boundaryPoints[i].length);
             }
             else if (isOrigin)
             {
-                gradient[j] += 0.5 * (boundaryPoints[i].sensitivities[j]
+                gradient[j] += 0.5 * (boundaryPoints[i].sensitivities[index]
                             * boundaryPoints[i].sensitivities[j]
                             * boundaryPoints[i].length);
 
