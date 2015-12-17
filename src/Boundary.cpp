@@ -7,6 +7,10 @@
 
 Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
 {
+}
+
+void Boundary::discretise()
+{
     // Allocate memory for boundary points and segments.
     // 20% of node count is a reasonable estimate.
     // Will need to check that this limit isn't exceeded.
@@ -18,10 +22,7 @@ Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(lev
     // Resize vectors.
     points.resize(size);
     segments.resize(size);
-}
 
-void Boundary::discretise()
-{
     // Reset the number of points and segments.
     nPoints = nSegments = 0;
 
