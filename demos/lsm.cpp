@@ -54,9 +54,13 @@ int main(int argc, char** argv)
     // Compute element areas.
     boundary.computeAreaFractions();
 
+    // Compute number of holes.
+    unsigned int nHoles = boundary.computeHoles();
+
     // Print some statistics.
     std::cout << "Boundary length:   " << boundary.length << '\n';
     std::cout << "Material fraction: " << (boundary.area / (mesh.width*mesh.height)) << '\n';
+    std::cout << "Number of holes:   " << nHoles << '\n';
 
     // Save LSF info (ParaView and txt file).
     io.saveLevelSetVTK(1, mesh, levelSet);
