@@ -68,7 +68,12 @@ public:
     void discretise();
 
     //! Calculate the material area fraction in each element.
-    void computeAreaFractions();
+    double computeAreaFractions();
+
+    //! Calculate the number of holes (number of closed loops).
+    /*! \return The number of holes.
+     */
+    unsigned int computeHoles();
 
     /// Vector of boundary points.
     std::vector<BoundaryPoint> points;
@@ -81,6 +86,9 @@ public:
 
     /// The number of boundary segments.
     unsigned int nSegments;
+
+    /// The number of holes (close loops).
+    unsigned int nHoles;
 
     /// The total length of the boundary.
     double length;
@@ -175,6 +183,41 @@ private:
 
     //! Compute the (potentially weighted) integral length for each boundary point.
     void computePointLengths();
+
+    //! Generate the boundary point adjacency matrix.
+    /*! \param adjacencyMatrix
+            A reference to the adjacency matrix.
+     */
+    void generateAdjacencyMatrix(std::vector<std::vector<bool> >&);
+
+    //! Compute the number of holes (close loops).
+    /*! \param adjacencyMatrix
+            A reference to the adjacency matrix.
+
+        \return
+            The number of holes.
+     */
+    unsigned int computeHoles(std::vector<std::vector<bool> >&);
+
+    //! Recursive, depth-first search to find connected boundary points.
+    /*! \param start
+            The starting boundary point index.
+
+        \param point
+            The current boundary point index.
+
+        \param adjacencyMatrix
+            A reference to the boundary point adjacency matrix.
+
+        \param isVisited
+            Whether each boundary point has already been visited.
+
+        \param depth
+            The current recursion depth.
+
+     */
+    void depthFirstSearch(unsigned int, unsigned int,
+        const std::vector<std::vector<bool> >&, std::vector<bool>&, unsigned int&);
 };
 
 #endif  /* _BOUNDARY_H */

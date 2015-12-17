@@ -473,7 +473,7 @@ void Boundary::discretise()
     computePointLengths();
 }
 
-void Boundary::computeAreaFractions()
+double Boundary::computeAreaFractions()
 {
     // Zero the total area fraction.
     area = 0;
@@ -494,6 +494,30 @@ void Boundary::computeAreaFractions()
         // Add the area to the running total.
         area += mesh.elements[i].area;
     }
+
+    return area;
+}
+
+unsigned int Boundary::computeHoles()
+{
+    // Boundary point adjacency matrix.
+    std::vector<std::vector<bool> > adjacencyMatrix;
+
+    // Resize and initialise the adjacency matrix.
+    adjacencyMatrix.resize(nPoints);
+    for (unsigned int i=0;i<nPoints;i++)
+    {
+        adjacencyMatrix[i].resize(nPoints);
+
+        for (unsigned int j=0;j<nPoints;j++)
+            adjacencyMatrix[i][j] = false;
+    }
+
+    // Generate the boundary adjacency matrix.
+    generateAdjacencyMatrix(adjacencyMatrix);
+
+    // Compute and return the number of holes.
+    return computeHoles(adjacencyMatrix);
 }
 
 void Boundary::computeMeshStatus()
@@ -802,5 +826,67 @@ void Boundary::computePointLengths()
         // Add half segment length to each boundary point.
         points[segments[i].start].length += 0.5 * segments[i].length;
         points[segments[i].end].length += 0.5 * segments[i].length;
+    }
+}
+
+void Boundary::generateAdjacencyMatrix(std::vector<std::vector<bool> >& adjacencyMatrix)
+{
+    // Loop over all boundary segments.
+    for (unsigned int i=0;i<nSegments;i++)
+    {
+        // Update adjacency matrix entries.
+        adjacencyMatrix[segments[i].start][segments[i].end] = true;
+        adjacencyMatrix[segments[i].end][segments[i].start] = true;
+    }
+}
+
+unsigned int Boundary::computeHoles(std::vector<std::vector<bool> >& adjacencyMatrix)
+{
+    // Zero the number of holes.
+   nHoles = 0;
+
+    // Whether a boundary point has already been visited.
+    std::vector<bool> isVisited(adjacencyMatrix[0].size());
+
+    // Initialise vector.
+    for (unsigned int i=0;i<isVisited.size();i++)
+        isVisited[i] = false;
+
+    // Perform a depth first search starting at all boundary points.
+    for (unsigned int i=0;i<isVisited.size();i++)
+    {
+        unsigned int depth = 0;
+        depthFirstSearch(i, i, adjacencyMatrix, isVisited, depth);
+    }
+
+    return nHoles;
+}
+
+void Boundary::depthFirstSearch(unsigned int start, unsigned int point,
+        const std::vector<std::vector<bool> >& adjacencyMatrix, std::vector<bool>& isVisited, unsigned int& depth)
+{
+    // Increment depth.
+    depth++;
+
+    // Flag point as visited.
+    isVisited[point] = true;
+
+    // Search all points points.
+    for (unsigned int i=0;i<isVisited.size();i++)
+    {
+        // If points are neighbours.
+        if (adjacencyMatrix[point][i])
+        {
+            // Continue search from neighbour, if not already visited.
+            if (!isVisited[i]) depthFirstSearch(start, i, adjacencyMatrix, isVisited, depth);
+
+            // Check to see if we've completed a loop.
+            else if (i == start)
+            {
+                // Ignore trivial loops (back and forth).
+                if (depth > 2) nHoles++;
+                return;
+            }
+        }
     }
 }
