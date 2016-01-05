@@ -1,6 +1,6 @@
 # LibLSM
 
-<p>Copyright &copy; 2015 <a href="http://lesterhedges.net">Lester Hedges</a>
+<p>Copyright &copy; 2015-2016 <a href="http://lesterhedges.net">Lester Hedges</a>
 <a href="http://www.gnu.org/licenses/gpl-3.0.html">
 <img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png"></a></p>
 
