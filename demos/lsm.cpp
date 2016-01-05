@@ -92,6 +92,9 @@ int main(int argc, char** argv)
     tmp2.resize(1);
     tmp3.resize(2);
     Optimise optimise(boundary.points, tmp2, tmp3, tmp1);
+    optimise.queryReturnCode();
+    optimise.solve();
+    optimise.queryReturnCode();
 
     return (EXIT_SUCCESS);
 }
