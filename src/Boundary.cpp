@@ -876,7 +876,7 @@ unsigned int Boundary::computeHoles(std::vector<std::vector<bool> >& adjacencyMa
 }
 
 void Boundary::depthFirstSearch(unsigned int start, unsigned int point,
-        const std::vector<std::vector<bool> >& adjacencyMatrix, std::vector<bool>& isVisited, unsigned int& depth)
+    const std::vector<std::vector<bool> >& adjacencyMatrix, std::vector<bool>& isVisited, unsigned int& depth)
 {
     // Increment depth.
     depth++;
