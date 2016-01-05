@@ -16,7 +16,12 @@
 */
 
 #include "Optimise.h"
-#include <iostream>
+
+double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data)
+{
+    NLoptWrapper* wrapperData = reinterpret_cast<NLoptWrapper*>(data);
+    return reinterpret_cast<Optimise*>(wrapperData->callback)->callback(lambda, gradient, wrapperData->index);
+}
 
 Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
                    const std::vector<double>& constraintDistances_,
@@ -27,22 +32,15 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
                    lambdas(lambdas_),
                    velocities(velocities_)
 {
+    // Set number of points and constraints.
     nPoints = boundaryPoints.size();
     nConstraints = constraintDistances.size();
+
+    // Resize data structures.
     isSideLimit.resize(nPoints);
-
-    // Test that NlOpt wrapper function is working.
-
-    NLOptWrapper wrapper;
-    wrapper.index = 0;
-    wrapper.callback = this;
-
-    void* data = reinterpret_cast<void*>(&wrapper);
-
-    std::vector<double> tmp1(2);
-    std::vector<double> tmp2(2);
-
-    std::cout << callbackWrapper(tmp1, tmp2, data) << '\n';
+    negativeLambdaLimits.resize(nConstraints + 1);
+    positiveLambdaLimits.resize(nConstraints + 1);
+    scaleFactors.resize(nConstraints + 1);
 }
 
 double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
@@ -57,10 +55,64 @@ double Optimise::callback(const std::vector<double>& lambda, std::vector<double>
     return computeFunction(index);
 }
 
-double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data)
+double Optimise::solve()
 {
-    NLOptWrapper* wrapperData = reinterpret_cast<NLOptWrapper*>(data);
-    return reinterpret_cast<Optimise*>(wrapperData->callback)->callback(lambda, gradient, wrapperData->index);
+    // Compute the scale factors for the objective end constraints.
+    computeScaleFactors();
+
+    // Compute the lambda limits.
+    computeLambdaLimits();
+
+    // Create wrapper for objective.
+    NLoptWrapper objectiveWrapper;
+    objectiveWrapper.index = 0;
+    objectiveWrapper.callback = this;
+
+    // Create wrappers for constraints.
+    NLoptWrapper constraintWrappers[nConstraints];
+    for (unsigned int i=0;i<nConstraints;i++)
+    {
+        constraintWrappers[i].index = i + 1;
+        constraintWrappers[i].callback = this;
+    }
+
+    // Instantiate NLopt optimisation object.
+    nlopt::opt opt(nlopt::LD_SLSQP, 1 + nConstraints);
+
+    // Set limits.
+    opt.set_lower_bounds(negativeLambdaLimits);
+    opt.set_upper_bounds(negativeLambdaLimits);
+
+    // Set a maximum of 500 iterations.
+    opt.set_maxeval(500);
+
+    // Set convergence tolerance.
+    opt.set_xtol_rel(1e-6);
+
+    // Specify that we want to minimise the objective function.
+    opt.set_min_objective(callbackWrapper, &objectiveWrapper);
+
+    // Add the inequality constraints.
+    for (unsigned int i=0;i<nConstraints;i++)
+        opt.add_inequality_constraint(callbackWrapper, &constraintWrappers[i], 1e-8);
+
+    // The optimum value of the objective function.
+    double optObjective;
+
+    // Perform the optimisation.
+    returnCode = opt.optimize(lambdas, optObjective);
+
+    return optObjective;
+}
+
+void Optimise::computeScaleFactors()
+{
+
+}
+
+void Optimise::computeLambdaLimits()
+{
+
 }
 
 void Optimise::computeVelocities(const std::vector<double>& lambda)
@@ -72,12 +124,12 @@ void Optimise::computeVelocities(const std::vector<double>& lambda)
         isSideLimit[i] = false;
 
         // Initialise component for objective.
-        velocities[i] = lambda[0]*boundaryPoints[i].sensitivities[0];
+        velocities[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
 
         // Add components for constraints.
         for (unsigned int j=1;j<nConstraints+1;j++)
         {
-            velocities[i] += lambda[j]*boundaryPoints[i].sensitivities[j];
+            velocities[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[j];
         }
 
         // Check side limits if point lies close to domain boundary.
@@ -102,7 +154,7 @@ double Optimise::computeFunction(unsigned int index)
 
     // Integrate function over boundary points.
     for (unsigned int i=0;i<nPoints;i++)
-        func += (velocities[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
+        func += (scaleFactors[index] * velocities[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
 
     if (index == 0) return func;
     else return func - constraintDistances[index - 1];
@@ -112,6 +164,9 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
 {
     // Whether we're at the origin, i.e. all lambda values are zero.
     bool isOrigin = false;
+
+    // Scale factor.
+    double scaleFactor = scaleFactors[index] * scaleFactors[index];
 
     // Zero the gradients.
     gradient[0] = 0;
@@ -141,7 +196,7 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
         }
     }
 
-    // Calculate the deriviative with respect to each lambda.
+    // Calculate the derivative with respect to each lambda.
 
     // Loop over all points.
     for (unsigned int i=0;i<nPoints;i++)
@@ -153,15 +208,37 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
             {
                 gradient[j] += (boundaryPoints[i].sensitivities[index]
                             * boundaryPoints[i].sensitivities[j]
-                            * boundaryPoints[i].length);
+                            * boundaryPoints[i].length
+                            * scaleFactor);
             }
             else if (isOrigin)
             {
-                gradient[j] += 0.5 * (boundaryPoints[i].sensitivities[index]
+                gradient[j] += (boundaryPoints[i].sensitivities[index]
                             * boundaryPoints[i].sensitivities[j]
-                            * boundaryPoints[i].length);
-
+                            * boundaryPoints[i].length
+                            * 0.5 * scaleFactor);
             }
         }
     }
+}
+
+void Optimise::queryReturnCode()
+{
+    // Success.
+    if (returnCode == 1) std::cout << "[INFO] Success: Generic success return value.\n";
+    else if (returnCode == 2) std::cout << "[INFO] Success: stopval was reached.\n";
+    else if (returnCode == 3) std::cout << "[INFO] Success: ftol_rel or ftol_abs was reached.\n";
+    else if (returnCode == 4) std::cout << "[INFO] Success: xtol_rel or xtol_abs was reached.\n";
+    else if (returnCode == 5) std::cout << "[INFO] Success: maxeval was reached.\n";
+    else if (returnCode == 6) std::cout << "[INFO] Success: maxtime was reached.\n";
+
+    // Error codes.
+    else if (returnCode == -1) std::cout << "[INFO] Failed: Generic failure code.\n";
+    else if (returnCode == -2) std::cout << "[INFO] Failed: Invalid arguments.\n";
+    else if (returnCode == -3) std::cout << "[INFO] Failed: Ran out of memory.\n";
+    else if (returnCode == -4) std::cout << "[INFO] Failed: Halted because roundoff errors limited progress.\n";
+    else if (returnCode == -5) std::cout << "[INFO] Failed: Halted because of a forced termination.\n";
+
+    // No optimisation.
+    else std::cout << "[INFO] No optimisation has been performed.\n";
 }
