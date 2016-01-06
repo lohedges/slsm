@@ -117,7 +117,7 @@ void Optimise::computeScaleFactors()
 {
     /* In order for the optimiser to work effectively it is important
        that small changes in the lambdas result in small changes in
-       the change functions for the objective and constraint and their
+       the change functions for the objective and constraints and their
        respective gradients. Since we are solving a multi-dimensional
        optimisation problem it is important that all variables are on
        the same scale. This enables us to use a universal convergence
