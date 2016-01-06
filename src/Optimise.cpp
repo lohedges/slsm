@@ -57,7 +57,7 @@ double Optimise::callback(const std::vector<double>& lambda, std::vector<double>
 
 double Optimise::solve()
 {
-    // Compute the scale factors for the objective end constraints.
+    // Compute the scale factors for the objective and constraints.
     computeScaleFactors();
 
     // Compute the lambda limits.
@@ -102,12 +102,69 @@ double Optimise::solve()
     // Perform the optimisation.
     returnCode = opt.optimize(lambdas, optObjective);
 
+    // Scale the lambda values.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+        lambdas[i] *= scaleFactors[i];
+
     return optObjective;
 }
 
 void Optimise::computeScaleFactors()
 {
+    /* In order for the optimiser to work effectively it is important
+       that small changes in the lambdas result in small changes in
+       the change functions for the objective and constraint and their
+       respective gradients. Since we are solving a multi-dimensional
+       optimisation problem it is important that all variables are on
+       the same scale. This enables us to use a universal convergence
+       tolerance.
 
+       Our scaling protocol is described below. Note that we choose to
+       store scale factors for each function, rather than scaling (then
+       rescaling) the input data. Sensitivites are scaled down (reduced)
+       and the lambda values are scale up (enlarged).
+
+         1) For each function, scale by the largest absolute sensitivity,
+            i.e. the maximum magnitude is one.
+
+         2) Scale by the gradient at the origin (all lambdas are zero).
+            This ensures that the gradient is close to one.
+     */
+
+    // Loop over all functions: objective first, then constraints.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+    {
+        // Initialise maximum sensitivity.
+        double maxSens = 0;
+
+        // Loop over all boundary points.
+        for (unsigned int j=0;j<nPoints;j++)
+        {
+            // Test whether sensitivity magnitude is current maximum.
+            double sens = std::abs(boundaryPoints[j].sensitivities[i]);
+            if (sens > maxSens) maxSens = sens;
+        }
+
+        // Store scale factor.
+        scaleFactors[i] = (1.0 / maxSens);
+    }
+
+    // Create lambda vector (all zeros, i.e. at the origin).
+    std::vector<double> lambda(nConstraints + 1);
+    std::fill(lambda.begin(), lambda.end(), 0.0);
+
+    // Initialise gradient vector.
+    std::vector<double> gradient(nConstraints + 1);
+
+    // Loop over all functions: objective first, then constraints.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+    {
+        // Calculate the gradient.
+        computeGradients(lambda, gradient, i);
+
+        // Scale by diagonal gradient entry (absolute value).
+        scaleFactors[i] *= (1.0 / std::abs(gradient[i]));
+    }
 }
 
 void Optimise::computeLambdaLimits()
