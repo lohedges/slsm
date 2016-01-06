@@ -110,7 +110,8 @@ double Optimise::solve()
     for (unsigned int i=0;i<nConstraints+1;i++)
         lambdas[i] *= scaleFactors[i];
 
-    return optObjective;
+    // Return unscaled change in objective function.
+    return (optObjective / scaleFactors[0]);
 }
 
 void Optimise::computeScaleFactors()
