@@ -128,9 +128,7 @@ void Optimise::computeVelocities(const std::vector<double>& lambda)
 
         // Add components for constraints.
         for (unsigned int j=1;j<nConstraints+1;j++)
-        {
             velocities[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[j];
-        }
 
         // Check side limits if point lies close to domain boundary.
         if (boundaryPoints[i].isDomain)
