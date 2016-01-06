@@ -81,7 +81,7 @@ double Optimise::solve()
 
     // Set limits.
     opt.set_lower_bounds(negativeLambdaLimits);
-    opt.set_upper_bounds(negativeLambdaLimits);
+    opt.set_upper_bounds(positiveLambdaLimits);
 
     // Set a maximum of 500 iterations.
     opt.set_maxeval(500);
