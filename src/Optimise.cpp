@@ -57,7 +57,7 @@ double Optimise::callback(const std::vector<double>& lambda, std::vector<double>
 
 double Optimise::solve()
 {
-    // Compute the scale factors for the objective and constraints.
+    // Compute the scale factors for the objective end constraints.
     computeScaleFactors();
 
     // Compute the lambda limits.
@@ -101,6 +101,9 @@ double Optimise::solve()
 
     // Perform the optimisation.
     returnCode = opt.optimize(lambdas, optObjective);
+
+    // Compute the optimum velocities.
+    computeVelocities(lambdas);
 
     // Scale the lambda values.
     for (unsigned int i=0;i<nConstraints+1;i++)
@@ -169,7 +172,12 @@ void Optimise::computeScaleFactors()
 
 void Optimise::computeLambdaLimits()
 {
-
+    // Dummy values for now.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+    {
+        negativeLambdaLimits[i] = -10;
+        positiveLambdaLimits[i] = 10;
+    }
 }
 
 void Optimise::computeVelocities(const std::vector<double>& lambda)
