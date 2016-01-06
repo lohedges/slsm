@@ -49,7 +49,8 @@ double Optimise::callback(const std::vector<double>& lambda, std::vector<double>
     computeVelocities(lambda);
 
     // Compute the gradients.
-    computeGradients(lambda, gradient, index);
+    if (!gradient.empty())
+        computeGradients(lambda, gradient, index);
 
     // Return the function value.
     return computeFunction(index);
