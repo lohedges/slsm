@@ -287,6 +287,14 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
 
 void Optimise::queryReturnCode()
 {
+    /* N.B.
+        Despite providing an extensive list of return codes NLopt does not
+        report when the optmisation exits because a lower or upper lambda
+        limit is hit. In this case the return code is 4. However, it's easy
+        to test for this situation by comparing the "optimum" lambda values
+        to the limits.
+     */
+
     // Success.
     if (returnCode == 1) std::cout << "[INFO] Success: Generic success return value.\n";
     else if (returnCode == 2) std::cout << "[INFO] Success: stopval was reached.\n";
