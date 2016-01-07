@@ -57,7 +57,7 @@ public:
             A reference to a vector of boundary points.
 
         \param constraintDistances_
-            Distance from violation for each constraint.
+            Distance from violation for each constraint (negative values indicate constraint violation).
 
         \param lambdas_
             The optimum lambda values. This array is modified.
