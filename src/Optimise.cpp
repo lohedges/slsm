@@ -34,7 +34,7 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
 {
     // Set number of points and constraints.
     nPoints = boundaryPoints.size();
-    nConstraints = 1 - lambdas.size();
+    nConstraints = lambdas.size() - 1;
 
     // Check for empty constraint distances vector.
     if (constraintDistances.empty())
