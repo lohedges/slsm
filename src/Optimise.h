@@ -152,6 +152,9 @@ private:
             Function index, 0 = objective, 1, 2, 3, ... = constraints.
      */
     void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
+
+    //! Rescale velocities and lambda values if the CFL condition is violated.
+    void rescaleVelocities();
 };
 
 #endif  /* _OPTIMISE_H */

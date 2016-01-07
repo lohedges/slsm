@@ -117,6 +117,9 @@ double Optimise::solve()
     // Compute the optimum velocity vector.
     computeVelocities(lambdas);
 
+    // Rescale the velocities and lambda values (if necessary).
+    rescaleVelocities();
+
     // Unscale the lambda values.
     for (unsigned int i=0;i<nConstraints+1;i++)
         lambdas[i] *= scaleFactors[i];
@@ -304,6 +307,58 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
                             * 0.5 * scaleFactor);
             }
         }
+    }
+}
+
+void Optimise::rescaleVelocities()
+{
+    // Check for CFL violation and rescale the velocities
+    // and lambda values if necessary.
+
+    // Maximum velocity magnitude.
+    double maxVel = 0;
+
+    // Velocity to rescale to (site dependent CFL limit).
+    double vRescale;
+
+    // Loop over all boundary points.
+    for (unsigned int i=0;i<nPoints;i++)
+    {
+        // Whether CFL is violated.
+        bool isCFL = false;
+
+        if (velocities[i] < boundaryPoints[i].negativeLimit)
+        {
+            vRescale = -boundaryPoints[i].negativeLimit;
+            isCFL = true;
+        }
+        else if (velocities[i] > boundaryPoints[i].positiveLimit)
+        {
+            vRescale = boundaryPoints[i].positiveLimit;
+            isCFL = true;
+        }
+
+        if (isCFL)
+        {
+            double vel = std::abs(velocities[i]);
+
+            // Check if current maximum is exceeded.
+            if (vel > maxVel) maxVel = vel;
+        }
+    }
+
+    // CFL condition is violated, rescale velocities.
+    if (maxVel)
+    {
+        // Scaling factor.
+        double scale = vRescale / maxVel;
+
+        // Scale lambda values.
+        for (unsigned int i=0;i<nConstraints+1;i++)
+            lambdas[i] *= scale;
+
+        // Recompute the velocity vector.
+        computeVelocities(lambdas);
     }
 }
 
