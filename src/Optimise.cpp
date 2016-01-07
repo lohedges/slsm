@@ -114,15 +114,12 @@ double Optimise::solve()
     // Unscale the objective function change.
     optObjective /= scaleFactors[0];
 
-    // Scale the lambda values and reset scale factors.
-    for (unsigned int i=0;i<nConstraints+1;i++)
-    {
-        lambdas[i] *= scaleFactors[i];
-        scaleFactors[i] = 1.0;
-    }
-
     // Compute the optimum velocity vector.
     computeVelocities(lambdas);
+
+    // Unscale the lambda values.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+        lambdas[i] *= scaleFactors[i];
 
     return optObjective;
 }
@@ -190,8 +187,8 @@ void Optimise::computeLambdaLimits()
     // Dummy values for now.
     for (unsigned int i=0;i<nConstraints+1;i++)
     {
-        negativeLambdaLimits[i] = -10;
-        positiveLambdaLimits[i] = 10;
+        negativeLambdaLimits[i] = -100;
+        positiveLambdaLimits[i] = 100;
     }
 }
 
@@ -235,16 +232,13 @@ double Optimise::computeFunction(unsigned int index)
         func += (scaleFactors[index] * velocities[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
 
     if (index == 0) return func;
-    else return func - constraintDistances[index - 1];
+    else return (func - (scaleFactors[index] * constraintDistances[index - 1]));
 }
 
 void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
 {
     // Whether we're at the origin, i.e. all lambda values are zero.
     bool isOrigin = false;
-
-    // Scale factor.
-    double scaleFactor = scaleFactors[index] * scaleFactors[index];
 
     // Zero the gradients.
     gradient[0] = 0;
@@ -282,6 +276,9 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
         // Loop over all functions (objective, then constraints).
         for (unsigned int j=0;j<nConstraints+1;j++)
         {
+            // Scale factor.
+            double scaleFactor = scaleFactors[index] * scaleFactors[j];
+
             if (!isSideLimit[i])
             {
                 gradient[j] += (boundaryPoints[i].sensitivities[index]
