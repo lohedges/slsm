@@ -68,6 +68,13 @@ psuedorandom number generator. A C++11 implementation using `std::random` is
 included as a bundled header file, `MersenneTwister.h`. See the source code or
 generate Doxygen documentation with `make doc` for details on how to use it.
 
+The `Optimise` class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
+Make sure that the library and header files are in your path. If not, do something like:
+
+```bash
+$ make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
+```
+
 ## Tests
 A test suite is provided in the `tests` directory. To run all unit tests:
 
@@ -128,11 +135,16 @@ material area fractions. Data can be written as plain text (.txt) or in
 ParaView readable VTK format. Methods should be able to read/write files
 in the current directory, or from a user defined path.
 
+### Optimise
+Solve for the optimum boundary point velocity vector using the SLP method.
+I have made numerous modifications to the method in order to remove unphysical
+velocity capping and ensure that variable scaling is consistent and transparent.
+
 ## To Do
 Next on the agenda...
 
-* Start working on `Sensitivity` object.
-* Understand the SLP sub-problem in Peter's code.
+* Map boundary point velocities to the level set grid.
+* Start working on `Sensitivity` and `Gradient` classes.
 
 ## Limitations
 * Limited to two-dimensional systems.
