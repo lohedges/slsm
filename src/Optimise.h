@@ -57,7 +57,8 @@ public:
             A reference to a vector of boundary points.
 
         \param constraintDistances_
-            Distance from violation for each constraint (negative values indicate constraint violation).
+            Distance from violation for each constraint (negative values
+            indicate that we want to reduce the constraint function).
 
         \param lambdas_
             The optimum lambda values. This array is modified.
@@ -120,11 +121,17 @@ private:
     /// Scale factor for each function.
     std::vector<double> scaleFactors;
 
+    /// Scaled constraint distances.
+    std::vector<double> constraintDistancesScaled;
+
     /// Optimiser return code.
     nlopt::result returnCode;
 
     //! Compute scale factors.
     void computeScaleFactors();
+
+    //! Compute constraint distances.
+    void computeConstraintDistances();
 
     //! Compute lambda limits.
     void computeLambdaLimits();

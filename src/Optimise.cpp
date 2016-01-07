@@ -49,6 +49,9 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
     negativeLambdaLimits.resize(nConstraints + 1);
     positiveLambdaLimits.resize(nConstraints + 1);
     scaleFactors.resize(nConstraints + 1);
+
+    // Copy constraint distances.
+    constraintDistancesScaled = constraintDistances;
 }
 
 double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
@@ -68,6 +71,9 @@ double Optimise::solve()
 {
     // Compute the scale factors for the objective end constraints.
     computeScaleFactors();
+
+    // Compute scaled constraint change distances.
+    computeConstraintDistances();
 
     // Compute the lambda limits.
     computeLambdaLimits();
@@ -195,13 +201,72 @@ void Optimise::computeScaleFactors()
     }
 }
 
+void Optimise::computeConstraintDistances()
+{
+    /* If we are far from satisfying the constraint then we need
+       to scale the constraint distance so that it can be "satisfied"
+       by simply moving in the correct direction, i.e. moving towards
+       satisying the constraint.
+     */
+
+    // Loop over all constraints.
+    for (unsigned int i=0;i<nConstraints;i++)
+    {
+        // Min and max changes.
+        double min = 0;
+        double max = 0;
+
+        // Integrate over boundary points.
+        for (unsigned int j=0;j<nPoints;j++)
+        {
+            if (boundaryPoints[j].sensitivities[i+1] > 0)
+            {
+                min += boundaryPoints[j].sensitivities[i+1]
+                     * boundaryPoints[j].length
+                     * boundaryPoints[j].negativeLimit;
+
+                max += boundaryPoints[j].sensitivities[i+1]
+                     * boundaryPoints[j].length
+                     * boundaryPoints[j].positiveLimit;
+            }
+            else
+            {
+                min += boundaryPoints[j].sensitivities[i+1]
+                     * boundaryPoints[j].length
+                     * boundaryPoints[j].positiveLimit;
+
+                max += boundaryPoints[j].sensitivities[i+1]
+                     * boundaryPoints[j].length
+                     * boundaryPoints[j].negativeLimit;
+            }
+        }
+
+        // Scale (20% is arbitrary, but seems to work well).
+        min *= 0.2;
+        max *= 0.2;
+
+        // We want to reduce the constraint function.
+        if (constraintDistances[i] < 0)
+        {
+            if (constraintDistances[i] < min)
+                constraintDistancesScaled[i] = min;
+        }
+        // Raise constraint function.
+        else
+        {
+            if (constraintDistances[i] > max)
+                constraintDistancesScaled[i] = max;
+        }
+    }
+}
+
 void Optimise::computeLambdaLimits()
 {
     // Dummy values for now.
     for (unsigned int i=0;i<nConstraints+1;i++)
     {
-        negativeLambdaLimits[i] = -100;
-        positiveLambdaLimits[i] = 100;
+        negativeLambdaLimits[i] = -200;
+        positiveLambdaLimits[i] = 200;
     }
 }
 
@@ -245,7 +310,7 @@ double Optimise::computeFunction(unsigned int index)
         func += (scaleFactors[index] * velocities[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
 
     if (index == 0) return func;
-    else return (func - (scaleFactors[index] * constraintDistances[index - 1]));
+    else return (func - (scaleFactors[index] * constraintDistancesScaled[index - 1]));
 }
 
 void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
