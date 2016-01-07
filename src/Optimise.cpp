@@ -144,6 +144,16 @@ void Optimise::computeScaleFactors()
 
          2) Scale by the gradient at the origin (all lambdas are zero).
             This ensures that the gradient is close to one.
+
+        There is no need to independently scale the boundary integral
+        coefficients since the boundary lengths are independent of the
+        function, i.e.
+
+            c^f_i = s^f_i * l_i
+
+        The l_i variables are the same for the objective and constraints
+        so, by definition, the c^f's are on the same scale if we simply
+        normalise by max(abs(s^f_i)).
      */
 
     // Loop over all functions: objective first, then constraints.
