@@ -34,7 +34,15 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
 {
     // Set number of points and constraints.
     nPoints = boundaryPoints.size();
-    nConstraints = constraintDistances.size();
+    nConstraints = 1 - lambdas.size();
+
+    // Check for empty constraint distances vector.
+    if (constraintDistances.empty())
+    {
+        errno = 0;
+        log_warn("Empty constraint distances vector. Assuming unconstrained optimisation.");
+        nConstraints = 0;
+    }
 
     // Resize data structures.
     isSideLimit.resize(nPoints);
@@ -103,15 +111,20 @@ double Optimise::solve()
     // Perform the optimisation.
     returnCode = opt.optimize(lambdas, optObjective);
 
-    // Compute the optimum velocities.
+    // Unscale the objective function change.
+    optObjective /= scaleFactors[0];
+
+    // Scale the lambda values and reset scale factors.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+    {
+        lambdas[i] *= scaleFactors[i];
+        scaleFactors[i] = 1.0;
+    }
+
+    // Compute the optimum velocity vector.
     computeVelocities(lambdas);
 
-    // Scale the lambda values.
-    for (unsigned int i=0;i<nConstraints+1;i++)
-        lambdas[i] *= scaleFactors[i];
-
-    // Return unscaled change in objective function.
-    return (optObjective / scaleFactors[0]);
+    return optObjective;
 }
 
 void Optimise::computeScaleFactors()
