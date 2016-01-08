@@ -33,17 +33,18 @@ int main(int argc, char** argv)
 #endif
 
     // Initialise a mesh.
-    Mesh mesh(160, 80, false);
+    //Mesh mesh(160, 80, false);
+    Mesh mesh(100, 100, false);
 
     // Create a hole.
-    /*std::vector<Hole> holes;
-    holes.push_back(Hole(5, 5, 5));
+    std::vector<Hole> holes;
+    holes.push_back(Hole(50, 50, 20));
 
     // Initialise the level set function (from hole vector).
-    LevelSet levelSet(mesh, 3, holes);*/
+    LevelSet levelSet(mesh, 3, holes);
 
     // Initialise the level set function (default Swiss cheese).
-    LevelSet levelSet(mesh, 3);
+    //LevelSet levelSet(mesh, 3);
 
     // Initialise io object.
     InputOutput io;
@@ -86,15 +87,28 @@ int main(int argc, char** argv)
     io.saveAreaFractionsVTK(1, mesh);
     io.saveAreaFractionsTXT(1, mesh, "", true);
 
+    for (unsigned int i=0;i<boundary.points.size();i++)
+        boundary.points[i].sensitivities[0] = -1.0;
+
+    // Data structures for Optimise class.
+    std::vector<double> constraintDistances, lambdas, velocities;
+
+    // Resize vectors.
+    velocities.resize(boundary.points.size());
+    constraintDistances.resize(1);
+    lambdas.resize(1);
+
     // Test optimisation class.
-    std::vector<double> tmp1, tmp2, tmp3;
-    tmp1.resize(boundary.points.size());
-    tmp2.resize(1);
-    tmp3.resize(2);
-    Optimise optimise(boundary.points, tmp2, tmp3, tmp1);
+    Optimise optimise(boundary.points, constraintDistances, lambdas, velocities);
     optimise.queryReturnCode();
     optimise.solve();
     optimise.queryReturnCode();
+
+    // Print results.
+    for (unsigned int i=0;i<boundary.points.size();i++)
+        std::cout << "VEL: " << i << ' ' << velocities[i] << '\n';
+
+    std::cout << "LAM: " << lambdas[0] << '\n';
 
     return (EXIT_SUCCESS);
 }
