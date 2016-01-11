@@ -65,6 +65,7 @@ public:
 
         \param velocities_
             The optimum boundary movement vector (velocity). This array is modified.
+            The velocity function is defined to be positive acting in from the boundary.
      */
     Optimise(const std::vector<BoundaryPoint>&, const std::vector<double>&,
         std::vector<double>&, std::vector<double>&);
