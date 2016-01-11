@@ -207,6 +207,12 @@ void Optimise::computeConstraintDistances()
        to scale the constraint distance so that it can be "satisfied"
        by simply moving in the correct direction, i.e. moving towards
        satisying the constraint.
+
+       I would have thought that the optimiser should be able to minimise
+       the constraint violation (this is suggested in the SLP paper) but
+       this doesn't seem to be the case, i.e. the optimiser would return
+       the lambdas that minimise the objective and the constraint violation
+       (if the constraint can't be satisfied).
      */
 
     // Loop over all constraints.
