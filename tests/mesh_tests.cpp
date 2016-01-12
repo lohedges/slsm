@@ -196,6 +196,44 @@ error:
     return 1;
 }
 
+int testCoordinateMapping()
+{
+    // Initialise a 2x2 non-periodic mesh.
+    Mesh mesh(2, 2, false);
+
+    // Set error number.
+    errno = 0;
+
+    // Check that point (0.5, 0.5) lies in bottom left (zeroth) element.
+    check(mesh.getElement(0.5, 0.5) == 0, "Point lies in incorrect element!");
+
+    // Check that point (1.5, 0.5) lies in bottom right (first) element.
+    check(mesh.getElement(1.5, 0.5) == 1, "Point lies in incorrect element!");
+
+    // Check that point (0.5, 1.5) lies in upper left (second) element.
+    check(mesh.getElement(0.5, 1.5) == 2, "Point lies in incorrect element!");
+
+    // Check that point (1.5, 1.5) lies in upper right (third) element.
+    check(mesh.getElement(1.5, 1.5) == 3, "Point lies in incorrect element!");
+
+    // Check that point (0.2, 0.2) lies closest to the bottom left (zeroth) node.
+    check(mesh.getClosestNode(0.2, 0.2) == 0, "Point lies closest to incorrect node!");
+
+    // Check that point (0.6, 0.2) lies closest to the first node.
+    check(mesh.getClosestNode(0.6, 0.2) == 1, "Point lies closest to incorrect node!");
+
+    // Check that point (0.2, 0.6) lies closest to the width + 1 node.
+    check(mesh.getClosestNode(0.2, 0.6) == (mesh.width + 1), "Point lies closest to incorrect node!");
+
+    // Check that point (0.6, 0.6) lies closest to the width + 2 node.
+    check(mesh.getClosestNode(0.6, 0.6) == (mesh.width + 2), "Point lies closest to incorrect node!");
+
+    return 0;
+
+error:
+    return 1;
+}
+
 int all_tests()
 {
     mu_suite_start();
@@ -206,6 +244,7 @@ int all_tests()
     mu_run_test(testReverseNodeConnectivity);
     mu_run_test(testElementNodeConnectivity);
     mu_run_test(testNodeElementConnectivity);
+    mu_run_test(testCoordinateMapping);
 
     return 0;
 }
