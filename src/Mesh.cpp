@@ -38,14 +38,84 @@ Mesh::Mesh(unsigned int width_,
     initialiseElements();
 }
 
+unsigned int Mesh::getClosestNode(const Coord& point)
+{
+    // Get element index.
+    unsigned int element = getElement(point);
+
+    // Work out x and y position within the element (remainder).
+    double dx = point.x - std::floor(point.x);
+    double dy = point.y - std::floor(point.y);
+
+    // Point lies in left half.
+    if (dx < 0.5)
+    {
+        // Lower left quadrant.
+        if (dy < 0.5) return elements[element].nodes[0];
+
+        // Upper left quadrant.
+        else return elements[element].nodes[3];
+    }
+
+    // Point lies in right half.
+    else
+    {
+        // Lower right quadrant.
+        if (dy < 0.5) return elements[element].nodes[1];
+
+        // Upper right quadrant.
+        else return elements[element].nodes[2];
+    }
+}
+
 unsigned int Mesh::getClosestNode(double x, double y)
 {
-    return 0;
+    // Get element index.
+    unsigned int element = getElement(x, y);
+
+    // Work out x and y position within the element (remainder).
+    double dx = x - std::floor(x);
+    double dy = y - std::floor(y);
+
+    // Point lies in left half.
+    if (dx < 0.5)
+    {
+        // Lower left quadrant.
+        if (dy < 0.5) return elements[element].nodes[0];
+
+        // Upper left quadrant.
+        else return elements[element].nodes[3];
+    }
+
+    // Point lies in right half.
+    else
+    {
+        // Lower right quadrant.
+        if (dy < 0.5) return elements[element].nodes[1];
+
+        // Upper right quadrant.
+        else return elements[element].nodes[2];
+    }
+}
+
+unsigned int Mesh::getElement(const Coord& point)
+{
+    // Work out x and y element indices (cells are unit width).
+    unsigned int elementX = std::floor(point.x);
+    unsigned int elementY = std::floor(point.y);
+
+    // Return global element index.
+    return (elementY*width + elementX);
 }
 
 unsigned int Mesh::getElement(double x, double y)
 {
-    return 0;
+    // Work out x and y element indices (cells are unit width).
+    unsigned int elementX = std::floor(x);
+    unsigned int elementY = std::floor(y);
+
+    // Return global element index.
+    return (elementY*width + elementX);
 }
 
 void Mesh::initialiseNodes()

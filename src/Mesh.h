@@ -135,6 +135,15 @@ public:
     Mesh(unsigned int, unsigned int, bool isPeriodic_ = false);
 
     //! For a given x-y coordinate, find the index of the closest node.
+    /*! \param point
+            The x-y coordinates of the point.
+
+        \return
+            The index of the closest node.
+     */
+    unsigned int getClosestNode(const Coord&);
+
+    //! For a given x-y coordinate, find the index of the closest node.
     /*! \param x
             The x position of the point.
 
@@ -147,6 +156,15 @@ public:
     unsigned int getClosestNode(double, double);
 
     //! For a given x-y coordinate, find the element that contains the point.
+    /*! \param point
+            The x-y position of the point.
+
+        \return
+            The index of the containing element.
+     */
+    unsigned int getElement(const Coord&);
+
+    //! For a given x-y coordinate, find the element that contains the point.
     /*! \param x
             The x position of the point.
 
@@ -154,7 +172,7 @@ public:
             The y position of the point.
 
         \return
-            The index of containing element.
+            The index of the containing element.
      */
     unsigned int getElement(double, double);
 
