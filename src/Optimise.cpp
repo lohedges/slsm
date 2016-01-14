@@ -327,12 +327,13 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
     gradient[0] = 0;
     for (unsigned int i=1;i<nConstraints+1;i++) gradient[i] = 0;
 
-    // If all lambda values are zero then we need a fix for the
-    // analytic gradient calculation. This is because side constraints
-    // for boundary points lying exactly on the domain boundary will
-    // be active for lambda < 0 and inactive for lambda > 0. As such,
-    // the gradient will be half as large, i.e. only positive lambda
-    // contributes.
+    /* If all lambda values are zero then we need a fix for the
+       analytic gradient calculation. This is because side constraints
+       for boundary points lying exactly on the domain boundary will
+       be active for lambda < 0 and inactive for lambda > 0. As such,
+       the gradient will be half as large, i.e. only positive lambda
+       contributes.
+     */
 
     // Sum lambda values.
     double lambdaSum = 0;
