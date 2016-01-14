@@ -26,11 +26,13 @@ double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& g
 Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
                    const std::vector<double>& constraintDistances_,
                    std::vector<double>& lambdas_,
-                   std::vector<double>& velocities_) :
+                   std::vector<double>& velocities_,
+                   double& timeStep_) :
                    boundaryPoints(boundaryPoints_),
                    constraintDistances(constraintDistances_),
                    lambdas(lambdas_),
-                   velocities(velocities_)
+                   velocities(velocities_),
+                   timeStep(timeStep_)
 {
     // Set number of points and constraints.
     nPoints = boundaryPoints.size();
@@ -129,6 +131,13 @@ double Optimise::solve()
     // Unscale the lambda values.
     for (unsigned int i=0;i<nConstraints+1;i++)
         lambdas[i] *= scaleFactors[i];
+
+    // Effective time step.
+    timeStep = std::abs(lambdas[0]);
+
+    // Convert to actual velocities (rather than displacements).
+    for (unsigned int i=0;i<nPoints;i++)
+        velocities[i] /= timeStep;
 
     return optObjective;
 }
@@ -277,6 +286,12 @@ void Optimise::computeLambdaLimits()
 
 void Optimise::computeVelocities(const std::vector<double>& lambda)
 {
+    /* Note that this actually computes the boundary movement vector,
+       which is the velocity multiplied by the time step. Velocities
+       are computed (by dividing by the effective time step) once the
+       solution has been found.
+     */
+
     // Loop over all boundary points.
     for (unsigned int i=0;i<nPoints;i++)
     {

@@ -66,9 +66,16 @@ public:
         \param velocities_
             The optimum boundary movement vector (velocity). This array is modified.
             The velocity function is defined to be positive acting in from the boundary.
+
+        \param timeStep_
+            The effective time step. The optimum boundary movement vector is the
+            velocity vector multiplied by the time step. In many level set problems
+            the time step is assumed to be one, i.e. the boundary movement and
+            velocity vectors are equivalent. The effective time step is taken as
+            the absolute value of the lambda value for the objective, i.e. abs(lambdas[0]).
      */
     Optimise(const std::vector<BoundaryPoint>&, const std::vector<double>&,
-        std::vector<double>&, std::vector<double>&);
+        std::vector<double>&, std::vector<double>&, double&);
 
     //! Execute the NLopt SLSQP solver.
     /*! \return
@@ -109,6 +116,9 @@ private:
 
     /// A reference to a vector of optimum velocity values (to be found by solver).
     std::vector<double>& velocities;
+
+    /// The effective time step.
+    double& timeStep;
 
     /// Whether the velocity side limit is active for each boundary point.
     std::vector<bool> isSideLimit;
