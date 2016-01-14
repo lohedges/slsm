@@ -92,6 +92,7 @@ int main(int argc, char** argv)
 
     // Data structures for Optimise class.
     std::vector<double> constraintDistances, lambdas, velocities;
+    double timeStep;
 
     // Resize vectors.
     velocities.resize(boundary.points.size());
@@ -99,7 +100,7 @@ int main(int argc, char** argv)
     lambdas.resize(1);
 
     // Test optimisation class.
-    Optimise optimise(boundary.points, constraintDistances, lambdas, velocities);
+    Optimise optimise(boundary.points, constraintDistances, lambdas, velocities, timeStep);
     optimise.queryReturnCode();
     optimise.solve();
     optimise.queryReturnCode();
@@ -109,6 +110,7 @@ int main(int argc, char** argv)
         std::cout << "VEL: " << i << ' ' << velocities[i] << '\n';
 
     std::cout << "LAM: " << lambdas[0] << '\n';
+    std::cout << "TIMESTEP: " << timeStep << '\n';
 
     return (EXIT_SUCCESS);
 }
