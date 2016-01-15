@@ -91,23 +91,22 @@ int main(int argc, char** argv)
         boundary.points[i].sensitivities[0] = -1.0;
 
     // Data structures for Optimise class.
-    std::vector<double> constraintDistances, lambdas, velocities;
+    std::vector<double> constraintDistances, lambdas;
     double timeStep;
 
     // Resize vectors.
-    velocities.resize(boundary.points.size());
     constraintDistances.resize(1);
     lambdas.resize(1);
 
     // Test optimisation class.
-    Optimise optimise(boundary.points, constraintDistances, lambdas, velocities, timeStep);
+    Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
     optimise.queryReturnCode();
     optimise.solve();
     optimise.queryReturnCode();
 
     // Print results.
     for (unsigned int i=0;i<boundary.points.size();i++)
-        std::cout << "VEL: " << i << ' ' << velocities[i] << '\n';
+        std::cout << "VEL: " << i << ' ' << boundary.points[i].velocity << '\n';
 
     std::cout << "LAM: " << lambdas[0] << '\n';
     std::cout << "TIMESTEP: " << timeStep << '\n';
