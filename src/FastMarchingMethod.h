@@ -48,7 +48,7 @@ namespace FMM_NodeStatus
 
 // MAIN CLASS
 
-/*! An implementation of the Fast Marching Method for finding
+/*! \brief An implementation of the Fast Marching Method for finding
     approximate solutions to boundary value problems of the Eikonal
     equation:
 

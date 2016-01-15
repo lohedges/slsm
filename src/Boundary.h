@@ -54,7 +54,7 @@ struct BoundarySegment
 
 // MAIN CLASS
 
-/*! A class computing and storing the discretised boundary.
+/*! \brief A class computing and storing the discretised boundary.
 
     The boundary is computed by looking for nodes lying exactly on the zero
     contour of the level set and then constructing a set of additional boundary
