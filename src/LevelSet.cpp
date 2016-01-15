@@ -27,6 +27,7 @@ LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_) :
 
     // Resize data structures.
     signedDistance.resize(nNodes);
+    velocity.resize(nNodes);
     gradient.resize(nNodes);
     narrowBand.resize(nNodes);
 
@@ -74,6 +75,10 @@ error:
 }
 
 void LevelSet::update()
+{
+}
+
+void LevelSet::computeGradient()
 {
 }
 

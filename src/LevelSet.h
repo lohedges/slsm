@@ -84,7 +84,11 @@ public:
     //! Re-initialise the level set to a signed distance function.
     void reinitialise();
 
+    //! Compute the gradient of the signed distance function.
+    void computeGradient();
+
     std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
+    std::vector<double> velocity;           //!< The nodal signed normal velocity.
     std::vector<double> gradient;           //!< The nodal gradient of the level set function.
     std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
     std::vector<unsigned int> mines;        //!< Indices of nodes at the edge of the narrow band.
