@@ -15,6 +15,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Boundary.h"
 #include "LevelSet.h"
 
 LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_) :
@@ -78,7 +79,11 @@ void LevelSet::update()
 {
 }
 
-void LevelSet::computeGradient()
+void LevelSet::computeVelocities(const std::vector<BoundaryPoint>& boundaryPoints)
+{
+}
+
+void LevelSet::computeGradients()
 {
 }
 

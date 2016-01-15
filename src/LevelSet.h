@@ -18,6 +18,10 @@
 #ifndef _LEVELSET_H
 #define _LEVELSET_H
 
+//! Forward declaration of BoundaryPoint data structure.
+//! Might want to move all non-class types to Common.h, i.e. affiliated types.
+struct BoundaryPoint;
+
 #include <cmath>
 #include <cstdlib>
 
@@ -84,8 +88,14 @@ public:
     //! Re-initialise the level set to a signed distance function.
     void reinitialise();
 
+    //! Extend boundary point velocities to the level set nodes.
+    /*! \param boundaryPoints
+            A reference to a vector of boundary points.
+     */
+    void computeVelocities(const std::vector<BoundaryPoint>&);
+
     //! Compute the gradient of the signed distance function.
-    void computeGradient();
+    void computeGradients();
 
     std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
     std::vector<double> velocity;           //!< The nodal signed normal velocity.
