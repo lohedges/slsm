@@ -23,15 +23,13 @@ double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& g
     return reinterpret_cast<Optimise*>(wrapperData->callback)->callback(lambda, gradient, wrapperData->index);
 }
 
-Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
+Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
                    const std::vector<double>& constraintDistances_,
                    std::vector<double>& lambdas_,
-                   std::vector<double>& velocities_,
                    double& timeStep_) :
                    boundaryPoints(boundaryPoints_),
                    constraintDistances(constraintDistances_),
                    lambdas(lambdas_),
-                   velocities(velocities_),
                    timeStep(timeStep_)
 {
     // Set number of points and constraints.
@@ -47,6 +45,7 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
     }
 
     // Resize data structures.
+    displacements.resize(nPoints);
     isSideLimit.resize(nPoints);
     negativeLambdaLimits.resize(nConstraints + 1);
     positiveLambdaLimits.resize(nConstraints + 1);
@@ -58,8 +57,8 @@ Optimise::Optimise(const std::vector<BoundaryPoint>& boundaryPoints_,
 
 double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
 {
-    // Calculate the boundary movement vector (velocities).
-    computeVelocities(lambda);
+    // Calculate the boundary displacement vector.
+    computeDisplacements(lambda);
 
     // Compute the gradients.
     if (!gradient.empty())
@@ -122,11 +121,11 @@ double Optimise::solve()
     // Unscale the objective function change.
     optObjective /= scaleFactors[0];
 
-    // Compute the optimum velocity vector.
-    computeVelocities(lambdas);
+    // Compute the optimum displacement vector.
+    computeDisplacements(lambdas);
 
-    // Rescale the velocities and lambda values (if necessary).
-    rescaleVelocities();
+    // Rescale the displacements and lambda values (if necessary).
+    rescaleDisplacements();
 
     // Unscale the lambda values.
     for (unsigned int i=0;i<nConstraints+1;i++)
@@ -135,9 +134,9 @@ double Optimise::solve()
     // Effective time step.
     timeStep = std::abs(lambdas[0]);
 
-    // Convert to actual velocities (rather than displacements).
+    // Calculate boundary point velocities.
     for (unsigned int i=0;i<nPoints;i++)
-        velocities[i] /= timeStep;
+        boundaryPoints[i].velocity = displacements[i] / timeStep;
 
     return optObjective;
 }
@@ -284,14 +283,8 @@ void Optimise::computeLambdaLimits()
     }
 }
 
-void Optimise::computeVelocities(const std::vector<double>& lambda)
+void Optimise::computeDisplacements(const std::vector<double>& lambda)
 {
-    /* Note that this actually computes the boundary movement vector,
-       which is the velocity multiplied by the time step. Velocities
-       are computed (by dividing by the effective time step) once the
-       solution has been found.
-     */
-
     // Loop over all boundary points.
     for (unsigned int i=0;i<nPoints;i++)
     {
@@ -299,19 +292,19 @@ void Optimise::computeVelocities(const std::vector<double>& lambda)
         isSideLimit[i] = false;
 
         // Initialise component for objective.
-        velocities[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
+        displacements[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
 
         // Add components for constraints.
         for (unsigned int j=1;j<nConstraints+1;j++)
-            velocities[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[j];
+            displacements[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[j];
 
         // Check side limits if point lies close to domain boundary.
         if (boundaryPoints[i].isDomain)
         {
             // Apply side limit.
-            if (velocities[i] < boundaryPoints[i].negativeLimit)
+            if (displacements[i] < boundaryPoints[i].negativeLimit)
             {
-                velocities[i] = boundaryPoints[i].negativeLimit;
+                displacements[i] = boundaryPoints[i].negativeLimit;
                 isSideLimit[i] = true;
             }
         }
@@ -320,14 +313,14 @@ void Optimise::computeVelocities(const std::vector<double>& lambda)
 
 double Optimise::computeFunction(unsigned int index)
 {
-    // This method assumes that velocities have already been calculated.
+    // This method assumes that displacements have already been calculated.
 
     // Intialise function.
     double func = 0;
 
     // Integrate function over boundary points.
     for (unsigned int i=0;i<nPoints;i++)
-        func += (scaleFactors[index] * velocities[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
+        func += (scaleFactors[index] * displacements[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
 
     if (index == 0) return func;
     else return (func - (scaleFactors[index] * constraintDistancesScaled[index - 1]));
@@ -396,16 +389,16 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
     }
 }
 
-void Optimise::rescaleVelocities()
+void Optimise::rescaleDisplacements()
 {
-    // Check for CFL violation and rescale the velocities
+    // Check for CFL violation and rescale the displacments
     // and lambda values if necessary.
 
-    // Maximum velocity magnitude.
-    double maxVel = 0;
+    // Maximum displacement magnitude.
+    double maxDisp = 0;
 
-    // Velocity to rescale to (site dependent CFL limit).
-    double vRescale;
+    // Displacment to rescale to (site dependent CFL limit).
+    double dispRescale;
 
     // Loop over all boundary points.
     for (unsigned int i=0;i<nPoints;i++)
@@ -413,38 +406,38 @@ void Optimise::rescaleVelocities()
         // Whether CFL is violated.
         bool isCFL = false;
 
-        if (velocities[i] < boundaryPoints[i].negativeLimit)
+        if (displacements[i] < boundaryPoints[i].negativeLimit)
         {
-            vRescale = -boundaryPoints[i].negativeLimit;
+            dispRescale = -boundaryPoints[i].negativeLimit;
             isCFL = true;
         }
-        else if (velocities[i] > boundaryPoints[i].positiveLimit)
+        else if (displacements[i] > boundaryPoints[i].positiveLimit)
         {
-            vRescale = boundaryPoints[i].positiveLimit;
+            dispRescale = boundaryPoints[i].positiveLimit;
             isCFL = true;
         }
 
         if (isCFL)
         {
-            double vel = std::abs(velocities[i]);
+            double disp = std::abs(displacements[i]);
 
             // Check if current maximum is exceeded.
-            if (vel > maxVel) maxVel = vel;
+            if (disp > maxDisp) maxDisp = disp;
         }
     }
 
-    // CFL condition is violated, rescale velocities.
-    if (maxVel)
+    // CFL condition is violated, rescale displacements.
+    if (maxDisp)
     {
         // Scaling factor.
-        double scale = vRescale / maxVel;
+        double scale = dispRescale / maxDisp;
 
         // Scale lambda values.
         for (unsigned int i=0;i<nConstraints+1;i++)
             lambdas[i] *= scale;
 
-        // Recompute the velocity vector.
-        computeVelocities(lambdas);
+        // Recompute the displacement vector.
+        computeDisplacements(lambdas);
     }
 }
 

@@ -44,7 +44,7 @@ struct NLoptWrapper
  */
 double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data);
 
-/*!\brief A class to solve for the optimum boundary movement vector (velocity).
+/*!\brief A class to solve for the optimum velocity vector.
 
     We make use of the NLopt SLSQP solver:
         http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
@@ -63,19 +63,14 @@ public:
         \param lambdas_
             The optimum lambda values. This array is modified.
 
-        \param velocities_
-            The optimum boundary movement vector (velocity). This array is modified.
-            The velocity function is defined to be positive acting in from the boundary.
-
         \param timeStep_
-            The effective time step. The optimum boundary movement vector is the
+            The effective time step. The optimum boundary displacement vector is the
             velocity vector multiplied by the time step. In many level set problems
-            the time step is assumed to be one, i.e. the boundary movement and
-            velocity vectors are equivalent. The effective time step is taken as
-            the absolute value of the lambda value for the objective, i.e. abs(lambdas[0]).
+            the time step is assumed to be one, i.e. the displacement and velocity
+            vectors are equivalent. The effective time step is taken as the absolute
+            value of the lambda value for the objective, i.e. abs(lambdas[0]).
      */
-    Optimise(const std::vector<BoundaryPoint>&, const std::vector<double>&,
-        std::vector<double>&, std::vector<double>&, double&);
+    Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&);
 
     //! Execute the NLopt SLSQP solver.
     /*! \return
@@ -106,7 +101,7 @@ private:
     unsigned int nConstraints;
 
     /// A reference to a vector of boundary points.
-    const std::vector<BoundaryPoint>& boundaryPoints;
+    std::vector<BoundaryPoint>& boundaryPoints;
 
     /// A reference to a vector of constraint violation distances.
     const std::vector<double>& constraintDistances;
@@ -114,13 +109,13 @@ private:
     /// A reference to a vector of optimum lambda values (to be found by solver).
     std::vector<double>& lambdas;
 
-    /// A reference to a vector of optimum velocity values (to be found by solver).
-    std::vector<double>& velocities;
-
     /// The effective time step.
     double& timeStep;
 
-    /// Whether the velocity side limit is active for each boundary point.
+    /// The boundary point displacement vector.
+    std::vector<double> displacements;
+
+    /// Whether the displacement side limit is active for each boundary point.
     std::vector<bool> isSideLimit;
 
     /// Negative lambda limits.
@@ -147,11 +142,11 @@ private:
     //! Compute lambda limits.
     void computeLambdaLimits();
 
-    //! Compute the boundary movement vector (velocities).
+    //! Compute the boundary movement vector.
     /*! \param lambda
             A vector of lambda values (objective, then constraints).
      */
-    void computeVelocities(const std::vector<double>&);
+    void computeDisplacements(const std::vector<double>&);
 
     //! Compute the change in the objective or constraint functions.
     /*! \param index
@@ -171,8 +166,8 @@ private:
      */
     void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
 
-    //! Rescale velocities and lambda values if the CFL condition is violated.
-    void rescaleVelocities();
+    //! Rescale displacements and lambda values if the CFL condition is violated.
+    void rescaleDisplacements();
 };
 
 #endif  /* _OPTIMISE_H */
