@@ -35,6 +35,7 @@ struct BoundaryPoint
 {
     Coord coord;                        //!< Coordinate of the boundary point.
     double length;                      //!< Integral length of the boundary point.
+    double velocity;                    //!< Normal velocity (positive acts inwards).
     double negativeLimit;               //!< Movement limit in negative direction (inwards).
     double positiveLimit;               //!< Movement limit in positive direction (outwards).
     bool isDomain;                      //!< Whether the point lies close to the domain boundary.
