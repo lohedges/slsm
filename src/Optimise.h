@@ -167,7 +167,10 @@ private:
     void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
 
     //! Rescale displacements and lambda values if the CFL condition is violated.
-    void rescaleDisplacements();
+    /*! \return
+            The scale factor.
+     */
+    double rescaleDisplacements();
 };
 
 #endif  /* _OPTIMISE_H */

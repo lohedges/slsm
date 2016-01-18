@@ -32,8 +32,7 @@ Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
                    lambdas(lambdas_),
                    timeStep(timeStep_)
 {
-    // Set number of points and constraints.
-    nPoints = boundaryPoints.size();
+    // Store number of constraints.
     nConstraints = lambdas.size() - 1;
 
     // Check for empty constraint distances vector.
@@ -45,8 +44,6 @@ Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
     }
 
     // Resize data structures.
-    displacements.resize(nPoints);
-    isSideLimit.resize(nPoints);
     negativeLambdaLimits.resize(nConstraints + 1);
     positiveLambdaLimits.resize(nConstraints + 1);
     scaleFactors.resize(nConstraints + 1);
@@ -70,8 +67,20 @@ double Optimise::callback(const std::vector<double>& lambda, std::vector<double>
 
 double Optimise::solve()
 {
+    // Store number of boundary points.
+    // This can change between successive optimisation calls.
+    nPoints = boundaryPoints.size();
+
+    // Resize boundary point dependent data structures.
+    displacements.resize(nPoints);
+    isSideLimit.resize(nPoints);
+
     // Compute the scale factors for the objective end constraints.
     computeScaleFactors();
+
+    // Scale inital lambda estimates.
+    for (unsigned int i=0;i<nConstraints+1;i++)
+        lambdas[i] /= scaleFactors[0];
 
     // Compute scaled constraint change distances.
     computeConstraintDistances();
@@ -115,19 +124,17 @@ double Optimise::solve()
     // The optimum value of the objective function.
     double optObjective;
 
-    // Perform the optimisation.
+    // Perform the optimisation. The previous lambda values will
+    // be used as an initial estimate for the solution.
     returnCode = opt.optimize(lambdas, optObjective);
-
-    // Unscale the objective function change.
-    optObjective /= scaleFactors[0];
 
     // Compute the optimum displacement vector.
     computeDisplacements(lambdas);
 
     // Rescale the displacements and lambda values (if necessary).
-    rescaleDisplacements();
+    optObjective *= rescaleDisplacements();
 
-    // Unscale the lambda values.
+    // Calculate the unscaled lambda values.
     for (unsigned int i=0;i<nConstraints+1;i++)
         lambdas[i] *= scaleFactors[i];
 
@@ -138,7 +145,8 @@ double Optimise::solve()
     for (unsigned int i=0;i<nPoints;i++)
         boundaryPoints[i].velocity = displacements[i] / timeStep;
 
-    return optObjective;
+    // Return unscaled objective change.
+    return (optObjective / scaleFactors[0]);
 }
 
 void Optimise::computeScaleFactors()
@@ -389,7 +397,7 @@ void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<d
     }
 }
 
-void Optimise::rescaleDisplacements()
+double Optimise::rescaleDisplacements()
 {
     // Check for CFL violation and rescale the displacments
     // and lambda values if necessary.
@@ -438,7 +446,12 @@ void Optimise::rescaleDisplacements()
 
         // Recompute the displacement vector.
         computeDisplacements(lambdas);
+
+        // Return the scale factor.
+        return scale;
     }
+
+    return 1.0;
 }
 
 void Optimise::queryReturnCode()
