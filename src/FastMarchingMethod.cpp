@@ -253,14 +253,32 @@ void FastMarchingMethod::initialiseTrial()
                         // Check that node status hasn't been updated.
                         if (nodeStatus[i] == FMM_NodeStatus::NONE)
                         {
-                            // Flag node as in trial band.
-                            nodeStatus[i] = FMM_NodeStatus::TRIAL;
+                            if (isVelocity)
+                            {
+                                // Node lies inside the narrow band region.
+                                if (mesh.nodes[i].isActive)
+                                {
+                                    // Flag node as in trial band.
+                                    nodeStatus[i] = FMM_NodeStatus::TRIAL;
 
-                            // Get distance from zero contour.
-                            (*signedDistance)[i] = updateNode(i);
+                                    // Get distance from zero contour.
+                                    (*signedDistance)[i] = updateNode(i);
 
-                            // Add to heap.
-                            heapPtr[i] = heap->push(i, std::abs((*signedDistance)[i]));
+                                    // Add to heap.
+                                    heapPtr[i] = heap->push(i, std::abs((*signedDistance)[i]));
+                                }
+                            }
+                            else
+                            {
+                                // Flag node as in trial band.
+                                nodeStatus[i] = FMM_NodeStatus::TRIAL;
+
+                                // Get distance from zero contour.
+                                (*signedDistance)[i] = updateNode(i);
+
+                                // Add to heap.
+                                heapPtr[i] = heap->push(i, std::abs((*signedDistance)[i]));
+                            }
                         }
                     }
                 }
@@ -375,11 +393,26 @@ void FastMarchingMethod::solve()
                             // Neighbour has no status (far field).
                             else if (nodeStatus[naddr] == FMM_NodeStatus::NONE)
                             {
-                                // Mark node as in trial band.
-                                nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
+                                if (isVelocity)
+                                {
+                                    // Node lies inside the narrow band region.
+                                    if (mesh.nodes[naddr].isActive)
+                                    {
+                                        // Mark node as in trial band.
+                                        nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
 
-                                // Push onto heap.
-                                heapPtr[naddr] = heap->push(naddr, std::abs(d));
+                                        // Push onto heap.
+                                        heapPtr[naddr] = heap->push(naddr, std::abs(d));
+                                    }
+                                }
+                                else
+                                {
+                                    // Mark node as in trial band.
+                                    nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
+
+                                    // Push onto heap.
+                                    heapPtr[naddr] = heap->push(naddr, std::abs(d));
+                                }
                             }
                         }
                     }
