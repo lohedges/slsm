@@ -101,7 +101,7 @@ int main(int argc, char** argv)
     // Test optimisation class.
     Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
     optimise.queryReturnCode();
-    optimise.solve();
+    double areaChange = optimise.solve();
     optimise.queryReturnCode();
 
     // Print results.
@@ -110,6 +110,7 @@ int main(int argc, char** argv)
 
     std::cout << "LAM: " << lambdas[0] << '\n';
     std::cout << "TIMESTEP: " << timeStep << '\n';
+    std::cout << "AREA CHANGE: " << areaChange << '\n';
 
     return (EXIT_SUCCESS);
 }
