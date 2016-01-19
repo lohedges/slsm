@@ -286,8 +286,8 @@ void Optimise::computeLambdaLimits()
     // Dummy values for now.
     for (unsigned int i=0;i<nConstraints+1;i++)
     {
-        negativeLambdaLimits[i] = -200;
-        positiveLambdaLimits[i] = 200;
+        negativeLambdaLimits[i] = -1000;
+        positiveLambdaLimits[i] = 1000;
     }
 }
 
