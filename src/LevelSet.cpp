@@ -57,6 +57,7 @@ LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_, const std::vector<Hole>
 
     // Resize data structures.
     signedDistance.resize(nNodes);
+    velocity.resize(nNodes);
     gradient.resize(nNodes);
     narrowBand.resize(nNodes);
 
@@ -81,6 +82,14 @@ void LevelSet::update()
 
 void LevelSet::computeVelocities(const std::vector<BoundaryPoint>& boundaryPoints)
 {
+    // Initialise velocity (map boundary points to boundary nodes).
+    initialiseVelocities(boundaryPoints);
+
+    // Initialise fast marching method object.
+    FastMarchingMethod fmm(mesh, false);
+
+    // Re-initialise the signed distance function.
+    fmm.march(signedDistance, velocity);
 }
 
 void LevelSet::computeGradients()
@@ -257,5 +266,67 @@ void LevelSet::initialiseNarrowBand()
             // Flag node as inactive.
             mesh.nodes[i].isActive = false;
         }
+    }
+}
+
+void LevelSet::initialiseVelocities(const std::vector<BoundaryPoint>& boundaryPoints)
+{
+    // Map boundary point velocities to nodes of the level set domain
+    // using inverse squared distance interpolation.
+
+    // Loop over all nodes.
+    for (unsigned int i=0;i<nNodes;i++)
+    {
+        // Number of neighbouring boundary points.
+        unsigned int nPoints = mesh.nodes[i].nBoundaryPoints;
+
+        // Node has a single neighbouring boundary point.
+        if (nPoints == 1)
+            velocity[i] = boundaryPoints[mesh.nodes[i].boundaryPoints[0]].velocity;
+
+        // Node has a two neighbouring boundary points.
+        else if (nPoints == 2)
+        {
+            // The indices of the two boundary points.
+            unsigned int point1 = mesh.nodes[i].boundaryPoints[0];
+            unsigned int point2 = mesh.nodes[i].boundaryPoints[1];
+
+            // Distances from the first point (x and y components).
+            double dx1 = std::abs(mesh.nodes[i].coord.x - boundaryPoints[point1].coord.x);
+            double dy1 = std::abs(mesh.nodes[i].coord.y - boundaryPoints[point1].coord.y);
+
+            // Distances from the second point (x and y components).
+            double dx2 = std::abs(mesh.nodes[i].coord.x - boundaryPoints[point2].coord.x);
+            double dy2 = std::abs(mesh.nodes[i].coord.y - boundaryPoints[point2].coord.y);
+
+            // Squared distances.
+            double rSqd1 = dx1*dx1 + dy1*dy1;
+            double rSqd2 = dx2*dx2 + dy2*dy2;
+
+            // Weighting factors.
+            double weight1 = 0.0;
+            double weight2 = 0.0;
+
+            // If one point lies exactly on a node, then use only that velocity.
+            if (rSqd1 < 1e-6) weight1 = 1.0;
+            else if (rSqd2 < 1e-6) weight2 = 1.0;
+
+            // Determine weights (inverse squared distance).
+            else
+            {
+                weight1 = 1.0 / rSqd1;
+                weight2 = 1.0 / rSqd2;
+            }
+
+            // Calculate total weight.
+            double totalWeight = weight1 + weight2;
+
+            // Store interpolated nodal velocity: v = (w1*v1 + w2*v2) / (w1 + w2)
+            velocity[i] = ((weight1 * boundaryPoints[point1].velocity)
+                        + (weight2 * boundaryPoints[point2].velocity)) / totalWeight;
+        }
+
+        // No neighbouring points.
+        else velocity[i] = 0;
     }
 }

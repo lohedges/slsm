@@ -126,6 +126,12 @@ private:
 
     //! Initialise the narrow band region.
     void initialiseNarrowBand();
+
+    //! Initialise velocities for boundary nodes.
+    /*! \param boundaryPoints
+            A reference to a vector of boundary points.
+     */
+    void initialiseVelocities(const std::vector<BoundaryPoint>&);
 };
 
 #endif  /* _LEVELSET_H */
