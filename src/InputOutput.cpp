@@ -56,13 +56,25 @@ void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh
     fprintf(pFile, "\nY_COORDINATES %d int\n", 1 + mesh.height);
     for (unsigned int i=0;i<=mesh.height;i++) {fprintf(pFile, "%d ", i);}
     fprintf(pFile, "\nZ_COORDINATES 1 int\n0\n\n");
+    fprintf(pFile, "POINT_DATA %d\n", mesh.nNodes);
 
     // Write the nodal signed distance to file.
-    fprintf(pFile, "POINT_DATA %d\n", mesh.nNodes);
-    fprintf(pFile, "SCALARS level-set float 1\n");
+    fprintf(pFile, "SCALARS distance float 1\n");
     fprintf(pFile, "LOOKUP_TABLE default\n");
     for (unsigned int i=0;i<mesh.nNodes;i++)
         fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
+
+    // Write the nodal velocity to file.
+    fprintf(pFile, "SCALARS velocity float 1\n");
+    fprintf(pFile, "LOOKUP_TABLE default\n");
+    for (unsigned int i=0;i<mesh.nNodes;i++)
+        fprintf(pFile, "%lf\n", levelSet.velocity[i]);
+
+    // Write the nodal gradient to file.
+    fprintf(pFile, "SCALARS gradient float 1\n");
+    fprintf(pFile, "LOOKUP_TABLE default\n");
+    for (unsigned int i=0;i<mesh.nNodes;i++)
+        fprintf(pFile, "%lf\n", levelSet.gradient[i]);
 
     fclose(pFile);
 
@@ -103,7 +115,7 @@ void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
     for (unsigned int i=0;i<mesh.nNodes;i++)
     {
         if (isXY) fprintf(pFile, "%lf %lf ", mesh.nodes[i].coord.x, mesh.nodes[i].coord.y);
-        fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
+        fprintf(pFile, "%lf %lf %lf\n", levelSet.signedDistance[i], levelSet.velocity[i], levelSet.gradient[i]);
     }
 
     fclose(pFile);
