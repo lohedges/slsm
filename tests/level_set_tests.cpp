@@ -17,8 +17,6 @@
 
 #include "lsm.h"
 
-#include "lsm.h"
-
 int testSignedDistance()
 {
     // A test for correct initialisation of the signed distance function.
@@ -39,7 +37,7 @@ int testSignedDistance()
     holes.push_back(hole);
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Diagonal of reduced 3x3 box.
     double diag = sqrt(18);

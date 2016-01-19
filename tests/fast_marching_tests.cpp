@@ -17,8 +17,6 @@
 
 #include "lsm.h"
 
-#include "lsm.h"
-
 int testUpwindFiniteDifference()
 {
     // A test for a correct upwind finite difference
@@ -32,7 +30,7 @@ int testUpwindFiniteDifference()
     std::vector<Hole> hole;
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, hole);
+    LevelSet levelSet(mesh, hole, 0.5, 3);
 
     // Place all nodes outside the structure.
     for (unsigned int i=0;i<levelSet.nNodes;i++)

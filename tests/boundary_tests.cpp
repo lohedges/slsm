@@ -31,7 +31,7 @@ int testBoundaryPoints()
     holes.push_back(Hole(1, 1, 1));
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
@@ -178,7 +178,7 @@ int testBoundarySegments()
     holes.push_back(Hole(1, 1, 1));
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
@@ -298,7 +298,7 @@ int testBoundarySymmetry()
     holes.push_back(Hole(1, 1, 1));
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
@@ -386,7 +386,7 @@ int testConnectivity()
     holes.push_back(Hole(1, 1, 1));
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
@@ -450,7 +450,7 @@ int testAreaFraction()
     holes.push_back(Hole(1, 1, 1));
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, 3, holes);
+    LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
@@ -566,38 +566,6 @@ error:
     return 1;
 }
 
-int testHoleCount()
-{
-    // Initialise a mesh.
-    Mesh mesh(160, 80, false);
-
-    // Initialise the level set function (default Swiss cheese).
-    LevelSet levelSet(mesh, 3);
-
-    // Re-initialise the level set to a signed distance function.
-    levelSet.reinitialise();
-
-    // Initialise the boundary object.
-    Boundary boundary(mesh, levelSet);
-
-    // Discretise the boundary.
-    boundary.discretise();
-
-    // Compute element areas.
-    boundary.computeAreaFractions();
-
-    // Compute the number of holes.
-    boundary.computeHoles();
-
-    // Check that the number of holes is correct.
-    check(boundary.nHoles == 24, "Number of holes is incorrect!");
-
-    return 0;
-
-error:
-    return 1;
-}
-
 int all_tests()
 {
     mu_suite_start();
@@ -607,7 +575,6 @@ int all_tests()
     mu_run_test(testBoundarySymmetry);
     mu_run_test(testConnectivity);
     mu_run_test(testAreaFraction);
-    mu_run_test(testHoleCount);
 
     return 0;
 }

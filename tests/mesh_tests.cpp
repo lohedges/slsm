@@ -17,8 +17,6 @@
 
 #include "lsm.h"
 
-#include "lsm.h"
-
 int testMeshSize()
 {
     // Initialise a 3x3 periodic mesh.
