@@ -83,7 +83,13 @@ public:
     LevelSet(Mesh&, unsigned int, const std::vector<Hole>&);
 
     //! Update the level set function.
-    void update();
+    /*! \param timeStep
+            The time step.
+
+        \return
+            Whether the signed distance was reinitialised.
+     */
+    bool update(double);
 
     //! Re-initialise the level set to a signed distance function.
     void reinitialise();
@@ -95,7 +101,10 @@ public:
     void computeVelocities(const std::vector<BoundaryPoint>&);
 
     //! Compute the gradient of the signed distance function.
-    void computeGradients();
+    /*! \param timeStep
+            The time step for the level set update.
+     */
+    void computeGradients(const double timeStep);
 
     std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
     std::vector<double> velocity;           //!< The nodal signed normal velocity.
@@ -132,6 +141,27 @@ private:
             A reference to a vector of boundary points.
      */
     void initialiseVelocities(const std::vector<BoundaryPoint>&);
+
+    //! Compute WENO gradient approximation.
+    /*! \param v1
+            The value of the function at the first stencil point.
+
+        \param v2
+            The value of the function at the second stencil point.
+
+        \param v3
+            The value of the function at the third stencil point.
+
+        \param v4
+            The value of the function at the fourth stencil point.
+
+        \param v5
+            The value of the function at the fifth stencil point.
+
+        \return
+            The smoothed function (gradient).
+     */
+    double gradWENO(double, double, double, double, double);
 };
 
 #endif  /* _LEVELSET_H */
