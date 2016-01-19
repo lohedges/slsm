@@ -71,13 +71,9 @@ int main(int argc, char** argv)
     unsigned int nHoles = boundary.computeHoles();
 
     // Print some statistics.
-    std::cout << "Boundary length:   " << boundary.length << '\n';
+    std::cout << "\nBoundary length:   " << boundary.length << '\n';
     std::cout << "Material fraction: " << (boundary.area / (mesh.width*mesh.height)) << '\n';
     std::cout << "Number of holes:   " << nHoles << '\n';
-
-    // Save LSF info (ParaView and txt file).
-    io.saveLevelSetVTK(1, mesh, levelSet);
-    io.saveLevelSetTXT(1, mesh, levelSet, "", true);
 
     // Save boundary points and segments (txt file).
     io.saveBoundaryPointsTXT(1, boundary);
@@ -100,17 +96,18 @@ int main(int argc, char** argv)
 
     // Test optimisation class.
     Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
-    optimise.queryReturnCode();
     double areaChange = optimise.solve();
-    optimise.queryReturnCode();
 
-    // Print results.
-    for (unsigned int i=0;i<boundary.points.size();i++)
-        std::cout << "VEL: " << i << ' ' << boundary.points[i].velocity << '\n';
+    // Print optimisation results.
+    std::cout << "Time step:         " << timeStep << '\n';
+    std::cout << "Area change:       " << areaChange << '\n';
 
-    std::cout << "LAM: " << lambdas[0] << '\n';
-    std::cout << "TIMESTEP: " << timeStep << '\n';
-    std::cout << "AREA CHANGE: " << areaChange << '\n';
+    // Extend boundary point velocities to all level set nodes.
+    levelSet.computeVelocities(boundary.points);
+
+    // Save LSF info (ParaView and txt file).
+    io.saveLevelSetVTK(1, mesh, levelSet);
+    io.saveLevelSetTXT(1, mesh, levelSet, "", true);
 
     return (EXIT_SUCCESS);
 }
