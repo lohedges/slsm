@@ -113,9 +113,6 @@ private:
     /// A copy of the initial signed distance function.
     std::vector<double> signedDistanceCopy;
 
-    /// A copy of the initial velocity field.
-    std::vector<double> velocityCopy;
-
     /// A pointer to the signed distance vector.
     std::vector<double>* signedDistance;
 
