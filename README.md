@@ -143,8 +143,8 @@ velocity capping and ensure that variable scaling is consistent and transparent.
 ## To Do
 Next on the agenda...
 
-* Map boundary point velocities to the level set grid.
-* Start working on `Sensitivity` and `Gradient` classes.
+* Start working on level set gradient calculation. Will then have a complete
+level set code for area optimisation, i.e. no sensitivity calculation needed.
 
 ## Limitations
 * Limited to two-dimensional systems.
