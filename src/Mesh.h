@@ -186,7 +186,6 @@ public:
 
 private:
     const bool isPeriodic;          //!< Whether the grid has periodic boundaries.
-    const double tolerance = 1e-6;  //!< Rounding tolerance.
 
     //! Initialise mesh nodes.
     void initialiseNodes();
