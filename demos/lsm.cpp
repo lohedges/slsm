@@ -54,8 +54,8 @@ int main(int argc, char** argv)
     // Number of cycles since re-initialisation.
     unsigned int nReinit = 0;
 
-    // Integrate for 50 time steps.
-    for (unsigned int i=0;i<50;i++)
+    // Integrate for 100 time steps.
+    for (unsigned int i=0;i<100;i++)
     {
         std::cout << "\nStarting iteration: " << i+1 << '\n';
 
@@ -113,7 +113,8 @@ int main(int argc, char** argv)
         // Re-initialise the signed distance function.
         if (!isReinitialised)
         {
-            if (nReinit == 20)
+            // For now, reinitialise every step.
+            if (nReinit == 0)
             {
                 levelSet.reinitialise();
                 nReinit = 0;
