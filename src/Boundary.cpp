@@ -16,7 +16,6 @@
 */
 
 #include "Boundary.h"
-#include <iostream>
 
 Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
 {
