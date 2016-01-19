@@ -18,13 +18,19 @@
 #include "Boundary.h"
 #include "LevelSet.h"
 
-LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_) :
+LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_) :
     nNodes(mesh_.nNodes),
+    moveLimit(moveLimit_),
     mesh(mesh_),
     bandWidth(bandWidth_)
 {
+    int size = 0.2*mesh.nNodes;
+
     errno = EINVAL;
     check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+
+    errno = EINVAL;
+    check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
     // Resize data structures.
     signedDistance.resize(nNodes);
@@ -32,8 +38,9 @@ LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_) :
     gradient.resize(nNodes);
     narrowBand.resize(nNodes);
 
-    // Resize mines vector, 20% of nNodes is a reasonable estimate.
-    mines.resize(int(0.2*nNodes));
+    // Make sure that memory is sufficient (for small test systems).
+    size = std::max(100, size);
+    mines.resize(size);
 
     // Generate a Swiss cheese structure.
     initialise();
@@ -47,13 +54,19 @@ error:
     exit(EXIT_FAILURE);
 }
 
-LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_, const std::vector<Hole>& holes) :
+LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes, double moveLimit_, unsigned int bandWidth_) :
     nNodes(mesh_.nNodes),
+    moveLimit(moveLimit_),
     mesh(mesh_),
     bandWidth(bandWidth_)
 {
+    int size = 0.2*mesh.nNodes;
+
     errno = EINVAL;
     check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+
+    errno = EINVAL;
+    check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
     // Resize data structures.
     signedDistance.resize(nNodes);
@@ -61,8 +74,9 @@ LevelSet::LevelSet(Mesh& mesh_, unsigned int bandWidth_, const std::vector<Hole>
     gradient.resize(nNodes);
     narrowBand.resize(nNodes);
 
-    // Resize mines vector, 20% of nNodes is a reasonable estimate.
-    mines.resize(int(0.2*nNodes));
+    // Make sure that memory is sufficient (for small test systems).
+    size = std::max(100, size);
+    mines.resize(size);
 
     // Initialise level set function from hole array.
     initialise(holes);

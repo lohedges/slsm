@@ -65,22 +65,28 @@ public:
     /*! \param mesh_
             A reference to the fixed grid, finite-element mesh.
 
+        \param moveLimit_
+            The CFL limit (in units of the mesh grid spacing).
+
         \param bandWidth_
             The width of the narrow band region.
      */
-    LevelSet(Mesh&, unsigned int);
+    LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
 
     //! Constructor.
     /*! \param mesh_
             A reference to the fixed grid, finite-element mesh.
 
-        \param bandWidth_
-            The width of the narrow band region.
-
         \param holes
             A vector of holes.
+
+        \param moveLimit_
+            The CFL limit (in units of the mesh grid spacing).
+
+        \param bandWidth_
+            The width of the narrow band region.
      */
-    LevelSet(Mesh&, unsigned int, const std::vector<Hole>&);
+    LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
 
     //! Update the level set function.
     /*! \param timeStep
@@ -114,6 +120,7 @@ public:
     const unsigned int nNodes;              //!< The number of nodes in the finite element grid.
     unsigned int nNarrowBand;               //!< The number of nodes in narrow band.
     unsigned int nMines;                    //!< The number of mine nodes.
+    const double moveLimit;                 //!< The boundary movement limit (CFL condition).
 
 private:
     Mesh& mesh;                             //!< A reference to the finite element mesh.
