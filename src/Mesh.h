@@ -184,6 +184,9 @@ public:
     const unsigned int nElements;   //!< The total number of grid elements.
     const unsigned int nNodes;      //!< The total number of nodes.
 
+    // Mapping between (x, y) coordinates and one dimensional nodes indices.
+    std::vector<std::vector<unsigned int> > xyToIndex;
+
 private:
     const bool isPeriodic;          //!< Whether the grid has periodic boundaries.
 

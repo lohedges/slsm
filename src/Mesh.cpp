@@ -31,6 +31,11 @@ Mesh::Mesh(unsigned int width_,
     elements.resize(nElements);
     nodes.resize(nNodes);
 
+    // Resize 2D to 1D mapping vector.
+    xyToIndex.resize(width+1);
+    for (unsigned int i=0;i<width+1;i++)
+        xyToIndex[i].resize(height+1);
+
     // Calculate node nearest neighbours.
     initialiseNodes();
 
@@ -136,6 +141,9 @@ void Mesh::initialiseNodes()
         // Set node coordinates.
         nodes[i].coord.x = x;
         nodes[i].coord.y = y;
+
+        // Add to 2D mapping vector.
+        xyToIndex[x][y] = i;
 
         // Determine nearest neighbours.
         initialiseNeighbours(i, x, y);
