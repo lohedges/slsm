@@ -16,6 +16,7 @@
 */
 
 #include "Boundary.h"
+#include <iostream>
 
 Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
 {
@@ -856,17 +857,17 @@ void Boundary::generateAdjacencyMatrix(std::vector<std::vector<bool> >& adjacenc
 unsigned int Boundary::computeHoles(std::vector<std::vector<bool> >& adjacencyMatrix)
 {
     // Zero the number of holes.
-   nHoles = 0;
+    nHoles = 0;
 
     // Whether a boundary point has already been visited.
-    std::vector<bool> isVisited(adjacencyMatrix[0].size());
+    std::vector<bool> isVisited(nPoints);
 
     // Initialise vector.
-    for (unsigned int i=0;i<isVisited.size();i++)
+    for (unsigned int i=0;i<nPoints;i++)
         isVisited[i] = false;
 
     // Perform a depth first search starting at all boundary points.
-    for (unsigned int i=0;i<isVisited.size();i++)
+    for (unsigned int i=0;i<nPoints;i++)
     {
         unsigned int depth = 0;
         depthFirstSearch(i, i, adjacencyMatrix, isVisited, depth);
