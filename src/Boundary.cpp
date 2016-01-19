@@ -642,9 +642,9 @@ void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
     // Assume two sensitivities to start with (objective and a single constraint).
     point.sensitivities.resize(2);
 
-    // Initialise movement (velocity) limits (half grid spacing in each direction).
-    point.negativeLimit = -0.5;
-    point.positiveLimit = 0.5;
+    // Initialise movement limit (CFL condition).
+    point.negativeLimit = -levelSet.moveLimit;
+    point.positiveLimit = levelSet.moveLimit;
 
     // Check whether point lies within half a grid spacing of the domain boundary.
     // If so, modify the lower movement limit so that point can't move outside of
