@@ -57,12 +57,16 @@ void FastMarchingMethod::march(std::vector<double>& signedDistance_)
 
 void FastMarchingMethod::march(std::vector<double>& signedDistance_, std::vector<double>& velocity_)
 {
+    /* Extend boundary velocities to all nodes within the narrow band region.
+
+       Note that this method assumes that boundary point velocities have
+       already been mapped to the level set nodes using inverse squared
+       distance interpolation, or similar.
+     */
+
     signedDistance = &signedDistance_;
     velocity = &velocity_;
     isVelocity = true;
-
-    // Resize local velocity array.
-    velocityCopy.resize(mesh.nNodes);
 
     // Initialise the set of frozen boundary nodes.
     initialiseFrozen();
@@ -87,8 +91,6 @@ void FastMarchingMethod::initialiseFrozen()
     {
         // Store a copy of the level set.
         signedDistanceCopy[i] = (*signedDistance)[i];
-
-        if (isVelocity) velocityCopy[i] = (*velocity)[i];
 
         // Make sure node isn't masked.
         if (nodeStatus[i] != FMM_NodeStatus::MASKED)
@@ -118,9 +120,6 @@ void FastMarchingMethod::initialiseFrozen()
             // Initialise distance array.
             double dist[2] = {0, 0};
 
-            // Initialise velocity array.
-            double vel[2] = {0, 0};
-
             // Loop over all neighbours.
             for (unsigned int j=0;j<4;j++)
             {
@@ -145,14 +144,7 @@ void FastMarchingMethod::initialiseFrozen()
 
                         // Check if distance is less than current value.
                         if (dist[dim] == 0 || dist[dim] > d)
-                        {
-                            // Store distance.
                             dist[dim] = d;
-
-                            // Store velocity.
-                            if (isVelocity)
-                                vel[dim] = velocityCopy[i] + d * (velocityCopy[neighbour] - velocityCopy[i]);
-                        }
                     }
                 }
             }
@@ -179,27 +171,6 @@ void FastMarchingMethod::initialiseFrozen()
 
                 // Increment number of frozen nodes.
                 nFrozen++;
-
-                if (isVelocity)
-                {
-                    double numerator = 0;
-                    double denominator = 0;
-
-                    for (unsigned int j=0;j<2;j++)
-                    {
-                        if (dist[j] != 0)
-                        {
-                            numerator += vel[j] / (dist[j] * dist[j]);
-                            denominator += 1.0 / (dist[j] * dist[j]);
-                        }
-                    }
-
-                    errno = 0;
-                    check(denominator != 0, "Divide by zero error.");
-
-                    // Update velocity.
-                    (*velocity)[i] = numerator / denominator;
-                }
             }
         }
     }
