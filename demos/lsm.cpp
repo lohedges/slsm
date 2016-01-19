@@ -33,27 +33,17 @@ int main(int argc, char** argv)
 #endif
 
     // Initialise a mesh.
-    //Mesh mesh(160, 80, false);
-    Mesh mesh(100, 100, false);
+    Mesh mesh(200, 200, false);
 
     // Create a hole.
     std::vector<Hole> holes;
-    holes.push_back(Hole(50, 50, 20));
+    holes.push_back(Hole(100, 100, 80));
 
     // Initialise the level set function (from hole vector).
-    LevelSet levelSet(mesh, 3, holes);
-
-    // Initialise the level set function (default Swiss cheese).
-    //LevelSet levelSet(mesh, 3);
+    LevelSet levelSet(mesh, holes, 0.5, 3);
 
     // Initialise io object.
     InputOutput io;
-
-    // Read Peter's level set.
-    /*std::ifstream infile("input.txt");
-    unsigned int i = 0;
-    while (infile >> levelSet.signedDistance[i])
-        i++;*/
 
     // Re-initialise the level set to a signed distance function.
     levelSet.reinitialise();
@@ -61,53 +51,79 @@ int main(int argc, char** argv)
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
 
-    // Discretise the boundary.
-    boundary.discretise();
+    // Number of cycles since re-initialisation.
+    unsigned int nReinit = 0;
 
-    // Compute element areas.
-    boundary.computeAreaFractions();
+    // Integrate for 50 time steps.
+    for (unsigned int i=0;i<50;i++)
+    {
+        std::cout << "\nStarting iteration: " << i+1 << '\n';
 
-    // Compute number of holes.
-    unsigned int nHoles = boundary.computeHoles();
+        // Discretise the boundary.
+        boundary.discretise();
 
-    // Print some statistics.
-    std::cout << "\nBoundary length:   " << boundary.length << '\n';
-    std::cout << "Material fraction: " << (boundary.area / (mesh.width*mesh.height)) << '\n';
-    std::cout << "Number of holes:   " << nHoles << '\n';
+        // Compute element areas.
+        boundary.computeAreaFractions();
 
-    // Save boundary points and segments (txt file).
-    io.saveBoundaryPointsTXT(1, boundary);
-    io.saveBoundarySegmentsTXT(1, mesh, boundary);
+        // Print some statistics.
+        std::cout << "Boundary length:    " << boundary.length << '\n';
+        std::cout << "Material fraction:  " << (boundary.area / (mesh.width*mesh.height)) << '\n';
 
-    // Save element area fractions.
-    io.saveAreaFractionsVTK(1, mesh);
-    io.saveAreaFractionsTXT(1, mesh, "", true);
+        // Fill sensitivities with dummy values.
+        for (unsigned int i=0;i<boundary.points.size();i++)
+            boundary.points[i].sensitivities[0] = 1.0;
 
-    for (unsigned int i=0;i<boundary.points.size();i++)
-        boundary.points[i].sensitivities[0] = -1.0;
+        // Data structures for Optimise class.
+        std::vector<double> constraintDistances, lambdas;
+        double timeStep;
 
-    // Data structures for Optimise class.
-    std::vector<double> constraintDistances, lambdas;
-    double timeStep;
+        // Resize vectors.
+        constraintDistances.resize(1);
+        lambdas.resize(1);
 
-    // Resize vectors.
-    constraintDistances.resize(1);
-    lambdas.resize(1);
+        // Test optimisation class.
+        Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
+        double areaChange = optimise.solve();
 
-    // Test optimisation class.
-    Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
-    double areaChange = optimise.solve();
+        // Print optimisation results.
+        std::cout << "Time step:          " << timeStep << '\n';
+        std::cout << "Area change:        " << areaChange << '\n';
 
-    // Print optimisation results.
-    std::cout << "Time step:         " << timeStep << '\n';
-    std::cout << "Area change:       " << areaChange << '\n';
+        // Extend boundary point velocities to all level set nodes.
+        levelSet.computeVelocities(boundary.points);
 
-    // Extend boundary point velocities to all level set nodes.
-    levelSet.computeVelocities(boundary.points);
+        // Compute gradient of signed distance function.
+        levelSet.computeGradients(timeStep);
 
-    // Save LSF info (ParaView and txt file).
-    io.saveLevelSetVTK(1, mesh, levelSet);
-    io.saveLevelSetTXT(1, mesh, levelSet, "", true);
+        // Save LSF info (ParaView and txt file).
+        io.saveLevelSetVTK(i+1, mesh, levelSet);
+        io.saveLevelSetTXT(i+1, mesh, levelSet, "", true);
+
+        // Save boundary points and segments (txt file).
+        io.saveBoundaryPointsTXT(i+1, boundary);
+        io.saveBoundarySegmentsTXT(i+1, mesh, boundary);
+
+        // Save element area fractions.
+        io.saveAreaFractionsVTK(i+1, mesh);
+        io.saveAreaFractionsTXT(i+1, mesh, "", true);
+
+        // Update the level set function.
+        bool isReinitialised = levelSet.update(timeStep);
+
+        // Re-initialise the signed distance function.
+        if (!isReinitialised)
+        {
+            if (nReinit == 20)
+            {
+                levelSet.reinitialise();
+                nReinit = 0;
+            }
+        }
+        else nReinit = 0;
+
+        // Increment number of steps since re-initialisation.
+        nReinit++;
+    }
 
     return (EXIT_SUCCESS);
 }
