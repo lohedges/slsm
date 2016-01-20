@@ -113,8 +113,8 @@ int main(int argc, char** argv)
         // Re-initialise the signed distance function.
         if (!isReinitialised)
         {
-            // For now, reinitialise every step.
-            if (nReinit == 0)
+            // Re-initialise every 20 iterations.
+            if (nReinit == 20)
             {
                 levelSet.reinitialise();
                 nReinit = 0;
