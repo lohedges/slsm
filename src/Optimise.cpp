@@ -405,8 +405,8 @@ double Optimise::rescaleDisplacements()
     // Maximum displacement magnitude.
     double maxDisp = 0;
 
-    // Displacment to rescale to (site dependent CFL limit).
-    double dispRescale;
+    // Displacment scale factor.
+    double scale;
 
     // Loop over all boundary points.
     for (unsigned int i=0;i<nPoints;i++)
@@ -414,14 +414,17 @@ double Optimise::rescaleDisplacements()
         // Whether CFL is violated.
         bool isCFL = false;
 
+        // Displacement limit (absolute site dependent CFL).
+        double dispLimit;
+
         if (displacements[i] < boundaryPoints[i].negativeLimit)
         {
-            dispRescale = -boundaryPoints[i].negativeLimit;
+            dispLimit = -boundaryPoints[i].negativeLimit;
             isCFL = true;
         }
         else if (displacements[i] > boundaryPoints[i].positiveLimit)
         {
-            dispRescale = boundaryPoints[i].positiveLimit;
+            dispLimit = boundaryPoints[i].positiveLimit;
             isCFL = true;
         }
 
@@ -430,16 +433,18 @@ double Optimise::rescaleDisplacements()
             double disp = std::abs(displacements[i]);
 
             // Check if current maximum is exceeded.
-            if (disp > maxDisp) maxDisp = disp;
+            if (disp > maxDisp)
+            {
+                // Store maximum displacement and scaling factor.
+                maxDisp = disp;
+                scale = dispLimit / maxDisp;
+            }
         }
     }
 
     // CFL condition is violated, rescale displacements.
     if (maxDisp)
     {
-        // Scaling factor.
-        double scale = dispRescale / maxDisp;
-
         // Scale lambda values.
         for (unsigned int i=0;i<nConstraints+1;i++)
             lambdas[i] *= scale;
