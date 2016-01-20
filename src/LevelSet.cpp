@@ -132,9 +132,6 @@ void LevelSet::computeGradients(const double timeStep)
     // Compute gradient of the signed distance function using upwind finite difference.
     // This function assumes that velocities have already been calculated.
 
-    // Gradient.
-    double grad;
-
     // Loop over all nodes in x direction.
     for (unsigned int i=0;i<mesh.width+1;i++)
     {
@@ -149,6 +146,9 @@ void LevelSet::computeGradients(const double timeStep)
 
             // Whether gradient has been computed.
             bool isGradient = false;
+
+            // Zero the gradient.
+            double grad = 0;
 
             // Node is on the left edge.
             if (i == 0)
