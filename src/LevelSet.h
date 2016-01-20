@@ -149,6 +149,18 @@ private:
      */
     void initialiseVelocities(const std::vector<BoundaryPoint>&);
 
+    //! Compute the nodal gradient of the signed distance function.
+    /*! \param node
+            The node index.
+
+        \param timeStep
+            The time step for the level set update.
+
+        \return
+            The gradient at the node.
+     */
+    double computeGradients(const unsigned int, const double);
+
     //! Compute WENO gradient approximation.
     /*! \param v1
             The value of the function at the first stencil point.
