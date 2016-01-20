@@ -145,6 +145,7 @@ Next on the agenda...
 
 * Test gradient calculation.
 * Fix hole calculation.
+* Create lsm namespace to avoid naming conflicts with external libraries, e.g. Deal II.
 
 ## Limitations
 * Limited to two-dimensional systems.
