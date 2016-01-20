@@ -542,7 +542,10 @@ void FastMarchingMethod::finaliseVelocity(unsigned int node)
                 // the front. Calculate the distance to the front in this direction.
                 double d = (*signedDistance)[node] - (*signedDistance)[neighbour];
 
-                if (dist[dim] == 0 || dist[dim] > d)
+                // Take absolute distance.
+                d = std::abs(d);
+
+                if ((dist[dim] == 0) || (dist[dim] > d))
                 {
                     dist[dim] = d;
                     vel[dim] = (*velocity)[neighbour];
@@ -556,8 +559,8 @@ void FastMarchingMethod::finaliseVelocity(unsigned int node)
 
     for (unsigned int i=0;i<2;i++)
     {
-        numerator += std::abs(dist[i]) * vel[i];
-        denominator += std::abs(dist[i]);
+        numerator += dist[i] * vel[i];
+        denominator += dist[i];
     }
 
     errno = 0;
