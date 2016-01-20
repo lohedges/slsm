@@ -45,13 +45,13 @@ int main(int argc, char** argv)
     // Initialise io object.
     InputOutput io;
 
-    // Re-initialise the level set to a signed distance function.
+    // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
     Boundary boundary(mesh, levelSet);
 
-    // Number of cycles since re-initialisation.
+    // Number of cycles since reinitialisation.
     unsigned int nReinit = 0;
 
     // Integrate for 100 time steps.
@@ -110,10 +110,10 @@ int main(int argc, char** argv)
         // Update the level set function.
         bool isReinitialised = levelSet.update(timeStep);
 
-        // Re-initialise the signed distance function.
+        // Reinitialise the signed distance function.
         if (!isReinitialised)
         {
-            // Re-initialise every 20 iterations.
+            // Reinitialise every 20 iterations.
             if (nReinit == 20)
             {
                 levelSet.reinitialise();
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
         }
         else nReinit = 0;
 
-        // Increment number of steps since re-initialisation.
+        // Increment number of steps since reinitialisation.
         nReinit++;
     }
 

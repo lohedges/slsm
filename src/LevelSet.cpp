@@ -105,7 +105,7 @@ bool LevelSet::update(double timeStep)
         // Boundary is within one grid spacing of the mine.
         if (std::abs(signedDistance[mines[i]]) < 1.0)
         {
-            // Re-initialise the signed distance function.
+            // Reinitialise the signed distance function.
             reinitialise();
 
             return true;
@@ -123,7 +123,7 @@ void LevelSet::computeVelocities(const std::vector<BoundaryPoint>& boundaryPoint
     // Initialise fast marching method object.
     FastMarchingMethod fmm(mesh, false);
 
-    // Re-initialise the signed distance function.
+    // Reinitialise the signed distance function.
     fmm.march(signedDistance, velocity);
 }
 
@@ -146,10 +146,10 @@ void LevelSet::reinitialise()
     // Initialise fast marching method object.
     FastMarchingMethod fmm(mesh, false);
 
-    // Re-initialise the signed distance function.
+    // Reinitialise the signed distance function.
     fmm.march(signedDistance);
 
-    // Re-initialise the narrow band.
+    // Reinitialise the narrow band.
     initialiseNarrowBand();
 }
 

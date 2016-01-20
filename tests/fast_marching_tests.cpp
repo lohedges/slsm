@@ -48,7 +48,7 @@ int testUpwindFiniteDifference()
         -2.43491262, -2.73579936, -2.00007282, -1.20710678, -0.50000000,
         -3.23422652, -2.43491262, -1.45118446, -0.50000000,  0.35355339};
 
-    // Re-initialise the signed distance function.
+    // Reinitialise the signed distance function.
     levelSet.reinitialise();
 
     // Set error number.

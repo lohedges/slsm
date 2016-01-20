@@ -40,13 +40,13 @@ struct BoundaryPoint;
   countour. Positive values are inside the structure, negative values are
   outside.
 
-  The class provides methods for initialising and re-initialising the signed
+  The class provides methods for initialising and reinitialising the signed
   distance function. The default initialisation uses a set of linearly spaced
   circular holes to create the classic "Swiss cheese" starting configuration.
   Alternatively, the user can pass the constructor a vector of holes that
   will be used to define the initial structure.
 
-  Re-initialisation of the signed distance function is performed using an
+  Reinitialisation of the signed distance function is performed using an
   implementation of the Fast Marching Method. A second-order stencil is used
   for the upwind finite difference scheme where possible.
 
@@ -97,7 +97,7 @@ public:
      */
     bool update(double);
 
-    //! Re-initialise the level set to a signed distance function.
+    //! Reinitialise the level set to a signed distance function.
     void reinitialise();
 
     //! Extend boundary point velocities to the level set nodes.
