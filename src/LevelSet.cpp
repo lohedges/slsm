@@ -39,7 +39,7 @@ LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_) :
     narrowBand.resize(nNodes);
 
     // Make sure that memory is sufficient (for small test systems).
-    size = std::max(100, size);
+    size = std::max(25, size);
     mines.resize(size);
 
     // Generate a Swiss cheese structure.
@@ -75,7 +75,7 @@ LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes, double moveLimit
     narrowBand.resize(nNodes);
 
     // Make sure that memory is sufficient (for small test systems).
-    size = std::max(100, size);
+    size = std::max(25, size);
     mines.resize(size);
 
     // Initialise level set function from hole array.
