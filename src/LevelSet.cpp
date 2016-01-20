@@ -92,7 +92,7 @@ error:
 
 bool LevelSet::update(double timeStep)
 {
-    // Loop over all nodes.
+    // Loop over all nodes in the narrow band.
     for (unsigned int i=0;i<nNarrowBand;i++)
     {
         unsigned int node = narrowBand[i];
@@ -524,10 +524,10 @@ void LevelSet::computeGradients(const double timeStep)
 
                 // Compute gradient using upwind scheme.
 
-                if (gradDown > 0) grad += gradDown * gradDown;
-                if (gradLeft > 0) grad += gradLeft * gradLeft;
-                if (gradUp < 0) grad += gradUp * gradUp;
-                if (gradRight < 0) grad += gradRight * gradRight;
+                if (gradDown > 0)   grad += gradDown * gradDown;
+                if (gradLeft > 0)   grad += gradLeft * gradLeft;
+                if (gradUp < 0)     grad += gradUp * gradUp;
+                if (gradRight < 0)  grad += gradRight * gradRight;
 
                 grad = sqrt(grad);
             }
