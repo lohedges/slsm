@@ -73,7 +73,7 @@ namespace lsm
             \param bandWidth_
                 The width of the narrow band region.
          */
-        LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
+        LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6);
 
         //! Constructor.
         /*! \param mesh_
@@ -88,7 +88,7 @@ namespace lsm
             \param bandWidth_
                 The width of the narrow band region.
          */
-        LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
+        LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6);
 
         //! Update the level set function.
         /*! \param timeStep
