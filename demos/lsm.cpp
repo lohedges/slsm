@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 
         // Fill sensitivities with dummy values.
         for (unsigned int i=0;i<boundary.points.size();i++)
-            boundary.points[i].sensitivities[0] = 1.0;
+            boundary.points[i].sensitivities[0] = -1.0;
 
         // Data structures for Optimise class.
         std::vector<double> constraintDistances, lambdas;
@@ -81,8 +81,8 @@ int main(int argc, char** argv)
         constraintDistances.resize(1);
         lambdas.resize(1);
 
-        // Test optimisation class.
-        lsm::Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
+        // Initialise the optimisation object for material area maximisation.
+        lsm::Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep, true);
         double areaChange = optimise.solve();
 
         // Print optimisation results.
