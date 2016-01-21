@@ -138,6 +138,9 @@ namespace lsm
         // Compute gradient of the signed distance function using upwind finite difference.
         // This function assumes that velocities have already been calculated.
 
+        // Reset gradients.
+        std::fill(gradient.begin(), gradient.end(), 0.0);
+
         // Loop over all nodes in the narrow band region.
         for (unsigned int i=0;i<nNarrowBand;i++)
         {
