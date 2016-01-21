@@ -28,172 +28,175 @@
     \brief A class for reading and writing data.
  */
 
-//! A class for reading and writing data.
-class InputOutput
+namespace lsm
 {
-public:
-    //! Constructor.
-    InputOutput();
+    //! A class for reading and writing data.
+    class InputOutput
+    {
+    public:
+        //! Constructor.
+        InputOutput();
 
-    //! Save the level set function as a ParaView VTK file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save the level set function as a ParaView VTK file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param levelSet
-            A reference to the level set object.
+            \param levelSet
+                A reference to the level set object.
 
-        \param outputDirectory
-            The output directory path (optional).
-     */
-    void saveLevelSetVTK(const unsigned int&, const Mesh&,
-        const LevelSet&, const std::string& outputDirectory = "") const;
+            \param outputDirectory
+                The output directory path (optional).
+        */
+        void saveLevelSetVTK(const unsigned int&, const Mesh&,
+            const LevelSet&, const std::string& outputDirectory = "") const;
 
-    //! Save the level set function as a ParaView VTK file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save the level set function as a ParaView VTK file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param levelSet
-            A reference to the level set object.
-     */
-    void saveLevelSetVTK(const std::ostringstream&, const Mesh&, const LevelSet&) const;
+            \param levelSet
+                A reference to the level set object.
+        */
+        void saveLevelSetVTK(const std::ostringstream&, const Mesh&, const LevelSet&) const;
 
-    //! Save the level set function as a plain text file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save the level set function as a plain text file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param levelSet
-            A reference to the level set object.
+            \param levelSet
+                A reference to the level set object.
 
-        \param outputDirectory
-            The output directory path (optional).
+            \param outputDirectory
+                The output directory path (optional).
 
-        \param isXY
-            Whether to also output the nodal x/y coordinates (optional).
-     */
-    void saveLevelSetTXT(const unsigned int&, const Mesh&, const LevelSet&,
-        const std::string& outputDirectory = "", bool isXY = false) const;
+            \param isXY
+                Whether to also output the nodal x/y coordinates (optional).
+        */
+        void saveLevelSetTXT(const unsigned int&, const Mesh&, const LevelSet&,
+            const std::string& outputDirectory = "", bool isXY = false) const;
 
-    //! Save the level set function as a plain text file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save the level set function as a plain text file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param levelSet
-            A reference to the level set object.
+            \param levelSet
+                A reference to the level set object.
 
-        \param isXY
-            Whether to also output the nodal x/y coordinates (optional).
-     */
-    void saveLevelSetTXT(const std::ostringstream&, const Mesh&, const LevelSet&, bool isXY = false) const;
+            \param isXY
+                Whether to also output the nodal x/y coordinates (optional).
+        */
+        void saveLevelSetTXT(const std::ostringstream&, const Mesh&, const LevelSet&, bool isXY = false) const;
 
-    //! Save boundary points as a plain text file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save boundary points as a plain text file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param boundary
-            A reference to the boundary object.
+            \param boundary
+                A reference to the boundary object.
 
-        \param outputDirectory
-            The output directory path (optional).
-     */
-    void saveBoundaryPointsTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
+            \param outputDirectory
+                The output directory path (optional).
+        */
+        void saveBoundaryPointsTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
 
-    //! Save boundary points as a plain text file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save boundary points as a plain text file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param boundary
-            A reference to the boundary object.
-     */
-    void saveBoundaryPointsTXT(const std::ostringstream&, const Boundary&) const;
+            \param boundary
+                A reference to the boundary object.
+        */
+        void saveBoundaryPointsTXT(const std::ostringstream&, const Boundary&) const;
 
-    //! Save boundary segments as a plain text file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save boundary segments as a plain text file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param boundary
-            A reference to the boundary object.
+            \param boundary
+                A reference to the boundary object.
 
-        \param outputDirectory
-            The output directory path (optional).
-     */
-    void saveBoundarySegmentsTXT(const unsigned int&, const Mesh&,
-        const Boundary&, const std::string& outputDirectory = "") const;
+            \param outputDirectory
+                The output directory path (optional).
+        */
+        void saveBoundarySegmentsTXT(const unsigned int&, const Mesh&,
+            const Boundary&, const std::string& outputDirectory = "") const;
 
-    //! Save boundary segments as a plain text file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save boundary segments as a plain text file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param boundary
-            A reference to the boundary object.
-     */
-    void saveBoundarySegmentsTXT(const std::ostringstream&, const Mesh&, const Boundary&) const;
+            \param boundary
+                A reference to the boundary object.
+        */
+        void saveBoundarySegmentsTXT(const std::ostringstream&, const Mesh&, const Boundary&) const;
 
-    //! Save the element area fractions as a ParaView VTK file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save the element area fractions as a ParaView VTK file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param outputDirectory
-            The output directory path (optional).
-     */
-    void saveAreaFractionsVTK(const unsigned int&, const Mesh&, const std::string& outputDirectory = "") const;
+            \param outputDirectory
+                The output directory path (optional).
+        */
+        void saveAreaFractionsVTK(const unsigned int&, const Mesh&, const std::string& outputDirectory = "") const;
 
-    //! Save the element area fractions as a ParaView VTK file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save the element area fractions as a ParaView VTK file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param mesh
-            A reference to the finite element mesh.
-     */
-    void saveAreaFractionsVTK(const std::ostringstream&, const Mesh&) const;
+            \param mesh
+                A reference to the finite element mesh.
+        */
+        void saveAreaFractionsVTK(const std::ostringstream&, const Mesh&) const;
 
-    //! Save element area fractions as a plain text file.
-    /*! \param datapoint
-            The datapoint of the current optimisation trajectory.
+        //! Save element area fractions as a plain text file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param outputDirectory
-            The output directory path (optional).
+            \param outputDirectory
+                The output directory path (optional).
 
-        \param isXY
-            Whether to also output the element x/y coordinates (optional).
-     */
-    void saveAreaFractionsTXT(const unsigned int&, const Mesh&,
-        const std::string& outputDirectory = "", bool isXY = false) const;
+            \param isXY
+                Whether to also output the element x/y coordinates (optional).
+        */
+        void saveAreaFractionsTXT(const unsigned int&, const Mesh&,
+            const std::string& outputDirectory = "", bool isXY = false) const;
 
-    //! Save element area fractions as a plain text file.
-    /*! \param fileName
-            The name of the data file.
+        //! Save element area fractions as a plain text file.
+        /*! \param fileName
+                The name of the data file.
 
-        \param mesh
-            A reference to the finite element mesh.
+            \param mesh
+                A reference to the finite element mesh.
 
-        \param isXY
-            Whether to also output the element x/y coordinates (optional).
-     */
-    void saveAreaFractionsTXT(const std::ostringstream&, const Mesh&, bool isXY = false) const;
-};
+            \param isXY
+                Whether to also output the element x/y coordinates (optional).
+        */
+        void saveAreaFractionsTXT(const std::ostringstream&, const Mesh&, bool isXY = false) const;
+    };
+}
 
 #endif  /* _INPUTOUTPUT_H */

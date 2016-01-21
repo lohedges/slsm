@@ -24,39 +24,42 @@
     \brief A simple circular hole data type.
  */
 
-//! Class for handling circular holes.
-class Hole
+namespace lsm
 {
-public:
-    //! Default constructor.
-    Hole();
+    //! Class for handling circular holes.
+    class Hole
+    {
+    public:
+        //! Default constructor.
+        Hole();
 
-    //! Constructor.
-    /*! \param x
-            The x coordinate of the hole.
+        //! Constructor.
+        /*! \param x
+                The x coordinate of the hole.
 
-        \param y
-            The x coordinate of the hole.
+            \param y
+                The x coordinate of the hole.
 
-        \param r
-            The radius of the hole.
-     */
-    Hole(double, double, double);
+            \param r
+                The radius of the hole.
+        */
+        Hole(double, double, double);
 
-    //! Constructor.
-    /*! \param coord_
-            The x-y coordinates of the hole.
+        //! Constructor.
+        /*! \param coord_
+                The x-y coordinates of the hole.
 
-        \param r
-            The radius of the hole.
-     */
-    Hole(Coord&, double);
+            \param r
+                The radius of the hole.
+        */
+        Hole(Coord&, double);
 
-    /// Coordinates.
-    Coord coord;
+        /// Coordinates.
+        Coord coord;
 
-    /// Radius.
-    double r;
-};
+        /// Radius.
+        double r;
+    };
+}
 
 #endif  /* _HOLE_H */

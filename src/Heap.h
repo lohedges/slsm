@@ -29,125 +29,128 @@
     \brief An implementation of a heap data structure (binary tree).
  */
 
-/*! \brief An implementation of a heap data structure (binary tree).
-
-    The heap is stored as a contiguous vector array. The children of a given
-    entry i are indexed as follows:
-
-        2*i + 1 = Left-hand child
-        2*i + 2 = Right-hand child
-
-    The heap is used to maintain an ascending order priority queue of unsigned
-    node distances from the zero iso-contour of the level set.
-
-    For efficiency, the heap is stored as a contiguous std::vector array,
-    rather than a linked list. The constructor needs to know the maximum number
-    of entries that will be added to the heap. This will number be computed in
-    the FastMarchingMethod::initialiseHeap method (which calculates the number
-    of far field nodes).
- */
-class Heap
+namespace lsm
 {
-public:
-    //! Constructor.
-    /*! \param maxLength_
-            The maximum number of entries in the heap.
+    /*! \brief An implementation of a heap data structure (binary tree).
 
-        \param isTest_
-            Whether to perform self testing of the heap (optional).
-     */
-    Heap(unsigned int, bool isTest_ = false);
+        The heap is stored as a contiguous vector array. The children of a given
+        entry i are indexed as follows:
 
-    //! Push a value onto the heap.
-    /*! \param address_
-            The address of the element to push (its array index).
+            2*i + 1 = Left-hand child
+            2*i + 2 = Right-hand child
 
-        \param value
-            The value of the element.
+        The heap is used to maintain an ascending order priority queue of unsigned
+        node distances from the zero iso-contour of the level set.
 
-        \return
-            The index of the value in the heap.
-     */
-    unsigned int push(unsigned int, double);
+        For efficiency, the heap is stored as a contiguous std::vector array,
+        rather than a linked list. The constructor needs to know the maximum number
+        of entries that will be added to the heap. This will number be computed in
+        the FastMarchingMethod::initialiseHeap method (which calculates the number
+        of far field nodes).
+    */
+    class Heap
+    {
+    public:
+        //! Constructor.
+        /*! \param maxLength_
+                The maximum number of entries in the heap.
 
-    //! Pop the top value from the heap.
-    /*! \param address_
-            The address (index) of top entry in the heap.
+            \param isTest_
+                Whether to perform self testing of the heap (optional).
+        */
+        Heap(unsigned int, bool isTest_ = false);
 
-        \param value
-            The value of the top entry in the heap.
-     */
-    void pop(unsigned int&, double&);
+        //! Push a value onto the heap.
+        /*! \param address_
+                The address of the element to push (its array index).
 
-    //! Set a specific heap entry.
-    /*! \param index
-            The index in the heap.
+            \param value
+                The value of the element.
 
-        \param newDistance
-            The new distance value to insert into the heap.
-     */
-    void set(unsigned int, double);
+            \return
+                The index of the value in the heap.
+        */
+        unsigned int push(unsigned int, double);
 
-    //! Test whether the heap is empty.
-    /*! \return
-            Whether the heap is empty (true) or contains entries (false).
-     */
-    bool empty() const;
+        //! Pop the top value from the heap.
+        /*! \param address_
+                The address (index) of top entry in the heap.
 
-    //! Return the value of the top entry in the heap.
-    /*! \return
-            The value currently at the top of the heap.
-     */
-    const double& peek() const;
+            \param value
+                The value of the top entry in the heap.
+        */
+        void pop(unsigned int&, double&);
 
-    //! Return the current size of the heap.
-    /* \return
-            The current size of the heap.
-     */
-    const unsigned int& size() const;
+        //! Set a specific heap entry.
+        /*! \param index
+                The index in the heap.
 
-private:
-    //! Test that the heap is correct.
-    void test() const;
+            \param newDistance
+                The new distance value to insert into the heap.
+        */
+        void set(unsigned int, double);
 
-    //! Sift a value up the heap.
-    /*! \param pos
-            The position in the heap.
-     */
-    void siftUp(unsigned int);
+        //! Test whether the heap is empty.
+        /*! \return
+                Whether the heap is empty (true) or contains entries (false).
+        */
+        bool empty() const;
 
-    //! Sift a value down the heap.
-    /*! \param startPos
-            The starting position in the heap.
+        //! Return the value of the top entry in the heap.
+        /*! \return
+                The value currently at the top of the heap.
+        */
+        const double& peek() const;
 
-        \param pos
-            The current position in the heap.
-     */
-    void siftDown(unsigned int, unsigned int);
+        //! Return the current size of the heap.
+        /* \return
+                The current size of the heap.
+        */
+        const unsigned int& size() const;
 
-    /// The maximum number of entries in the heap.
-    unsigned int maxLength;
+    private:
+        //! Test that the heap is correct.
+        void test() const;
 
-    /// The current size of the heap.
-    unsigned int heapLength;
+        //! Sift a value up the heap.
+        /*! \param pos
+                The position in the heap.
+        */
+        void siftUp(unsigned int);
 
-    /// The current size of the list.
-    unsigned int listLength;
+        //! Sift a value down the heap.
+        /*! \param startPos
+                The starting position in the heap.
 
-    /// The unsigned distance from the zero level set iso-contour.
-    std::vector<double> distance;
+            \param pos
+                The current position in the heap.
+        */
+        void siftDown(unsigned int, unsigned int);
 
-    /// The index of entries into the distance (or address) array.
-    std::vector<unsigned int> heap;
+        /// The maximum number of entries in the heap.
+        unsigned int maxLength;
 
-    /// The (original) grid address of each element in the heap.
-    std::vector<unsigned int> address;
+        /// The current size of the heap.
+        unsigned int heapLength;
 
-    /// A map from the index of distance (or address) to the current location of the heap element.
-    std::vector<unsigned int> backPointer;
+        /// The current size of the list.
+        unsigned int listLength;
 
-    /// Whether self testing of the heap is active.
-    bool isTest;
-};
+        /// The unsigned distance from the zero level set iso-contour.
+        std::vector<double> distance;
+
+        /// The index of entries into the distance (or address) array.
+        std::vector<unsigned int> heap;
+
+        /// The (original) grid address of each element in the heap.
+        std::vector<unsigned int> address;
+
+        /// A map from the index of distance (or address) to the current location of the heap element.
+        std::vector<unsigned int> backPointer;
+
+        /// Whether self testing of the heap is active.
+        bool isTest;
+    };
+}
 
 #endif  /* _HEAP_H */

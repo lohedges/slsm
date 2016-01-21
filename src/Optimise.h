@@ -23,154 +23,157 @@
 
 #include "Boundary.h"
 
-// ASSOCIATED DATA TYPES
-
-//! Wrapper structure for interfacing with NLopt.
-struct NLoptWrapper
+namespace lsm
 {
-    unsigned int index;     //!< Function index (0 = objective, 1, 2, ... = constraints).
-    void* callback;         //!< Pointer to callback function wrapper.
-};
+    // ASSOCIATED DATA TYPES
 
-//! NLopt callback function wrapper.
-/*! \param lambda
-        The current lambda value for each function.
+    //! Wrapper structure for interfacing with NLopt.
+    struct NLoptWrapper
+    {
+        unsigned int index;     //!< Function index (0 = objective, 1, 2, ... = constraints).
+        void* callback;         //!< Pointer to callback function wrapper.
+    };
 
-    \param gradient
-        The gradient of the change in objective or constraint with respect to each lambda.
-
-    \param data
-        Void pointer to NLoptWrapper data.
- */
-double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data);
-
-/*!\brief A class to solve for the optimum velocity vector.
-
-    We make use of the NLopt SLSQP solver:
-        http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
- */
-class Optimise
-{
-public:
-    //! Constructor.
-    /*! \param boundaryPoints_
-            A reference to a vector of boundary points.
-
-        \param constraintDistances_
-            Distance from violation for each constraint (negative values
-            indicate that we want to reduce the constraint function).
-
-        \param lambdas_
-            The optimum lambda values. This array is modified.
-
-        \param timeStep_
-            The effective time step. The optimum boundary displacement vector is the
-            velocity vector multiplied by the time step. In many level set problems
-            the time step is assumed to be one, i.e. the displacement and velocity
-            vectors are equivalent. The effective time step is taken as the absolute
-            value of the lambda value for the objective, i.e. abs(lambdas[0]).
-     */
-    Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&);
-
-    //! Execute the NLopt SLSQP solver.
-    /*! \return
-            The optimum value of the objective function.
-     */
-    double solve();
-
-    //! NLopt callback function.
+    //! NLopt callback function wrapper.
     /*! \param lambda
             The current lambda value for each function.
 
         \param gradient
             The gradient of the change in objective or constraint with respect to each lambda.
 
-        \param index
-            Function index, 0 = objective, 1, 2, 3, ... = constraints.
-     */
-    double callback(const std::vector<double>&, std::vector<double>&, unsigned int);
+        \param data
+            Void pointer to NLoptWrapper data.
+    */
+    double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data);
 
-    //! Query the NLopt return code.
-    void queryReturnCode();
+    /*!\brief A class to solve for the optimum velocity vector.
 
-private:
-    /// The number of boundary points.
-    unsigned int nPoints;
+        We make use of the NLopt SLSQP solver:
+            http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
+    */
+    class Optimise
+    {
+    public:
+        //! Constructor.
+        /*! \param boundaryPoints_
+                A reference to a vector of boundary points.
 
-    /// The number of constraints.
-    unsigned int nConstraints;
+            \param constraintDistances_
+                Distance from violation for each constraint (negative values
+                indicate that we want to reduce the constraint function).
 
-    /// A reference to a vector of boundary points.
-    std::vector<BoundaryPoint>& boundaryPoints;
+            \param lambdas_
+                The optimum lambda values. This array is modified.
 
-    /// A reference to a vector of constraint violation distances.
-    const std::vector<double>& constraintDistances;
+            \param timeStep_
+                The effective time step. The optimum boundary displacement vector is the
+                velocity vector multiplied by the time step. In many level set problems
+                the time step is assumed to be one, i.e. the displacement and velocity
+                vectors are equivalent. The effective time step is taken as the absolute
+                value of the lambda value for the objective, i.e. abs(lambdas[0]).
+        */
+        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&);
 
-    /// A reference to a vector of optimum lambda values (to be found by solver).
-    std::vector<double>& lambdas;
+        //! Execute the NLopt SLSQP solver.
+        /*! \return
+                The optimum value of the objective function.
+        */
+        double solve();
 
-    /// The effective time step.
-    double& timeStep;
+        //! NLopt callback function.
+        /*! \param lambda
+                The current lambda value for each function.
 
-    /// The boundary point displacement vector.
-    std::vector<double> displacements;
+            \param gradient
+                The gradient of the change in objective or constraint with respect to each lambda.
 
-    /// Whether the displacement side limit is active for each boundary point.
-    std::vector<bool> isSideLimit;
+            \param index
+                Function index, 0 = objective, 1, 2, 3, ... = constraints.
+        */
+        double callback(const std::vector<double>&, std::vector<double>&, unsigned int);
 
-    /// Negative lambda limits.
-    std::vector<double> negativeLambdaLimits;
+        //! Query the NLopt return code.
+        void queryReturnCode();
 
-    /// Positive lambda limits.
-    std::vector<double> positiveLambdaLimits;
+    private:
+        /// The number of boundary points.
+        unsigned int nPoints;
 
-    /// Scale factor for each function.
-    std::vector<double> scaleFactors;
+        /// The number of constraints.
+        unsigned int nConstraints;
 
-    /// Scaled constraint distances.
-    std::vector<double> constraintDistancesScaled;
+        /// A reference to a vector of boundary points.
+        std::vector<BoundaryPoint>& boundaryPoints;
 
-    /// Optimiser return code.
-    nlopt::result returnCode;
+        /// A reference to a vector of constraint violation distances.
+        const std::vector<double>& constraintDistances;
 
-    //! Compute scale factors.
-    void computeScaleFactors();
+        /// A reference to a vector of optimum lambda values (to be found by solver).
+        std::vector<double>& lambdas;
 
-    //! Compute constraint distances.
-    void computeConstraintDistances();
+        /// The effective time step.
+        double& timeStep;
 
-    //! Compute lambda limits.
-    void computeLambdaLimits();
+        /// The boundary point displacement vector.
+        std::vector<double> displacements;
 
-    //! Compute the boundary movement vector.
-    /*! \param lambda
-            A vector of lambda values (objective, then constraints).
-     */
-    void computeDisplacements(const std::vector<double>&);
+        /// Whether the displacement side limit is active for each boundary point.
+        std::vector<bool> isSideLimit;
 
-    //! Compute the change in the objective or constraint functions.
-    /*! \param index
-            Function index, 0 = objective, 1, 2, 3, ... = constraints.
-     */
-    double computeFunction(unsigned int);
+        /// Negative lambda limits.
+        std::vector<double> negativeLambdaLimits;
 
-    //! Compute the gradient of the objective or constraint functions.
-    /*! \param lambda
-            A vector of lambda values (objective, then constraints).
+        /// Positive lambda limits.
+        std::vector<double> positiveLambdaLimits;
 
-        \param gradient
-            The gradient of the change in objective or constraint with respect to each lambda.
+        /// Scale factor for each function.
+        std::vector<double> scaleFactors;
 
-        \param index
-            Function index, 0 = objective, 1, 2, 3, ... = constraints.
-     */
-    void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
+        /// Scaled constraint distances.
+        std::vector<double> constraintDistancesScaled;
 
-    //! Rescale displacements and lambda values if the CFL condition is violated.
-    /*! \return
-            The scale factor.
-     */
-    double rescaleDisplacements();
-};
+        /// Optimiser return code.
+        nlopt::result returnCode;
+
+        //! Compute scale factors.
+        void computeScaleFactors();
+
+        //! Compute constraint distances.
+        void computeConstraintDistances();
+
+        //! Compute lambda limits.
+        void computeLambdaLimits();
+
+        //! Compute the boundary movement vector.
+        /*! \param lambda
+                A vector of lambda values (objective, then constraints).
+        */
+        void computeDisplacements(const std::vector<double>&);
+
+        //! Compute the change in the objective or constraint functions.
+        /*! \param index
+                Function index, 0 = objective, 1, 2, 3, ... = constraints.
+        */
+        double computeFunction(unsigned int);
+
+        //! Compute the gradient of the objective or constraint functions.
+        /*! \param lambda
+                A vector of lambda values (objective, then constraints).
+
+            \param gradient
+                The gradient of the change in objective or constraint with respect to each lambda.
+
+            \param index
+                Function index, 0 = objective, 1, 2, 3, ... = constraints.
+        */
+        void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
+
+        //! Rescale displacements and lambda values if the CFL condition is violated.
+        /*! \return
+                The scale factor.
+        */
+        double rescaleDisplacements();
+    };
+}
 
 #endif  /* _OPTIMISE_H */

@@ -28,171 +28,174 @@
     \brief A class computing and storing the discretised boundary.
  */
 
-// ASSOCIATED DATA TYPES
-
-//! \brief A container for storing information associated with a boundary point.
-struct BoundaryPoint
+namespace lsm
 {
-    Coord coord;                        //!< Coordinate of the boundary point.
-    double length;                      //!< Integral length of the boundary point.
-    double velocity;                    //!< Normal velocity (positive acts inwards).
-    double negativeLimit;               //!< Movement limit in negative direction (inwards).
-    double positiveLimit;               //!< Movement limit in positive direction (outwards).
-    bool isDomain;                      //!< Whether the point lies close to the domain boundary.
-    std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
-};
+    // ASSOCIATED DATA TYPES
 
-//! \brief A container for storing information associated with a boundary segment.
-struct BoundarySegment
-{
-    unsigned int start;                 //!< Index of start point.
-    unsigned int end;                   //!< Index of end point.
-    unsigned int element;               //!< The element cut by the boundary segment.
-    double length;                      //!< Length of the boundary segment.
-    double weight;                      //!< Weighting factor for boundary segment.
-};
+    //! \brief A container for storing information associated with a boundary point.
+    struct BoundaryPoint
+    {
+        Coord coord;                        //!< Coordinate of the boundary point.
+        double length;                      //!< Integral length of the boundary point.
+        double velocity;                    //!< Normal velocity (positive acts inwards).
+        double negativeLimit;               //!< Movement limit in negative direction (inwards).
+        double positiveLimit;               //!< Movement limit in positive direction (outwards).
+        bool isDomain;                      //!< Whether the point lies close to the domain boundary.
+        std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
+    };
 
-// MAIN CLASS
+    //! \brief A container for storing information associated with a boundary segment.
+    struct BoundarySegment
+    {
+        unsigned int start;                 //!< Index of start point.
+        unsigned int end;                   //!< Index of end point.
+        unsigned int element;               //!< The element cut by the boundary segment.
+        double length;                      //!< Length of the boundary segment.
+        double weight;                      //!< Weighting factor for boundary segment.
+    };
 
-/*! \brief A class computing and storing the discretised boundary.
+    // MAIN CLASS
 
-    The boundary is computed by looking for nodes lying exactly on the zero
-    contour of the level set and then constructing a set of additional boundary
-    points by simple linear interpolation when the level set changes sign
-    between the nodes on an element edge.
+    /*! \brief A class computing and storing the discretised boundary.
 
-    The points vector holds coordinates for boundary points (both those lying
-    exactly on nodes of the finite element mesh, and the interpolated points).
-    Boundary segment data is stored in the segments vector.
- */
-class Boundary
-{
-public:
-    //! Constructor.
-    /*! \param mesh_
-            A reference to the finite element mesh.
+        The boundary is computed by looking for nodes lying exactly on the zero
+        contour of the level set and then constructing a set of additional boundary
+        points by simple linear interpolation when the level set changes sign
+        between the nodes on an element edge.
 
-        \param levelSet_
-            A reference to the level set object.
-     */
-    Boundary(Mesh&, LevelSet&);
+        The points vector holds coordinates for boundary points (both those lying
+        exactly on nodes of the finite element mesh, and the interpolated points).
+        Boundary segment data is stored in the segments vector.
+    */
+    class Boundary
+    {
+    public:
+        //! Constructor.
+        /*! \param mesh_
+                A reference to the finite element mesh.
 
-    //! Use linear interpolation to compute the discretised boundary
-    void discretise();
+            \param levelSet_
+                A reference to the level set object.
+        */
+        Boundary(Mesh&, LevelSet&);
 
-    //! Calculate the material area fraction in each element.
-    double computeAreaFractions();
+        //! Use linear interpolation to compute the discretised boundary
+        void discretise();
 
-    //! Calculate the number of holes (number of closed loops).
-    /*! \return The number of holes.
-     */
-    unsigned int computeHoles();
+        //! Calculate the material area fraction in each element.
+        double computeAreaFractions();
 
-    /// Vector of boundary points.
-    std::vector<BoundaryPoint> points;
+        //! Calculate the number of holes (number of closed loops).
+        /*! \return The number of holes.
+        */
+        unsigned int computeHoles();
 
-    /// Vector of boundary segments.
-    std::vector<BoundarySegment> segments;
+        /// Vector of boundary points.
+        std::vector<BoundaryPoint> points;
 
-    /// The number of boundary points.
-    unsigned int nPoints;
+        /// Vector of boundary segments.
+        std::vector<BoundarySegment> segments;
 
-    /// The number of boundary segments.
-    unsigned int nSegments;
+        /// The number of boundary points.
+        unsigned int nPoints;
 
-    /// The total length of the boundary.
-    double length;
+        /// The number of boundary segments.
+        unsigned int nSegments;
 
-    /// The total area fraction of the mesh.
-    double area;
+        /// The total length of the boundary.
+        double length;
 
-private:
-    /// A reference to the finite element mesh.
-    Mesh& mesh;
+        /// The total area fraction of the mesh.
+        double area;
 
-    /// A reference to the level set object.
-    LevelSet& levelSet;
+    private:
+        /// A reference to the finite element mesh.
+        Mesh& mesh;
 
-    //! Determine the status of the elements and nodes of the finite element grid.
-    void computeMeshStatus();
+        /// A reference to the level set object.
+        LevelSet& levelSet;
 
-    //! Check whether a boundary point has already been added.
-    /*! \param point
-            The coordinates of the boundary point (to be determined).
+        //! Determine the status of the elements and nodes of the finite element grid.
+        void computeMeshStatus();
 
-        \param node
-            The index of the adjacent node.
+        //! Check whether a boundary point has already been added.
+        /*! \param point
+                The coordinates of the boundary point (to be determined).
 
-        \param edge
-            The index of the element edge.
+            \param node
+                The index of the adjacent node.
 
-        \param distance
-            The distance from the node.
+            \param edge
+                The index of the element edge.
 
-        \return
-            The index of the boundary point if previously added, minus one if not.
-     */
-    int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
+            \param distance
+                The distance from the node.
 
-    //! Initialise a boundary point.
-    /*! \param point
-            A reference to a boundary point.
+            \return
+                The index of the boundary point if previously added, minus one if not.
+        */
+        int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
 
-        \param coord
-            The position vector of the boundary point.
-     */
-    void initialisePoint(BoundaryPoint&, const Coord&);
+        //! Initialise a boundary point.
+        /*! \param point
+                A reference to a boundary point.
 
-    //! Calculate the material area for an element cut by the boundary.
-    /*! \param element
-            A reference to the element.
+            \param coord
+                The position vector of the boundary point.
+        */
+        void initialisePoint(BoundaryPoint&, const Coord&);
 
-        \return
-            The area fraction.
-     */
-    double cutArea(const Element&);
+        //! Calculate the material area for an element cut by the boundary.
+        /*! \param element
+                A reference to the element.
 
-    //! Whether a point is clockwise of another. The origin point is 12 o'clock.
-    /*! \param point1
-            The coordinates of the first point.
+            \return
+                The area fraction.
+        */
+        double cutArea(const Element&);
 
-        \param point2
-            The coordinates of the second point.
+        //! Whether a point is clockwise of another. The origin point is 12 o'clock.
+        /*! \param point1
+                The coordinates of the first point.
 
-        \param centre
-            The coordinates of the element centre.
+            \param point2
+                The coordinates of the second point.
 
-        \return
-            Whether the first point is clockwise of the second.
-     */
-    bool isClockwise(const Coord&, const Coord&, const Coord&) const;
+            \param centre
+                The coordinates of the element centre.
 
-    //! Return the area of a polygon.
-    /*! \param vertices
-            A clockwise ordered vector of polygon vertices.
+            \return
+                Whether the first point is clockwise of the second.
+        */
+        bool isClockwise(const Coord&, const Coord&, const Coord&) const;
 
-        \param nVertices
-            The number of vertices.
+        //! Return the area of a polygon.
+        /*! \param vertices
+                A clockwise ordered vector of polygon vertices.
 
-        \param centre
-            The coordinates of the element centre.
+            \param nVertices
+                The number of vertices.
 
-        \return
-            The area of the polygon.
-     */
-    double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
+            \param centre
+                The coordinates of the element centre.
 
-    //! Return the length of a boundary segment.
-    /*! \param segment
-            A reference to the boundary segment.
+            \return
+                The area of the polygon.
+        */
+        double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
 
-        \return
-            The length of the bounary segment.
-     */
-    double segmentLength(const BoundarySegment&);
+        //! Return the length of a boundary segment.
+        /*! \param segment
+                A reference to the boundary segment.
 
-    //! Compute the (potentially weighted) integral length for each boundary point.
-    void computePointLengths();
-};
+            \return
+                The length of the bounary segment.
+        */
+        double segmentLength(const BoundarySegment&);
+
+        //! Compute the (potentially weighted) integral length for each boundary point.
+        void computePointLengths();
+    };
+}
 
 #endif  /* _BOUNDARY_H */
