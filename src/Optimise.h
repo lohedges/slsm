@@ -71,8 +71,11 @@ namespace lsm
                 the time step is assumed to be one, i.e. the displacement and velocity
                 vectors are equivalent. The effective time step is taken as the absolute
                 value of the lambda value for the objective, i.e. abs(lambdas[0]).
+
+            \param isMax_
+                Whether to maximise the objective function (default is to minimise).
         */
-        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&);
+        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&, bool isMax_ = false);
 
         //! Execute the NLopt SLSQP solver.
         /*! \return
@@ -113,6 +116,9 @@ namespace lsm
 
         /// The effective time step.
         double& timeStep;
+
+        /// Whether to maximise the objective function.
+        bool isMax;
 
         /// The boundary point displacement vector.
         std::vector<double> displacements;

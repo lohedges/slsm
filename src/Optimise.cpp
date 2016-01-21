@@ -28,11 +28,13 @@ namespace lsm
     Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
                     const std::vector<double>& constraintDistances_,
                     std::vector<double>& lambdas_,
-                    double& timeStep_) :
+                    double& timeStep_,
+                    bool isMax_) :
                     boundaryPoints(boundaryPoints_),
                     constraintDistances(constraintDistances_),
                     lambdas(lambdas_),
-                    timeStep(timeStep_)
+                    timeStep(timeStep_),
+                    isMax(isMax_)
     {
         // Store number of constraints.
         nConstraints = lambdas.size() - 1;
@@ -116,8 +118,9 @@ namespace lsm
         // Set convergence tolerance.
         opt.set_xtol_rel(1e-6);
 
-        // Specify that we want to minimise the objective function.
-        opt.set_min_objective(callbackWrapper, &objectiveWrapper);
+        // Specify whether we want to minimise or maximise the objective function.
+        if (isMax) opt.set_max_objective(callbackWrapper, &objectiveWrapper);
+        else       opt.set_min_objective(callbackWrapper, &objectiveWrapper);
 
         // Add the inequality constraints.
         for (unsigned int i=0;i<nConstraints;i++)
