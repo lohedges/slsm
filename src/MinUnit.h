@@ -10,6 +10,10 @@
 
 #include "Debug.h"
 
+/*! \file MinUnit.h
+    \brief A simple unit testing framework.
+ */
+
 #define mu_suite_start() int message = 0
 
 #define mu_assert(test, message) if (!(test)) { log_err(message); return message; }

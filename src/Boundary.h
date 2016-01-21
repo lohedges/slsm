@@ -25,7 +25,7 @@
 #include "LevelSet.h"
 
 /*! \file Boundary.h
-    \brief A class computing and storing the discretised boundary.
+    \brief A class for the discretised boundary.
  */
 
 namespace lsm

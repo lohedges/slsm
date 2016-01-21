@@ -19,6 +19,10 @@
 
 #include "FastMarchingMethod.h"
 
+/*! \file FastMarchingMethod.cpp
+    \brief An implementation of the Fast Marching Method.
+ */
+
 namespace lsm
 {
     FastMarchingMethod::FastMarchingMethod(const Mesh& mesh_, bool isTest_) :

@@ -17,6 +17,10 @@
 
 #include "Hole.h"
 
+/*! \file Hole.cpp
+    \brief A simple circular hole data type.
+ */
+
 namespace lsm
 {
     Hole::Hole() {}

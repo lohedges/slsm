@@ -17,6 +17,10 @@
 
 #include "Optimise.h"
 
+/*! \file Optimise.cpp
+    \brief A class for finding the solution for the optimum velocity vector.
+ */
+
 namespace lsm
 {
     double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data)

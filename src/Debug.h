@@ -8,6 +8,10 @@
 #include <errno.h>
 #include <string.h>
 
+/*! \file Debug.h
+    \brief A set of debugging macros.
+ */
+
 #ifdef NDEBUG
 #define lsm_debug(M, ...)
 #else

@@ -19,6 +19,10 @@
 
 #include "Heap.h"
 
+/*! \file Heap.cpp
+    \brief An implementation of a heap data structure (binary tree).
+ */
+
 namespace lsm
 {
     Heap::Heap(unsigned int maxLength_, bool isTest_) :

@@ -17,6 +17,10 @@
 
 #include "InputOutput.h"
 
+/*! \file InputOutput.cpp
+    \brief A class for reading and writing data.
+ */
+
 namespace lsm
 {
     InputOutput::InputOutput() {}

@@ -18,6 +18,10 @@
 #include "Boundary.h"
 #include "LevelSet.h"
 
+/*! \file LevelSet.cpp
+    \brief A class for the level set function.
+ */
+
 namespace lsm
 {
     LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_) :

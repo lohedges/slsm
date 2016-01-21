@@ -17,6 +17,10 @@
 
 #include "Boundary.h"
 
+/*! \file Boundary.cpp
+    \brief A class for the discretised boundary.
+ */
+
 namespace lsm
 {
     Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)

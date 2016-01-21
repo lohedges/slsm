@@ -17,6 +17,10 @@
 
 #include "Mesh.h"
 
+/*! \file Mesh.cpp
+    \brief A class for the fixed grid, finite-element mesh.
+ */
+
 namespace lsm
 {
     Mesh::Mesh(unsigned int width_,
