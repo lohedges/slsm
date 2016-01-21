@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "Heap.h"
 #include "LevelSet.h"
+#include "Mesh.h"
 
 /*! \file FastMarchingMethod.h
     \brief An implementation of the Fast Marching Method.
