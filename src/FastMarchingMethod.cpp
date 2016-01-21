@@ -85,6 +85,9 @@ namespace lsm
 
         // Find the fast marching solution.
         solve();
+
+        // Restore the original signed distance function. Only update velocities.
+        (*signedDistance) = signedDistanceCopy;
     }
 
     void FastMarchingMethod::initialiseFrozen()
