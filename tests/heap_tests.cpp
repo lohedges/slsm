@@ -28,7 +28,7 @@
 int testPush()
 {
     // Initialise heap.
-    Heap heap(10, true);
+    lsm::Heap heap(10, true);
 
     // Set error number.
     errno = 0;
@@ -42,10 +42,10 @@ int testPush()
         heap.push(i, value);
 
         // Check that heap size is correct.
-        check(heap.size() == unsigned(i + 1), "Heap push: incorrect heap size!");
+        lsm_check(heap.size() == unsigned(i + 1), "Heap push: incorrect heap size!");
 
         // Check that new value has sifted to the top of the heap.
-        check(heap.peek() == value, "Heap push: incorrect value at top of heap!");
+        lsm_check(heap.peek() == value, "Heap push: incorrect value at top of heap!");
     }
 
     return 0;
@@ -57,7 +57,7 @@ error:
 int testPop()
 {
     // Initialise random number generator.
-    MersenneTwister rng;
+    lsm::MersenneTwister rng;
 
     // Initialise vector of doubles.
     std::vector<double> vec(10);
@@ -73,7 +73,7 @@ int testPop()
     std::sort(sorted.begin(), sorted.end());
 
     // Initialise heap.
-    Heap heap(vec.size(), true);
+    lsm::Heap heap(vec.size(), true);
 
     // Initialise back pointer array.
     std::vector<unsigned int> heapPtr(vec.size());
@@ -94,7 +94,7 @@ int testPop()
         heap.pop(addr, value);
 
         // Make sure that values are in ascending order.
-        check(value == sorted[i], "Heap pop: incorrect value!");
+        lsm_check(value == sorted[i], "Heap pop: incorrect value!");
     }
 
     return 0;
@@ -106,7 +106,7 @@ error:
 int testSet()
 {
     // Initialise random number generator.
-    MersenneTwister rng;
+    lsm::MersenneTwister rng;
 
     // Initialise vector of doubles.
     std::vector<double> vec(10);
@@ -122,7 +122,7 @@ int testSet()
     std::sort(sorted.begin(), sorted.end());
 
     // Initialise heap.
-    Heap heap(vec.size(), true);
+    lsm::Heap heap(vec.size(), true);
 
     // Initialise back pointer array.
     std::vector<unsigned int> heapPtr(vec.size());
@@ -138,7 +138,7 @@ int testSet()
     errno = 0;
 
     // Check that top entry is correct.
-    check(heap.peek() == -100, "Heap set: incorrect value!");
+    lsm_check(heap.peek() == -100, "Heap set: incorrect value!");
 
     return 0;
 

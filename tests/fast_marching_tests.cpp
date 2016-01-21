@@ -24,13 +24,13 @@ int testUpwindFiniteDifference()
     // in scikit-fmm.
 
     // Initialise a 4x4 non-periodic mesh.
-    Mesh mesh(4, 4, false);
+    lsm::Mesh mesh(4, 4, false);
 
     // Create a single hole (just to pass to constructor).
-    std::vector<Hole> hole;
+    std::vector<lsm::Hole> hole;
 
     // Initialise the level set object.
-    LevelSet levelSet(mesh, hole, 0.5, 3);
+    lsm::LevelSet levelSet(mesh, hole, 0.5, 3);
 
     // Place all nodes outside the structure.
     for (unsigned int i=0;i<levelSet.nNodes;i++)
@@ -56,7 +56,7 @@ int testUpwindFiniteDifference()
 
     // Check signed distance against expected values.
     for (unsigned int i=0;i<levelSet.nNodes;i++)
-        check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
+        lsm_check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
 
     return 0;
 

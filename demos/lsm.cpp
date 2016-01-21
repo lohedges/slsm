@@ -33,23 +33,23 @@ int main(int argc, char** argv)
 #endif
 
     // Initialise a mesh.
-    Mesh mesh(200, 200, false);
+    lsm::Mesh mesh(200, 200, false);
 
     // Create a hole.
-    std::vector<Hole> holes;
-    holes.push_back(Hole(100, 100, 80));
+    std::vector<lsm::Hole> holes;
+    holes.push_back(lsm::Hole(100, 100, 80));
 
     // Initialise the level set function (from hole vector).
-    LevelSet levelSet(mesh, holes, 0.5, 3);
+    lsm::LevelSet levelSet(mesh, holes, 0.5, 3);
 
     // Initialise io object.
-    InputOutput io;
+    lsm::InputOutput io;
 
     // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(mesh, levelSet);
 
     // Number of cycles since reinitialisation.
     unsigned int nReinit = 0;
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         lambdas.resize(1);
 
         // Test optimisation class.
-        Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
+        lsm::Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep);
         double areaChange = optimise.solve();
 
         // Print optimisation results.
