@@ -48,6 +48,11 @@ namespace lsm
 
     /*!\brief A class to solve for the optimum velocity vector.
 
+        Find the velocity vector that minimises (or maximises) the change in the
+        objective function subject to an arbitrary number of inequality constraints.
+
+        Support for equality constraints will be added in a future version.
+
         We make use of the NLopt SLSQP solver:
             http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
     */
