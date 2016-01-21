@@ -422,7 +422,7 @@ namespace lsm
             }
 
             // Node is at top left corner.
-            if (y == mesh.height)
+            else if (y == mesh.height)
             {
                 // If signed distance at nodes to right and below is the same, then use
                 // the diagonal node for computing the gradient.
@@ -456,7 +456,7 @@ namespace lsm
             }
 
             // Node is at top right corner.
-            if (y == mesh.height)
+            else if (y == mesh.height)
             {
                 // If signed distance at nodes to left and below is the same, then use
                 // the diagonal node for computing the gradient.
@@ -484,116 +484,6 @@ namespace lsm
             // Node on left-hand edge.
             if (x == 0)
             {
-                v1 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
-                v2 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
-                v3 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
-
-                // Approximate derivatives outside of domain.
-                v4 = v3;
-                v5 = v3;
-            }
-
-            // One node to right of left-hand edge.
-            else if (x == 1)
-            {
-                v1 = signedDistance[mesh.xyToIndex[4][y]] - signedDistance[mesh.xyToIndex[3][y]];
-                v2 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
-                v3 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
-                v4 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
-
-                // Approximate derivatives outside of domain.
-                v5 = v3;
-            }
-
-            // Node on right-hand edge.
-            else if (x == mesh.width)
-            {
-                v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-
-                // Approximate derivatives outside of domain.
-                v3 = v4;
-                v2 = v4;
-                v1 = v4;
-            }
-
-            // One node to left of right-hand edge.
-            else if (x == (mesh.width - 1))
-            {
-                v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-
-                // Approximate derivatives outside of domain.
-                v2 = v3;
-                v1 = v3;
-            }
-
-            // Two nodes to left of right-hand edge.
-            else if (x == (mesh.width - 2))
-            {
-                v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-                v2 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
-
-                // Approximate derivatives outside of domain.
-                v1 = v2;
-            }
-
-            // Node lies in bulk.
-            else
-            {
-                v1 = signedDistance[mesh.xyToIndex[x+3][y]] - signedDistance[mesh.xyToIndex[x+2][y]];
-                v2 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
-                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-                v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-            }
-
-            double gradRight = sign * gradWENO(v1, v2, v3, v4, v5);
-
-            // Derivatives to left.
-
-            // Node on right-hand edge.
-            if (x == mesh.width)
-            {
-                v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
-                v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-
-                // Approximate derivatives outside of domain.
-                v4 = v3;
-                v5 = v3;
-            }
-
-            // One node to left of right-hand edge.
-            else if (x == (mesh.width-1))
-            {
-                v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
-                v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-                v4 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-
-                // Approximate derivatives outside of domain.
-                v5 = v4;
-            }
-
-            // Node on left-hand edge.
-            else if (x == 0)
-            {
-                v5 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
-                v4 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
-
-                // Approximate derivatives outside of domain.
-                v3 = v4;
-                v2 = v4;
-                v1 = v4;
-            }
-
-            // One node to right of left-hand edge.
-            else if (x == 1)
-            {
                 v5 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
                 v4 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
                 v3 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
@@ -603,8 +493,8 @@ namespace lsm
                 v1 = v3;
             }
 
-            // Two nodes to right of left-hand edge.
-            else if (x == 2)
+            // One node to right of left-hand edge.
+            else if (x == 1)
             {
                 v5 = signedDistance[mesh.xyToIndex[4][y]] - signedDistance[mesh.xyToIndex[3][y]];
                 v4 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
@@ -615,14 +505,124 @@ namespace lsm
                 v1 = v2;
             }
 
+            // Node on right-hand edge.
+            else if (x == mesh.width)
+            {
+                v1 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+
+                // Approximate derivatives outside of domain.
+                v3 = v2;
+                v4 = v2;
+                v5 = v2;
+            }
+
+            // One node to left of right-hand edge.
+            else if (x == (mesh.width - 1))
+            {
+                v1 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
+
+                // Approximate derivatives outside of domain.
+                v4 = v3;
+                v5 = v3;
+            }
+
+            // Two nodes to left of right-hand edge.
+            else if (x == (mesh.width - 2))
+            {
+                v1 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
+                v4 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
+
+                // Approximate derivatives outside of domain.
+                v5 = v4;
+            }
+
             // Node lies in bulk.
             else
             {
-                v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
-                v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v1 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
+                v4 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
+                v5 = signedDistance[mesh.xyToIndex[x+3][y]] - signedDistance[mesh.xyToIndex[x+2][y]];
+            }
+
+            double gradRight = sign * gradWENO(v1, v2, v3, v4, v5);
+
+            // Derivatives to left.
+
+            // Node on right-hand edge.
+            if (x == mesh.width)
+            {
+                v5 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
+                v4 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
                 v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
-                v4 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-                v5 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
+
+                // Approximate derivatives outside of domain.
+                v2 = v3;
+                v1 = v3;
+            }
+
+            // One node to left of right-hand edge.
+            else if (x == (mesh.width-1))
+            {
+                v5 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
+                v4 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v2 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
+
+                // Approximate derivatives outside of domain.
+                v1 = v2;
+            }
+
+            // Node on left-hand edge.
+            else if (x == 0)
+            {
+                v1 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
+                v2 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
+
+                // Approximate derivatives outside of domain.
+                v3 = v2;
+                v4 = v2;
+                v5 = v2;
+            }
+
+            // One node to right of left-hand edge.
+            else if (x == 1)
+            {
+                v1 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
+                v2 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
+                v3 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
+
+                // Approximate derivatives outside of domain.
+                v4 = v3;
+                v5 = v3;
+            }
+
+            // Two nodes to right of left-hand edge.
+            else if (x == 2)
+            {
+                v1 = signedDistance[mesh.xyToIndex[4][y]] - signedDistance[mesh.xyToIndex[3][y]];
+                v2 = signedDistance[mesh.xyToIndex[3][y]] - signedDistance[mesh.xyToIndex[2][y]];
+                v3 = signedDistance[mesh.xyToIndex[2][y]] - signedDistance[mesh.xyToIndex[1][y]];
+                v4 = signedDistance[mesh.xyToIndex[1][y]] - signedDistance[mesh.xyToIndex[0][y]];
+
+                // Approximate derivatives outside of domain.
+                v5 = v4;
+            }
+
+            // Node lies in bulk.
+            else
+            {
+                v1 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
+                v2 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v4 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
+                v5 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
             }
 
             double gradLeft = sign * gradWENO(v1, v2, v3, v4, v5);
@@ -631,116 +631,6 @@ namespace lsm
 
             // Node on bottom edge.
             if (y == 0)
-            {
-                v1 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
-                v2 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
-                v3 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
-
-                // Approximate derivatives outside of domain.
-                v4 = v3;
-                v5 = v3;
-            }
-
-            // One node above bottom edge.
-            else if (y == 1)
-            {
-                v1 = signedDistance[mesh.xyToIndex[x][4]] - signedDistance[mesh.xyToIndex[x][3]];
-                v2 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
-                v3 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
-                v4 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
-
-                // Approximate derivatives outside of domain.
-                v5 = v4;
-            }
-
-            // Node is on top edge.
-            else if (y == mesh.height)
-            {
-                v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-
-                // Approximate derivatives outside of domain.
-                v3 = v4;
-                v2 = v4;
-                v1 = v4;
-            }
-
-            // One node below top edge.
-            else if (y == (mesh.height - 1))
-            {
-                v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
-
-                // Approximate derivatives outside of domain.
-                v2 = v3;
-                v1 = v3;
-            }
-
-            // Two nodes below top edge.
-            else if (y == (mesh.height - 2))
-            {
-                v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v2 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
-
-                // Approximate derivatives outside of domain.
-                v1 = v2;
-            }
-
-            // Node lies in bulk.
-            else
-            {
-                v1 = signedDistance[mesh.xyToIndex[x][y+3]] - signedDistance[mesh.xyToIndex[x][y+2]];
-                v2 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
-                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-                v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y]];
-            }
-
-            double gradUp = sign * gradWENO(v1, v2, v3, v4, v5);
-
-            // Downward derivative.
-
-            // Node on right edge.
-            if (y == mesh.width)
-            {
-                v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
-                v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-
-                // Approximate derivatives outside of domain.
-                v4 = v3;
-                v5 = v3;
-            }
-
-            // One node left of right edge.
-            else if (y == (mesh.width - 1))
-            {
-                v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
-                v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
-                v4 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
-
-                // Approximate derivatives outside of domain.
-                v5 = v4;
-            }
-
-            // Node lies on bottom edge
-            else if (y == 0)
-            {
-                v5 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
-                v4 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
-
-                // Approximate derivatives outside of domain.
-                v3 = v4;
-                v2 = v4;
-                v1 = v4;
-            }
-
-            // One node above bottom edge.
-            else if (y == 1)
             {
                 v5 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
                 v4 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
@@ -751,8 +641,8 @@ namespace lsm
                 v1 = v3;
             }
 
-            // Two nodes above bottom edge.
-            else if (y == 2)
+            // One node above bottom edge.
+            else if (y == 1)
             {
                 v5 = signedDistance[mesh.xyToIndex[x][4]] - signedDistance[mesh.xyToIndex[x][3]];
                 v4 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
@@ -761,6 +651,116 @@ namespace lsm
 
                 // Approximate derivatives outside of domain.
                 v1 = v2;
+            }
+
+            // Node is on top edge.
+            else if (y == mesh.height)
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+
+                // Approximate derivatives outside of domain.
+                v3 = v2;
+                v4 = v2;
+                v5 = v2;
+            }
+
+            // One node below top edge.
+            else if (y == (mesh.height - 1))
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
+
+                // Approximate derivatives outside of domain.
+                v4 = v3;
+                v5 = v3;
+            }
+
+            // Two nodes below top edge.
+            else if (y == (mesh.height - 2))
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
+
+                // Approximate derivatives outside of domain.
+                v5 = v4;
+            }
+
+            // Node lies in bulk.
+            else
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v2 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
+                v5 = signedDistance[mesh.xyToIndex[x][y+3]] - signedDistance[mesh.xyToIndex[x][y+2]];
+            }
+
+            double gradUp = sign * gradWENO(v1, v2, v3, v4, v5);
+
+            // Downward derivative.
+
+            // Node on right edge.
+            if (y == mesh.width)
+            {
+                v5 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
+                v4 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+
+                // Approximate derivatives outside of domain.
+                v2 = v3;
+                v1 = v3;
+            }
+
+            // One node left of right edge.
+            else if (y == (mesh.width - 1))
+            {
+                v5 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
+                v4 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v2 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
+
+                // Approximate derivatives outside of domain.
+                v1 = v2;
+            }
+
+            // Node lies on bottom edge
+            else if (y == 0)
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
+                v2 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
+
+                // Approximate derivatives outside of domain.
+                v3 = v2;
+                v4 = v2;
+                v5 = v2;
+            }
+
+            // One node above bottom edge.
+            else if (y == 1)
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
+                v2 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
+                v3 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
+
+                // Approximate derivatives outside of domain.
+                v4 = v3;
+                v5 = v3;
+            }
+
+            // Two nodes above bottom edge.
+            else if (y == 2)
+            {
+                v1 = signedDistance[mesh.xyToIndex[x][4]] - signedDistance[mesh.xyToIndex[x][3]];
+                v2 = signedDistance[mesh.xyToIndex[x][3]] - signedDistance[mesh.xyToIndex[x][2]];
+                v3 = signedDistance[mesh.xyToIndex[x][2]] - signedDistance[mesh.xyToIndex[x][1]];
+                v4 = signedDistance[mesh.xyToIndex[x][1]] - signedDistance[mesh.xyToIndex[x][0]];
+
+                // Approximate derivatives outside of domain.
+                v5 = v4;
             }
 
             // Node lies in bulk.
