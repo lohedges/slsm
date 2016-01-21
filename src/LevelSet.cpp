@@ -133,6 +133,12 @@ namespace lsm
         fmm.march(signedDistance, velocity);
     }
 
+    double LevelSet::computeVelocities(std::vector<BoundaryPoint>& boundaryPoints,
+        double& timeStep, const double temperature, MersenneTwister& rng)
+    {
+        return 1.0;
+    }
+
     void LevelSet::computeGradients(const double timeStep)
     {
         // Compute gradient of the signed distance function using upwind finite difference.
