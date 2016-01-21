@@ -23,7 +23,7 @@
 /*! \file MersenneTwister.h
     \brief A C++11 implementation of a Mersenne-Twister
     random number generator class.
-*/
+ */
 
 namespace lsm
 {
@@ -39,21 +39,21 @@ namespace lsm
             generator.seed(seed);
 
             /* Note that seeding the generator with a single 32-bit integer
-            only allows for 2^32 initial states.
+               only allows for 2^32 initial states.
 
-            For a better RNG, consider using the Permuted Congruential Generator
+               For a better RNG, consider using the Permuted Congruential Generator
 
-                http://www.pcg-random.org
+                 http://www.pcg-random.org
 
-            For details on the pitfalls of seeding the C++11 mt19937 generator,
-            see
+               For details on the pitfalls of seeding the C++11 mt19937 generator,
+               see
 
-                http://www.pcg-random.org/posts/cpp-seeding-surprises.html
+                 http://www.pcg-random.org/posts/cpp-seeding-surprises.html
 
-            To enable good seeding with mt19937, consider using randutils.hpp
+               To enable good seeding with mt19937, consider using randutils.hpp
 
-                https://gist.github.com/imneme/540829265469e673d045
-            */
+                 https://gist.github.com/imneme/540829265469e673d045
+             */
         }
 
         //! Overloaded () operator.
@@ -72,7 +72,7 @@ namespace lsm
 
             \return
                 The uniform random integer.
-        */
+         */
         int integer(int min, int max)
         {
             return std::uniform_int_distribution<int>{min, max}(generator);
@@ -82,7 +82,7 @@ namespace lsm
         /*! zero mean and unit standard deviation.
             \return
                 A random number drawn from the normal distribution.
-        */
+         */
         double normal()
         {
             return default_normal_distribution(generator);
@@ -97,7 +97,7 @@ namespace lsm
 
             \return
                 A random number drawn from the normal distribution.
-        */
+         */
         double normal(double mean, double stdDev)
         {
             return std::normal_distribution<double>{mean, stdDev}(generator);
@@ -106,7 +106,7 @@ namespace lsm
         //! Get the random number generator seed.
         /*! \return seed
                 The generator seed.
-        */
+         */
         unsigned int getSeed()
         {
             return seed;
@@ -115,7 +115,7 @@ namespace lsm
         //! Seed the random number generator.
         /*! \param seed_
                 The new seed.
-        */
+         */
         void setSeed(unsigned int seed_)
         {
             seed = seed_;

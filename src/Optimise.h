@@ -18,6 +18,10 @@
 #ifndef _OPTIMISE_H
 #define _OPTIMISE_H
 
+/*! \file Optimise.h
+    \brief A class for finding the solution for the optimum velocity vector.
+ */
+
 #include <iostream>
 #include <nlopt.hpp>
 
@@ -43,7 +47,7 @@ namespace lsm
 
         \param data
             Void pointer to NLoptWrapper data.
-    */
+     */
     double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data);
 
     /*!\brief A class to solve for the optimum velocity vector.
@@ -55,7 +59,7 @@ namespace lsm
 
         We make use of the NLopt SLSQP solver:
             http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
-    */
+     */
     class Optimise
     {
     public:
@@ -79,13 +83,13 @@ namespace lsm
 
             \param isMax_
                 Whether to maximise the objective function (default is to minimise).
-        */
+         */
         Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&, bool isMax_ = false);
 
         //! Execute the NLopt SLSQP solver.
         /*! \return
                 The optimum value of the objective function.
-        */
+         */
         double solve();
 
         //! NLopt callback function.
@@ -97,7 +101,7 @@ namespace lsm
 
             \param index
                 Function index, 0 = objective, 1, 2, 3, ... = constraints.
-        */
+         */
         double callback(const std::vector<double>&, std::vector<double>&, unsigned int);
 
         //! Query the NLopt return code.
@@ -158,13 +162,13 @@ namespace lsm
         //! Compute the boundary movement vector.
         /*! \param lambda
                 A vector of lambda values (objective, then constraints).
-        */
+         */
         void computeDisplacements(const std::vector<double>&);
 
         //! Compute the change in the objective or constraint functions.
         /*! \param index
                 Function index, 0 = objective, 1, 2, 3, ... = constraints.
-        */
+         */
         double computeFunction(unsigned int);
 
         //! Compute the gradient of the objective or constraint functions.
@@ -176,13 +180,13 @@ namespace lsm
 
             \param index
                 Function index, 0 = objective, 1, 2, 3, ... = constraints.
-        */
+         */
         void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
 
         //! Rescale displacements and lambda values if the CFL condition is violated.
         /*! \return
                 The scale factor.
-        */
+         */
         double rescaleDisplacements();
     };
 }

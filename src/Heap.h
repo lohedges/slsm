@@ -47,7 +47,7 @@ namespace lsm
         of entries that will be added to the heap. This will number be computed in
         the FastMarchingMethod::initialiseHeap method (which calculates the number
         of far field nodes).
-    */
+     */
     class Heap
     {
     public:
@@ -57,7 +57,7 @@ namespace lsm
 
             \param isTest_
                 Whether to perform self testing of the heap (optional).
-        */
+         */
         Heap(unsigned int, bool isTest_ = false);
 
         //! Push a value onto the heap.
@@ -69,7 +69,7 @@ namespace lsm
 
             \return
                 The index of the value in the heap.
-        */
+         */
         unsigned int push(unsigned int, double);
 
         //! Pop the top value from the heap.
@@ -78,7 +78,7 @@ namespace lsm
 
             \param value
                 The value of the top entry in the heap.
-        */
+         */
         void pop(unsigned int&, double&);
 
         //! Set a specific heap entry.
@@ -87,25 +87,25 @@ namespace lsm
 
             \param newDistance
                 The new distance value to insert into the heap.
-        */
+         */
         void set(unsigned int, double);
 
         //! Test whether the heap is empty.
         /*! \return
                 Whether the heap is empty (true) or contains entries (false).
-        */
+         */
         bool empty() const;
 
         //! Return the value of the top entry in the heap.
         /*! \return
                 The value currently at the top of the heap.
-        */
+         */
         const double& peek() const;
 
         //! Return the current size of the heap.
         /* \return
                 The current size of the heap.
-        */
+         */
         const unsigned int& size() const;
 
     private:
@@ -115,7 +115,7 @@ namespace lsm
         //! Sift a value up the heap.
         /*! \param pos
                 The position in the heap.
-        */
+         */
         void siftUp(unsigned int);
 
         //! Sift a value down the heap.
@@ -124,7 +124,7 @@ namespace lsm
 
             \param pos
                 The current position in the heap.
-        */
+         */
         void siftDown(unsigned int, unsigned int);
 
         /// The maximum number of entries in the heap.

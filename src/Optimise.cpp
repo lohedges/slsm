@@ -157,33 +157,33 @@ namespace lsm
     void Optimise::computeScaleFactors()
     {
         /* In order for the optimiser to work effectively it is important
-        that small changes in the lambdas result in small changes in the
-        functions for the objective and constraints and their respective
-        gradients. Since we are solving a multi-dimensional optimisation
-        problem it is important that all variables are on the same scale.
-        This enables us to use a universal convergence tolerance.
+           that small changes in the lambdas result in small changes in the
+           functions for the objective and constraints and their respective
+           gradients. Since we are solving a multi-dimensional optimisation
+           problem it is important that all variables are on the same scale.
+           This enables us to use a universal convergence tolerance.
 
-        Our scaling protocol is described below. Note that we choose to
-        store scale factors for each function, rather than scaling (then
-        rescaling) the input data. Sensitivites are scaled down (reduced)
-        and the lambda values are scale up (enlarged).
+           Our scaling protocol is described below. Note that we choose to
+           store scale factors for each function, rather than scaling (then
+           rescaling) the input data. Sensitivites are scaled down (reduced)
+           and the lambda values are scale up (enlarged).
 
             1) For each function, scale by the largest absolute sensitivity,
-                i.e. the maximum magnitude is one.
+               i.e. the maximum magnitude is one.
 
             2) Scale by the gradient at the origin (all lambdas are zero).
-                This ensures that the gradient is close to one.
+               This ensures that the gradient is close to one.
 
-            There is no need to independently scale the boundary integral
-            coefficients since the boundary lengths are independent of the
-            function, i.e.
+           There is no need to independently scale the boundary integral
+           coefficients since the boundary lengths are independent of the
+           function, i.e.
 
-                c^f_i = s^f_i * l_i
+             c^f_i = s^f_i * l_i
 
-            The l_i variables are the same for the objective and constraints
-            so, by definition, the c^f's are on the same scale if we simply
-            normalise by max(abs(s^f_i)).
-        */
+           The l_i variables are the same for the objective and constraints
+           so, by definition, the c^f's are on the same scale if we simply
+           normalise by max(abs(s^f_i)).
+         */
 
         // Loop over all functions: objective first, then constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
@@ -224,16 +224,10 @@ namespace lsm
     void Optimise::computeConstraintDistances()
     {
         /* If we are far from satisfying the constraint then we need
-        to scale the constraint distance so that it can be "satisfied"
-        by simply moving in the correct direction, i.e. moving towards
-        satisying the constraint.
-
-        I would have thought that the optimiser should be able to minimise
-        the constraint violation (this is suggested in the SLP paper) but
-        this doesn't seem to be the case, i.e. the optimiser would return
-        the lambdas that minimise the objective and the constraint violation
-        (if the constraint can't be satisfied).
-        */
+           to scale the constraint distance so that it can be "satisfied"
+           by simply moving in the correct direction, i.e. moving towards
+           satisying the constraint.
+         */
 
         // Loop over all constraints.
         for (unsigned int i=0;i<nConstraints;i++)
@@ -349,12 +343,12 @@ namespace lsm
         for (unsigned int i=1;i<nConstraints+1;i++) gradient[i] = 0;
 
         /* If all lambda values are zero then we need a fix for the
-        analytic gradient calculation. This is because side constraints
-        for boundary points lying exactly on the domain boundary will
-        be active for lambda < 0 and inactive for lambda > 0. As such,
-        the gradient will be half as large, i.e. only positive lambda
-        contributes.
-        */
+           analytic gradient calculation. This is because side constraints
+           for boundary points lying exactly on the domain boundary will
+           be active for lambda < 0 and inactive for lambda > 0. As such,
+           the gradient will be half as large, i.e. only positive lambda
+           contributes.
+         */
 
         // Sum lambda values.
         double lambdaSum = 0;
@@ -467,12 +461,12 @@ namespace lsm
     void Optimise::queryReturnCode()
     {
         /* N.B.
-            Despite providing an extensive list of return codes NLopt does not
-            report when the optmisation exits because a lower or upper lambda
-            limit is hit. In this case the return code is 4. However, it's easy
-            to test for this situation by comparing the "optimum" lambda values
-            to the limits.
-        */
+           Despite providing an extensive list of return codes NLopt does not
+           report when the optmisation exits because a lower or upper lambda
+           limit is hit. In this case the return code is 4. However, it's easy
+           to test for this situation by comparing the "optimum" lambda values
+           to the limits.
+         */
 
         // Success.
         if (returnCode == 1) std::cout << "[INFO] Success: Generic success return value.\n";

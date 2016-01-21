@@ -59,7 +59,7 @@ namespace lsm
         This object can be used to reinitialise the level set to a signed
         distance function, or to compute extension velocities using known
         values at the boundary.
-    */
+     */
     class FastMarchingMethod
     {
     public:
@@ -69,7 +69,7 @@ namespace lsm
 
             \param isTest_
                 Whether to test the heap following each update.
-        */
+         */
         FastMarchingMethod(const Mesh&, bool isTest_=false);
 
         //! Destructor.
@@ -78,7 +78,7 @@ namespace lsm
         //! Excecute Fast Marching for reinitialisation of the signed distance function.
         /*! \param signedDistance_
                 The nodal signed distance function (level set).
-        */
+         */
         void march(std::vector<double>&);
 
         //! Excecute Fast Marching for velocity extension.
@@ -87,7 +87,7 @@ namespace lsm
 
             \param velocity_
                 The nodal velocities.
-        */
+         */
         void march(std::vector<double>&, std::vector<double>&);
 
     private:
@@ -140,13 +140,13 @@ namespace lsm
 
             \return
                 The new value (distance or velocity) at the node.
-        */
+         */
         double updateNode(unsigned int);
 
         //! Finalise the velocity at a node.
         /*! \param node
                 The index of the node.
-        */
+         */
         void finaliseVelocity(unsigned int node);
 
         //! Solve the quadratic equation.
@@ -164,7 +164,7 @@ namespace lsm
 
             \return
                 The correct root of the equation.
-        */
+         */
         double solveQuadratic(unsigned int, const double&, const double&, const double&) const;
 
         const double doubleEpsilon = std::numeric_limits<double>::epsilon();

@@ -28,7 +28,7 @@
 
 /*! \file LevelSet.h
     \brief A class for the level set function.
-*/
+ */
 
 namespace lsm
 {
@@ -38,28 +38,28 @@ namespace lsm
 
     /*! \brief A class for the level set function.
 
-    The level set is represented as a signed distance function from the zero
-    countour. Positive values are inside the structure, negative values are
-    outside.
+        The level set is represented as a signed distance function from the zero
+        countour. Positive values are inside the structure, negative values are
+        outside.
 
-    The class provides methods for initialising and reinitialising the signed
-    distance function. The default initialisation uses a set of linearly spaced
-    circular holes to create the classic "Swiss cheese" starting configuration.
-    Alternatively, the user can pass the constructor a vector of holes that
-    will be used to define the initial structure.
+        The class provides methods for initialising and reinitialising the signed
+        distance function. The default initialisation uses a set of linearly spaced
+        circular holes to create the classic "Swiss cheese" starting configuration.
+        Alternatively, the user can pass the constructor a vector of holes that
+        will be used to define the initial structure.
 
-    Reinitialisation of the signed distance function is performed using an
-    implementation of the Fast Marching Method. A second-order stencil is used
-    for the upwind finite difference scheme where possible.
+        Reinitialisation of the signed distance function is performed using an
+        implementation of the Fast Marching Method. A second-order stencil is used
+        for the upwind finite difference scheme where possible.
 
-    Functionality is also provided for tracking nodes that are part of the
-    narrow band region around the zero contour, as well as mine nodes at
-    the edge of the narrow band.
+        Functionality is also provided for tracking nodes that are part of the
+        narrow band region around the zero contour, as well as mine nodes at
+        the edge of the narrow band.
 
-    Note that the level set grid need not be the same resolution as the
-    finite-element mesh. However, for the simple two-dimensional problems
-    considered here we will use a grid of the same size.
-    */
+        Note that the level set grid need not be the same resolution as the
+        finite-element mesh. However, for the simple two-dimensional problems
+        considered here we will use a grid of the same size.
+     */
     class LevelSet
     {
     public:
@@ -72,7 +72,7 @@ namespace lsm
 
             \param bandWidth_
                 The width of the narrow band region.
-        */
+         */
         LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
 
         //! Constructor.
@@ -87,7 +87,7 @@ namespace lsm
 
             \param bandWidth_
                 The width of the narrow band region.
-        */
+         */
         LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 3);
 
         //! Update the level set function.
@@ -96,7 +96,7 @@ namespace lsm
 
             \return
                 Whether the signed distance was reinitialised.
-        */
+         */
         bool update(double);
 
         //! Reinitialise the level set to a signed distance function.
@@ -105,13 +105,13 @@ namespace lsm
         //! Extend boundary point velocities to the level set nodes.
         /*! \param boundaryPoints
                 A reference to a vector of boundary points.
-        */
+         */
         void computeVelocities(const std::vector<BoundaryPoint>&);
 
         //! Compute the gradient of the signed distance function.
         /*! \param timeStep
                 The time step for the level set update.
-        */
+         */
         void computeGradients(const double timeStep);
 
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
@@ -132,10 +132,9 @@ namespace lsm
         void initialise();
 
         //! Initialise the level set from a vector of user-defined holes.
-        /*/
-            \param holes
+        /* \param holes
                 A vector of holes.
-        */
+         */
         void initialise(const std::vector<Hole>&);
 
         //! Helper function for initialise methods.
@@ -148,7 +147,7 @@ namespace lsm
         //! Initialise velocities for boundary nodes.
         /*! \param boundaryPoints
                 A reference to a vector of boundary points.
-        */
+         */
         void initialiseVelocities(const std::vector<BoundaryPoint>&);
 
         //! Compute the nodal gradient of the signed distance function.
@@ -160,7 +159,7 @@ namespace lsm
 
             \return
                 The gradient at the node.
-        */
+         */
         double computeGradients(const unsigned int, const double);
 
         //! Compute WENO gradient approximation.
@@ -181,7 +180,7 @@ namespace lsm
 
             \return
                 The smoothed function (gradient).
-        */
+         */
         double gradWENO(double, double, double, double, double);
     };
 }

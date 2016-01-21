@@ -49,7 +49,7 @@ namespace lsm
 
             \param outputDirectory
                 The output directory path (optional).
-        */
+         */
         void saveLevelSetVTK(const unsigned int&, const Mesh&,
             const LevelSet&, const std::string& outputDirectory = "") const;
 
@@ -62,7 +62,7 @@ namespace lsm
 
             \param levelSet
                 A reference to the level set object.
-        */
+         */
         void saveLevelSetVTK(const std::ostringstream&, const Mesh&, const LevelSet&) const;
 
         //! Save the level set function as a plain text file.
@@ -80,7 +80,7 @@ namespace lsm
 
             \param isXY
                 Whether to also output the nodal x/y coordinates (optional).
-        */
+         */
         void saveLevelSetTXT(const unsigned int&, const Mesh&, const LevelSet&,
             const std::string& outputDirectory = "", bool isXY = false) const;
 
@@ -96,7 +96,7 @@ namespace lsm
 
             \param isXY
                 Whether to also output the nodal x/y coordinates (optional).
-        */
+         */
         void saveLevelSetTXT(const std::ostringstream&, const Mesh&, const LevelSet&, bool isXY = false) const;
 
         //! Save boundary points as a plain text file.
@@ -108,7 +108,7 @@ namespace lsm
 
             \param outputDirectory
                 The output directory path (optional).
-        */
+         */
         void saveBoundaryPointsTXT(const unsigned int&, const Boundary&, const std::string& outputDirectory = "") const;
 
         //! Save boundary points as a plain text file.
@@ -117,7 +117,7 @@ namespace lsm
 
             \param boundary
                 A reference to the boundary object.
-        */
+         */
         void saveBoundaryPointsTXT(const std::ostringstream&, const Boundary&) const;
 
         //! Save boundary segments as a plain text file.
@@ -132,7 +132,7 @@ namespace lsm
 
             \param outputDirectory
                 The output directory path (optional).
-        */
+         */
         void saveBoundarySegmentsTXT(const unsigned int&, const Mesh&,
             const Boundary&, const std::string& outputDirectory = "") const;
 
@@ -145,7 +145,7 @@ namespace lsm
 
             \param boundary
                 A reference to the boundary object.
-        */
+         */
         void saveBoundarySegmentsTXT(const std::ostringstream&, const Mesh&, const Boundary&) const;
 
         //! Save the element area fractions as a ParaView VTK file.
@@ -157,7 +157,7 @@ namespace lsm
 
             \param outputDirectory
                 The output directory path (optional).
-        */
+         */
         void saveAreaFractionsVTK(const unsigned int&, const Mesh&, const std::string& outputDirectory = "") const;
 
         //! Save the element area fractions as a ParaView VTK file.
@@ -166,7 +166,7 @@ namespace lsm
 
             \param mesh
                 A reference to the finite element mesh.
-        */
+         */
         void saveAreaFractionsVTK(const std::ostringstream&, const Mesh&) const;
 
         //! Save element area fractions as a plain text file.
@@ -181,7 +181,7 @@ namespace lsm
 
             \param isXY
                 Whether to also output the element x/y coordinates (optional).
-        */
+         */
         void saveAreaFractionsTXT(const unsigned int&, const Mesh&,
             const std::string& outputDirectory = "", bool isXY = false) const;
 
@@ -194,7 +194,7 @@ namespace lsm
 
             \param isXY
                 Whether to also output the element x/y coordinates (optional).
-        */
+         */
         void saveAreaFractionsTXT(const std::ostringstream&, const Mesh&, bool isXY = false) const;
     };
 }

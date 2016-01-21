@@ -31,18 +31,21 @@ namespace lsm
 {
     // ASSOCIATED DATA TYPES
 
-    // The following are implementations of strongly typed enums. This allows
-    // for better scoping and name sharing between enumerations. This can also
-    // be achieved in C++11 using "enum classes", although it's not currently
-    // supported by all compilers.
+    /* The following are implementations of strongly typed enums. This allows
+       for better scoping and name sharing between enumerations. This can also
+       be achieved in C++11 using "enum classes", although it's not currently
+       supported by all compilers.
+     */
 
     //! Whether a node lies inside, outside, or on the boundary.
     namespace NodeStatus
     {
-        // Left bit shift enumerated types to allow the creation
-        // of sets and simple bit masking operations.
-        // For example, to test whether a node is neither inside or outside...
-        // if (node.status ^ (NodeStatus::INSIDE|NodeStatus::OUTSIDE))
+        /* Left bit shift enumerated types to allow the creation of sets and
+           simple bit masking operations. For example, to test whether a node
+           is neither inside or outside...
+
+             if (node.status ^ (NodeStatus::INSIDE|NodeStatus::OUTSIDE))
+         */
         enum NodeStatus
         {
             NONE            = 0,                //!< No status.
@@ -58,8 +61,6 @@ namespace lsm
     //! If not, whether the element centre lies inside or outside.
     namespace ElementStatus
     {
-        // Left bit shift enumerated types to allow the creation
-        // of sets and simple bit masking operations.
         enum ElementStatus
         {
             NONE            = 0,                //!< No status.
@@ -98,7 +99,7 @@ namespace lsm
 
     // MAIN CLASS
 
-    /*!\brief A class for the fixed grid, finite-element mesh.
+    /*! \brief A class for the fixed grid, finite-element mesh.
 
         Stores connectivty information between grid elements and nodes.
         The grid is assumed to be two-dimensional and is comprised of
@@ -120,7 +121,7 @@ namespace lsm
         For non-periodic meshes, neighbours that are outside of the domain are
         given the value nNodes, i.e. one past the end of the node array, which
         runs from 0 to nNodes - 1.
-    */
+     */
     class Mesh
     {
     public:
@@ -133,7 +134,7 @@ namespace lsm
 
             \param isPeriodic_
                 Whether the grid is periodic.
-        */
+         */
         Mesh(unsigned int, unsigned int, bool isPeriodic_ = false);
 
         //! For a given x-y coordinate, find the index of the closest node.
@@ -142,7 +143,7 @@ namespace lsm
 
             \return
                 The index of the closest node.
-        */
+         */
         unsigned int getClosestNode(const Coord&);
 
         //! For a given x-y coordinate, find the index of the closest node.
@@ -154,7 +155,7 @@ namespace lsm
 
             \return
                 The index of the closest node.
-        */
+         */
         unsigned int getClosestNode(double, double);
 
         //! For a given x-y coordinate, find the element that contains the point.
@@ -163,7 +164,7 @@ namespace lsm
 
             \return
                 The index of the containing element.
-        */
+         */
         unsigned int getElement(const Coord&);
 
         //! For a given x-y coordinate, find the element that contains the point.
@@ -175,7 +176,7 @@ namespace lsm
 
             \return
                 The index of the containing element.
-        */
+         */
         unsigned int getElement(double, double);
 
         std::vector<Element> elements;  //!< Fixed grid elements (cells).
@@ -207,7 +208,7 @@ namespace lsm
 
             \param y
                 The y coordinate of the node.
-        */
+         */
         void initialiseNeighbours(unsigned int, unsigned int, unsigned int);
     };
 }

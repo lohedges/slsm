@@ -66,7 +66,7 @@ namespace lsm
         The points vector holds coordinates for boundary points (both those lying
         exactly on nodes of the finite element mesh, and the interpolated points).
         Boundary segment data is stored in the segments vector.
-    */
+     */
     class Boundary
     {
     public:
@@ -76,7 +76,7 @@ namespace lsm
 
             \param levelSet_
                 A reference to the level set object.
-        */
+         */
         Boundary(Mesh&, LevelSet&);
 
         //! Use linear interpolation to compute the discretised boundary
@@ -87,7 +87,7 @@ namespace lsm
 
         //! Calculate the number of holes (number of closed loops).
         /*! \return The number of holes.
-        */
+         */
         unsigned int computeHoles();
 
         /// Vector of boundary points.
@@ -133,7 +133,7 @@ namespace lsm
 
             \return
                 The index of the boundary point if previously added, minus one if not.
-        */
+         */
         int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
 
         //! Initialise a boundary point.
@@ -142,7 +142,7 @@ namespace lsm
 
             \param coord
                 The position vector of the boundary point.
-        */
+         */
         void initialisePoint(BoundaryPoint&, const Coord&);
 
         //! Calculate the material area for an element cut by the boundary.
@@ -151,7 +151,7 @@ namespace lsm
 
             \return
                 The area fraction.
-        */
+         */
         double cutArea(const Element&);
 
         //! Whether a point is clockwise of another. The origin point is 12 o'clock.
@@ -166,7 +166,7 @@ namespace lsm
 
             \return
                 Whether the first point is clockwise of the second.
-        */
+         */
         bool isClockwise(const Coord&, const Coord&, const Coord&) const;
 
         //! Return the area of a polygon.
@@ -181,7 +181,7 @@ namespace lsm
 
             \return
                 The area of the polygon.
-        */
+         */
         double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
 
         //! Return the length of a boundary segment.
@@ -190,7 +190,7 @@ namespace lsm
 
             \return
                 The length of the bounary segment.
-        */
+         */
         double segmentLength(const BoundarySegment&);
 
         //! Compute the (potentially weighted) integral length for each boundary point.

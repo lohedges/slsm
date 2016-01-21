@@ -42,7 +42,7 @@ namespace lsm
 
             \param r
                 The radius of the hole.
-        */
+         */
         Hole(double, double, double);
 
         //! Constructor.
@@ -51,7 +51,7 @@ namespace lsm
 
             \param r
                 The radius of the hole.
-        */
+         */
         Hole(Coord&, double);
 
         /// Coordinates.

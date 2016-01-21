@@ -61,10 +61,10 @@ namespace lsm
     {
         /* Extend boundary velocities to all nodes within the narrow band region.
 
-        Note that this method assumes that boundary point velocities have
-        already been mapped to the level set nodes using inverse squared
-        distance interpolation, or similar.
-        */
+           Note that this method assumes that boundary point velocities have
+           already been mapped to the level set nodes using inverse squared
+           distance interpolation, or similar.
+         */
 
         signedDistance = &signedDistance_;
         velocity = &velocity_;
@@ -263,20 +263,20 @@ namespace lsm
     void FastMarchingMethod::solve()
     {
         /* This is the fast marching method main loop. The order
-        of operations is as follows...
+           of operations is as follows...
 
-        (1) Choose from the trial set the node with the smallest
-            absolute distance from the zero contour and freeze it.
+            (1) Choose from the trial set the node with the smallest
+                absolute distance from the zero contour and freeze it.
 
-        (2) For each neighbour of the frozen node, calculate a new
-            distance based on frozen elements.
+            (2) For each neighbour of the frozen node, calculate a new
+                distance based on frozen elements.
 
-                - Mark each neighbour as a trial node and insert into
-                the heap.
+                 - Mark each neighbour as a trial node and insert into
+                   the heap.
 
-                - If the neighbour is already in the heap, update the
-                distance value.
-        */
+                 - If the neighbour is already in the heap, update the
+                   distance value.
+         */
 
         // Number of nodes to freeze.
         unsigned int nFrozen;
