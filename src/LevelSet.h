@@ -22,9 +22,10 @@
 #include <cstdlib>
 
 #include "Common.h"
-#include "Hole.h"
-#include "Mesh.h"
 #include "FastMarchingMethod.h"
+#include "Hole.h"
+#include "MersenneTwister.h"
+#include "Mesh.h"
 
 /*! \file LevelSet.h
     \brief A class for the level set function.
@@ -107,6 +108,24 @@ namespace lsm
                 A reference to a vector of boundary points.
          */
         void computeVelocities(const std::vector<BoundaryPoint>&);
+
+        //! Extend boundary point velocities to the level set nodes.
+        /*! \param boundaryPoints
+                A reference to a vector of boundary points.
+
+            \param timeStep
+                The time step for the level set update.
+
+            \param temperature
+                The temperature of the thermal bath.
+
+            \param rng
+                A reference to the random number generator.
+
+            \return
+                The time step scaling factor.
+         */
+        double computeVelocities(std::vector<BoundaryPoint>&, double&, const double, MersenneTwister&);
 
         //! Compute the gradient of the signed distance function.
         /*! \param timeStep
