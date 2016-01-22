@@ -23,9 +23,11 @@
  */
 
 #include <iostream>
+#include <limits>
 #include <nlopt.hpp>
 
 #include "Boundary.h"
+#include "Debug.h"
 
 namespace lsm
 {
@@ -81,10 +83,14 @@ namespace lsm
                 vectors are equivalent. The effective time step is taken as the absolute
                 value of the lambda value for the objective, i.e. abs(lambdas[0]).
 
+            \param maxDisplacement_
+                The maximum displacement (default is 0.5).
+
             \param isMax_
                 Whether to maximise the objective function (default is to minimise).
          */
-        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&, std::vector<double>&, double&, bool isMax_ = false);
+        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&,
+            std::vector<double>&, double&, double maxDisplacement_ = 0.5, bool isMax_ = false);
 
         //! Execute the NLopt SLSQP solver.
         /*! \return
@@ -125,6 +131,9 @@ namespace lsm
 
         /// The effective time step.
         double& timeStep;
+
+        /// The maximum displacement.
+        double maxDisplacement;
 
         /// Whether to maximise the objective function.
         bool isMax;

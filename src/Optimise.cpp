@@ -33,13 +33,18 @@ namespace lsm
                     const std::vector<double>& constraintDistances_,
                     std::vector<double>& lambdas_,
                     double& timeStep_,
+                    double maxDisplacement_,
                     bool isMax_) :
                     boundaryPoints(boundaryPoints_),
                     constraintDistances(constraintDistances_),
                     lambdas(lambdas_),
                     timeStep(timeStep_),
+                    maxDisplacement(maxDisplacement_),
                     isMax(isMax_)
     {
+        errno = EINVAL;
+        lsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
+
         // Store number of constraints.
         nConstraints = lambdas.size() - 1;
 
@@ -58,6 +63,12 @@ namespace lsm
 
         // Copy constraint distances.
         constraintDistancesScaled = constraintDistances;
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+
     }
 
     double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
@@ -88,7 +99,7 @@ namespace lsm
 
         // Scale inital lambda estimates.
         for (unsigned int i=0;i<nConstraints+1;i++)
-            lambdas[i] /= scaleFactors[0];
+            lambdas[i] /= scaleFactors[i];
 
         // Compute scaled constraint change distances.
         computeConstraintDistances();
@@ -286,11 +297,46 @@ namespace lsm
 
     void Optimise::computeLambdaLimits()
     {
-        // Dummy values for now.
+        /* The lambda limits are set by computing the minimum displacement
+           that violates the CFL condition independently for each function, i.e.
+           when setting other lambda values equal to zero.
+
+           In this case the displacement for a given function is simply
+
+             z = lambda x sensitivity
+
+           and the largest lambda that doesn't trigger the CFL limit is
+
+            lambda = CFL / max(abs(sensitivity))
+         */
+
+        // Loop over objective and constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
         {
-            negativeLambdaLimits[i] = -1000;
-            positiveLambdaLimits[i] = 1000;
+            // Initialise max sensitivity.
+            double maxSens = std::numeric_limits<double>::min();
+
+            // Loop over all boundary points.
+            for (unsigned int j=0;j<boundaryPoints.size();j++)
+            {
+                // Take absolute sensitivity.
+                double sens = std::abs(boundaryPoints[j].sensitivities[i]);
+
+                // Check max sensitivity.
+                if (sens > maxSens) maxSens = sens;
+            }
+
+            // Store limits.
+            negativeLambdaLimits[i] = -maxDisplacement / maxSens;
+            positiveLambdaLimits[i] =  maxDisplacement / maxSens;
+
+            // Scale limits.
+            negativeLambdaLimits[i] /= scaleFactors[i];
+            positiveLambdaLimits[i] /= scaleFactors[i];
+
+            // Check that initial lambda values are in range.
+            if (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] = 0;
+            else if (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] = 0;
         }
     }
 
