@@ -54,15 +54,15 @@ namespace lsm
         // Get element index.
         unsigned int element = getElement(point);
 
-        // Work out x and y position within the element (remainder).
-        double dx = point.x - std::floor(point.x);
-        double dy = point.y - std::floor(point.y);
+        // Work out distance relative to element centre.
+        double dx = point.x - elements[element].coord.x;
+        double dy = point.y - elements[element].coord.y;
 
         // Point lies in left half.
-        if (dx < 0.5)
+        if (dx < 0)
         {
             // Lower left quadrant.
-            if (dy < 0.5) return elements[element].nodes[0];
+            if (dy < 0) return elements[element].nodes[0];
 
             // Upper left quadrant.
             else return elements[element].nodes[3];
@@ -72,7 +72,7 @@ namespace lsm
         else
         {
             // Lower right quadrant.
-            if (dy < 0.5) return elements[element].nodes[1];
+            if (dy < 0) return elements[element].nodes[1];
 
             // Upper right quadrant.
             else return elements[element].nodes[2];
@@ -84,15 +84,15 @@ namespace lsm
         // Get element index.
         unsigned int element = getElement(x, y);
 
-        // Work out x and y position within the element (remainder).
-        double dx = x - std::floor(x);
-        double dy = y - std::floor(y);
+        // Work out distance relative to element centre.
+        double dx = x - elements[element].coord.x;
+        double dy = y - elements[element].coord.y;
 
         // Point lies in left half.
-        if (dx < 0.5)
+        if (dx < 0)
         {
             // Lower left quadrant.
-            if (dy < 0.5) return elements[element].nodes[0];
+            if (dy < 0) return elements[element].nodes[0];
 
             // Upper left quadrant.
             else return elements[element].nodes[3];
@@ -102,7 +102,7 @@ namespace lsm
         else
         {
             // Lower right quadrant.
-            if (dy < 0.5) return elements[element].nodes[1];
+            if (dy < 0) return elements[element].nodes[1];
 
             // Upper right quadrant.
             else return elements[element].nodes[2];
@@ -111,9 +111,17 @@ namespace lsm
 
     unsigned int Mesh::getElement(const Coord& point)
     {
+        // Subtract a small value to ensure that we round down.
+        double x = point.x - 1e-6;
+        double y = point.y - 1e-6;
+
+        // Enforce lower bound.
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+
         // Work out x and y element indices (cells are unit width).
-        unsigned int elementX = std::floor(point.x);
-        unsigned int elementY = std::floor(point.y);
+        unsigned int elementX = std::floor(x);
+        unsigned int elementY = std::floor(y);
 
         // Return global element index.
         return (elementY*width + elementX);
@@ -121,6 +129,14 @@ namespace lsm
 
     unsigned int Mesh::getElement(double x, double y)
     {
+        // Subtract a small value to ensure that we round down.
+        x -= 1e-6;
+        y -= 1e-6;
+
+        // Enforce lower bound.
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+
         // Work out x and y element indices (cells are unit width).
         unsigned int elementX = std::floor(x);
         unsigned int elementY = std::floor(y);
