@@ -137,12 +137,19 @@ namespace lsm
         // Loop over all nodes.
         for (unsigned int i=0;i<nNodes;i++)
         {
+            // Mark node as in bulk.
+            nodes[i].isDomain = false;
+
             // Zero number of connected elements.
             nodes[i].nElements = 0;
 
             // Work out node coordinates.
             x = i % (width + 1);
             y = int(i / (width + 1));
+
+            // Node lies on the domain boundary.
+            if ((x == 0) || (x == width) || (y == 0) || (y == height))
+                nodes[i].isDomain = true;
 
             // Set node coordinates.
             nodes[i].coord.x = x;

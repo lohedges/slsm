@@ -93,6 +93,7 @@ namespace lsm
         unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with the node.
         unsigned int nBoundaryPoints;           //!< The number of boundary points associated with the node.
         bool isActive;                          //!< Whether the node is active (part of narrow band, and not fixed).
+        bool isDomain;                          //!< Whether the node lies on the domain boundary.
         bool isMine;                            //!< Whether the node lies on the edge of the narrow band.
         NodeStatus::NodeStatus status;          //!< Whether node is outside, inside, or on the boundary.
     };
