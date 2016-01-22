@@ -103,6 +103,14 @@ namespace lsm
         {
             unsigned int node = narrowBand[i];
             signedDistance[node] -= timeStep * gradient[node] * velocity[node];
+
+            // If node is on domain boundary.
+            if (mesh.nodes[node].isDomain)
+            {
+                // Enforce boundary condition.
+                if (signedDistance[node] > 0)
+                    signedDistance[node] = 0;
+            }
         }
 
         // Check mine nodes.
@@ -136,10 +144,37 @@ namespace lsm
     double LevelSet::computeVelocities(std::vector<BoundaryPoint>& boundaryPoints,
         double& timeStep, const double temperature, MersenneTwister& rng)
     {
-        return 1.0;
+        // Square root of two times temperature, sqrt(2T).
+        double sqrt2T = sqrt(2.0 * temperature);
+
+        // Time step scale factor.
+        double scale = 1.0;
+
+        // Check that noise won't lead to severe CFL violation.
+        if ((sqrt2T * sqrt(timeStep)) > (0.5 * moveLimit))
+        {
+            // Calculate time step scale factor.
+            scale = (2.0 * sqrt2T / moveLimit);
+            scale *= (timeStep * scale);
+
+            // Scale the time step.
+            timeStep /= scale;
+        }
+
+        // Calculate noise prefactor.
+        double noise = sqrt2T / sqrt(timeStep);
+
+        // Add random noise to velocity of each boundary point.
+        for (unsigned int i=0;i<boundaryPoints.size();i++)
+            boundaryPoints[i].velocity += noise * rng.normal(0, 1);
+
+        // Perform velocity extension.
+        computeVelocities(boundaryPoints);
+
+        return scale;
     }
 
-    void LevelSet::computeGradients(const double timeStep)
+    void LevelSet::computeGradients()
     {
         // Compute gradient of the signed distance function using upwind finite difference.
         // This function assumes that velocities have already been calculated.
@@ -152,7 +187,7 @@ namespace lsm
         {
             // Compute the nodal gradient.
             unsigned int node = narrowBand[i];
-            gradient[node] = computeGradients(node, timeStep);
+            gradient[node] = computeGradients(node);
         }
     }
 
@@ -337,64 +372,93 @@ namespace lsm
         // Map boundary point velocities to nodes of the level set domain
         // using inverse squared distance interpolation.
 
-        // Loop over all nodes.
+        // Whether the velocity at a node has been set.
+        bool isSet[nNodes];
+
+        // Weighting factor for each node.
+        double weight[nNodes];
+
+        // Initialise arrays.
         for (unsigned int i=0;i<nNodes;i++)
         {
-            // Number of neighbouring boundary points.
-            unsigned int nPoints = mesh.nodes[i].nBoundaryPoints;
+            isSet[i] = false;
+            weight[i] = 0;
+            velocity[i] = 0;
+        }
 
-            // Node has a single neighbouring boundary point.
-            if (nPoints == 1)
-                velocity[i] = boundaryPoints[mesh.nodes[i].boundaryPoints[0]].velocity;
+        // Loop over all boundary points.
+        for (unsigned int i=0;i<boundaryPoints.size();i++)
+        {
+            // Find the closest node.
+            unsigned int node = mesh.getClosestNode(boundaryPoints[i].coord);
 
-            // Node has a two neighbouring boundary points.
-            else if (nPoints == 2)
+            // Distance from the boundary point to the node.
+            double dx = mesh.nodes[node].coord.x - boundaryPoints[i].coord.x;
+            double dy = mesh.nodes[node].coord.y - boundaryPoints[i].coord.y;
+
+            // Squared distance.
+            double rSqd = dx*dx + dy*dy;
+
+            // If boundary point lies exactly on the node, then set velocity
+            // to that of the boundary point.
+            if (rSqd < 1e-6)
             {
-                // The indices of the two boundary points.
-                unsigned int point1 = mesh.nodes[i].boundaryPoints[0];
-                unsigned int point2 = mesh.nodes[i].boundaryPoints[1];
-
-                // Distances from the first point (x and y components).
-                double dx1 = std::abs(mesh.nodes[i].coord.x - boundaryPoints[point1].coord.x);
-                double dy1 = std::abs(mesh.nodes[i].coord.y - boundaryPoints[point1].coord.y);
-
-                // Distances from the second point (x and y components).
-                double dx2 = std::abs(mesh.nodes[i].coord.x - boundaryPoints[point2].coord.x);
-                double dy2 = std::abs(mesh.nodes[i].coord.y - boundaryPoints[point2].coord.y);
-
-                // Squared distances.
-                double rSqd1 = dx1*dx1 + dy1*dy1;
-                double rSqd2 = dx2*dx2 + dy2*dy2;
-
-                // Weighting factors.
-                double weight1 = 0.0;
-                double weight2 = 0.0;
-
-                // If one point lies exactly on a node, then use only that velocity.
-                if (rSqd1 < 1e-6) weight1 = 1.0;
-                else if (rSqd2 < 1e-6) weight2 = 1.0;
-
-                // Determine weights (inverse squared distance).
-                else
+                velocity[node] = boundaryPoints[i].velocity;
+                weight[node] = 1.0;
+                isSet[node] = true;
+            }
+            else
+            {
+                // Update velocity estimate if not already set.
+                if (!isSet[node])
                 {
-                    weight1 = 1.0 / rSqd1;
-                    weight2 = 1.0 / rSqd2;
+                    velocity[node] += boundaryPoints[i].velocity / rSqd;
+                    weight[node] += 1.0 / rSqd;
                 }
-
-                // Calculate total weight.
-                double totalWeight = weight1 + weight2;
-
-                // Store interpolated nodal velocity: v = (w1*v1 + w2*v2]) / (w1 + w2)
-                velocity[i] = ((weight1 * boundaryPoints[point1].velocity)
-                            + (weight2 * boundaryPoints[point2].velocity)) / totalWeight;
             }
 
-            // No neighbouring points.
-            else velocity[i] = 0;
+            // Loop over all neighbours of the node.
+            for (unsigned int j=0;j<4;j++)
+            {
+                // Index of the neighbouring node.
+                unsigned int neighbour = mesh.nodes[node].neighbours[j];
+
+                // Distance from the boundary point to the node.
+                double dx = mesh.nodes[neighbour].coord.x - boundaryPoints[i].coord.x;
+                double dy = mesh.nodes[neighbour].coord.y - boundaryPoints[i].coord.y;
+
+                // Squared distance.
+                double rSqd = dx*dx + dy*dy;
+
+                // If boundary point lies exactly on the node, then set velocity
+                // to that of the boundary point.
+                if (rSqd < 1e-6)
+                {
+                    velocity[neighbour] = boundaryPoints[i].velocity;
+                    weight[neighbour] = 1.0;
+                    isSet[neighbour] = true;
+                }
+                else if (rSqd <= 1.0)
+                {
+                    // Update velocity estimate if not already set.
+                    if (!isSet[neighbour])
+                    {
+                        velocity[neighbour] += boundaryPoints[i].velocity / rSqd;
+                        weight[neighbour] += 1.0 / rSqd;
+                    }
+                }
+            }
+        }
+
+        // Compute interpolated velocity.
+        for (unsigned int i=0;i<nNarrowBand;i++)
+        {
+            unsigned int node = narrowBand[i];
+            if (velocity[node]) velocity[node] /= weight[node];
         }
     }
 
-    double LevelSet::computeGradients(const unsigned int node, const double timeStep)
+    double LevelSet::computeGradients(const unsigned int node)
     {
         // Nodal coordinates.
         unsigned int x = mesh.nodes[node].coord.x;
@@ -789,14 +853,6 @@ namespace lsm
             if (gradRight < 0)  grad += gradRight * gradRight;
 
             grad = sqrt(grad);
-        }
-
-        // Check that gradient doesn't take the boundary outside of the domain.
-        if ((x == 0) || (x == mesh.width) || (y == 0) || (y == mesh.height))
-        {
-            // Updated signed distance is positive.
-            if ((lsf - (timeStep * grad * velocity[node])) > 0)
-                grad = lsf / (timeStep * velocity[node]);
         }
 
         // Return gradient.

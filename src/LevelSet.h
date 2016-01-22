@@ -128,10 +128,7 @@ namespace lsm
         double computeVelocities(std::vector<BoundaryPoint>&, double&, const double, MersenneTwister&);
 
         //! Compute the gradient of the signed distance function.
-        /*! \param timeStep
-                The time step for the level set update.
-         */
-        void computeGradients(const double timeStep);
+        void computeGradients();
 
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
         std::vector<double> velocity;           //!< The nodal signed normal velocity.
@@ -173,13 +170,10 @@ namespace lsm
         /*! \param node
                 The node index.
 
-            \param timeStep
-                The time step for the level set update.
-
             \return
                 The gradient at the node.
          */
-        double computeGradients(const unsigned int, const double);
+        double computeGradients(const unsigned int);
 
         //! Compute WENO gradient approximation.
         /*! \param v1
