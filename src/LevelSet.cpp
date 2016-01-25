@@ -187,7 +187,7 @@ namespace lsm
         {
             // Compute the nodal gradient.
             unsigned int node = narrowBand[i];
-            gradient[node] = computeGradients(node);
+            gradient[node] = computeGradient(node);
         }
     }
 
@@ -458,7 +458,7 @@ namespace lsm
         }
     }
 
-    double LevelSet::computeGradients(const unsigned int node)
+    double LevelSet::computeGradient(const unsigned int node)
     {
         // Nodal coordinates.
         unsigned int x = mesh.nodes[node].coord.x;

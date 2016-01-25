@@ -173,7 +173,7 @@ namespace lsm
             \return
                 The gradient at the node.
          */
-        double computeGradients(const unsigned int);
+        double computeGradient(const unsigned int);
 
         //! Compute WENO gradient approximation.
         /*! \param v1
