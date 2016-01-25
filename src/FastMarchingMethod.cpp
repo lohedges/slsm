@@ -358,34 +358,21 @@ namespace lsm
                         {
                             // Calculate and store udpdated distance estimate.
                             double d = updateNode(naddr);
+                            (*signedDistance)[naddr] = d;
 
-                            // Make sure root was found.
-                            if (d)
+                            // Neighbour is in trial band.
+                            if (nodeStatus[naddr] & FMM_NodeStatus::TRIAL)
                             {
-                                (*signedDistance)[naddr] = d;
-
-                                // Neighbour is in trial band.
-                                if (nodeStatus[naddr] & FMM_NodeStatus::TRIAL)
+                                // Update value in heap.
+                                heap->set(heapPtr[naddr], std::abs(d));
+                            }
+                            // Neighbour has no status (far field).
+                            else if (nodeStatus[naddr] == FMM_NodeStatus::NONE)
+                            {
+                                if (isVelocity)
                                 {
-                                    // Update value in heap.
-                                    heap->set(heapPtr[naddr], std::abs(d));
-                                }
-                                // Neighbour has no status (far field).
-                                else if (nodeStatus[naddr] == FMM_NodeStatus::NONE)
-                                {
-                                    if (isVelocity)
-                                    {
-                                        // Node lies inside the narrow band region.
-                                        if (mesh.nodes[naddr].isActive)
-                                        {
-                                            // Mark node as in trial band.
-                                            nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
-
-                                            // Push onto heap.
-                                            heapPtr[naddr] = heap->push(naddr, std::abs(d));
-                                        }
-                                    }
-                                    else
+                                    // Node lies inside the narrow band region.
+                                    if (mesh.nodes[naddr].isActive)
                                     {
                                         // Mark node as in trial band.
                                         nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
@@ -393,6 +380,14 @@ namespace lsm
                                         // Push onto heap.
                                         heapPtr[naddr] = heap->push(naddr, std::abs(d));
                                     }
+                                }
+                                else
+                                {
+                                    // Mark node as in trial band.
+                                    nodeStatus[naddr] = FMM_NodeStatus::TRIAL;
+
+                                    // Push onto heap.
+                                    heapPtr[naddr] = heap->push(naddr, std::abs(d));
                                 }
                             }
                         }
@@ -412,15 +407,10 @@ namespace lsm
                                 {
                                     // Calculate and store udpdated distance estimate.
                                     double d = updateNode(naddr);
+                                    (*signedDistance)[naddr] = d;
 
-                                    // Make sure root was found.
-                                    if (d)
-                                    {
-                                        (*signedDistance)[naddr] = d;
-
-                                        // Update value in heap.
-                                        heap->set(heapPtr[naddr], std::abs(d));
-                                    }
+                                    // Update value in heap.
+                                    heap->set(heapPtr[naddr], std::abs(d));
                                 }
                             }
                         }
@@ -597,7 +587,8 @@ namespace lsm
             r0 = (-b + sqrt(discrim)) / (2.0 * a);
             r1 = (-b - sqrt(discrim)) / (2.0 * a);
         }
-        else return 0;
+        // Use previous estimate.
+        else return (*signedDistance)[node];
 
         if (signedDistanceCopy[node] > doubleEpsilon) return r0;
         else return r1;
