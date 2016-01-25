@@ -482,7 +482,7 @@ namespace lsm
                                 if (nodeStatus[n2] & FMM_NodeStatus::FROZEN)
                                 {
                                     // Make sure neighbour is closer to the zero contour (upwind).
-                                    if (std::abs((*signedDistance)[n2] <= std::abs(dist1)))
+                                    if (std::abs((*signedDistance)[n2]) <= std::abs(dist1))
                                     {
                                         // Store distance.
                                         dist2 = (*signedDistance)[n2];
