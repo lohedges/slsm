@@ -73,7 +73,7 @@ namespace lsm
                     // Edge connectivity goes: 0 --> 1, 1 --> 2, 2 --> 3, 3 --> 0
                     unsigned int n2 = (j == 3) ? 0 : (j + 1);
 
-                    // Conver to node index.
+                    // Convert to node index.
                     n2 = mesh.elements[i].nodes[n2];
 
                     // One node is inside, the other is outside. The edge is cut.
