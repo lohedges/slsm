@@ -82,7 +82,8 @@ int main(int argc, char** argv)
         lambdas.resize(1);
 
         // Initialise the optimisation object for material area maximisation.
-        lsm::Optimise optimise(boundary.points, constraintDistances, lambdas, timeStep, true);
+        lsm::Optimise optimise(boundary.points, constraintDistances,
+            lambdas, timeStep,  levelSet.moveLimit, true);
         double areaChange = optimise.solve();
 
         // Print optimisation results.
@@ -93,7 +94,7 @@ int main(int argc, char** argv)
         levelSet.computeVelocities(boundary.points);
 
         // Compute gradient of signed distance function.
-        levelSet.computeGradients(timeStep);
+        levelSet.computeGradients();
 
         // Save LSF info (ParaView and txt file).
         io.saveLevelSetVTK(i+1, mesh, levelSet);
