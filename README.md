@@ -90,17 +90,21 @@ $ make devel test
 ```
 
 ## Demos
-Currently there is a single demo showing how to instantiate objects and perform
-calculations.
+Currently there is a single demo showing how to use the library:
 
-* `demos/lsm.cpp`
+* `demos/hole_shrinking.cpp`
 
 The makefile will build an executable, which can be run (from the top level
 directory) as follows
 
 ```bash
-$ ./demos/lsm
+$ ./demos/hole_shrinking
+
 ```
+
+The demo serves as a test of our numerical implementation, showing the
+shrinking of a hole at constant velocity. The comments in the source
+file provide further details of the calculations.
 
 ## Completed
 
