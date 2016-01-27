@@ -112,10 +112,6 @@ int main(int argc, char** argv)
     // Boundary length measurements.
     std::vector<double> lengths;
 
-    // Store initial values.
-    times.push_back(time);
-    lengths.push_back(boundary.length);
-
     /* Lambda values for the optimiser.
        These are reused, i.e. the solution from the current iteration is
        used as an estimate for the next, hence we declare the vector
@@ -202,8 +198,8 @@ int main(int argc, char** argv)
             printf("%6.1f %8.1f\n", time, boundary.length);
 
             // Write level set and boundary segments to file.
-            io.saveLevelSetVTK(times.size()-1, mesh, levelSet);
-            io.saveBoundarySegmentsTXT(times.size()-1, mesh, boundary);
+            io.saveLevelSetVTK(times.size(), mesh, levelSet);
+            io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
         }
     }
 
@@ -211,7 +207,7 @@ int main(int argc, char** argv)
     FILE *pFile;
     pFile = fopen("hole_shrink.txt", "w");
     for (unsigned int i=0;i<times.size();i++)
-        fprintf(pFile, "%lf %lf\n", times[i], (lengths[0] - lengths[i]) / (2 * M_PI));
+        fprintf(pFile, "%lf %lf\n", times[i] - times[0], (lengths[0] - lengths[i]) / (2 * M_PI));
 
     std::cout << "\nDone!\n";
 
