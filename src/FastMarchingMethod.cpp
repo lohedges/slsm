@@ -519,6 +519,9 @@ namespace lsm
         // Initialise distance array.
         double dist[2] = {0, 0};
 
+        // Initialise front (zero contour) distance array.
+        double frontDist[2] = {0, 0};
+
         // Initialise velocity array.
         double vel[2] = {0, 0};
 
@@ -537,16 +540,20 @@ namespace lsm
                 // Neighbour is frozen.
                 if (nodeStatus[neighbour] & FMM_NodeStatus::FROZEN)
                 {
-                    // Determine which direction, in this dimension, is nearest to
-                    // the front. Calculate the distance to the front in this direction.
-                    double d = (*signedDistance)[node] - (*signedDistance)[neighbour];
+                    // Absolute signed distance of the neighbouring node.
+                    double d = std::abs((*signedDistance)[neighbour]);
 
-                    // Take absolute distance.
-                    d = std::abs(d);
-
-                    if ((dist[dim] == 0) || (dist[dim] > d))
+                    // Check whether the neighbour is closer to the zero contour.
+                    if ((frontDist[dim] == 0) || (frontDist[dim] > d))
                     {
-                        dist[dim] = d;
+                        // Store updated distance to the front.
+                        frontDist[dim] = d;
+
+                        // Calculate the distance to the front in this direction.
+                        d = (*signedDistance)[node] - (*signedDistance)[neighbour];
+
+                        // Store absolute distance and velocity.
+                        dist[dim] = std::abs(d);
                         vel[dim] = (*velocity)[neighbour];
                     }
                 }
