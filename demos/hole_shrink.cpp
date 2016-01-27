@@ -47,11 +47,6 @@
     by measuring the change in the boundary length over time and comparing the
     radius at each time interval (radius = perimeter / (2 x pi).
 
-    Note that the domain boundary provides a constant contribution to the
-    boundary length, i.e. the length is not just the perimeter of the hole.
-    However, since these points are fixed, the additional contribution
-    cancels when measuring displacements relative to the initial condition.
-
     The output file, "hole_shrink.txt", contains the measured distance vs
     time data for the optmisation run. Level set information for each
     sample interval is written to ParaView readable VTK files, "level-set_*.vtk".
@@ -91,7 +86,7 @@ int main(int argc, char** argv)
     holes.push_back(lsm::Hole(100, 100, 80));
 
     // Initialise the level set object (from the hole vector).
-    lsm::LevelSet levelSet(mesh, holes, moveLimit);
+    lsm::LevelSet levelSet(mesh, holes, moveLimit, 6, true);
 
     // Initialise io object.
     lsm::InputOutput io;
