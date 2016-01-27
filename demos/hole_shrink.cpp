@@ -105,9 +105,6 @@ int main(int argc, char** argv)
     // Perform initial boundary discretisation.
     boundary.discretise();
 
-    // Initialise random number generator.
-    lsm::MersenneTwister rng;
-
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
 
