@@ -24,11 +24,12 @@
 
 namespace lsm
 {
-    LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_) :
+    LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
-        bandWidth(bandWidth_)
+        bandWidth(bandWidth_),
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -60,11 +61,13 @@ namespace lsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes, double moveLimit_, unsigned int bandWidth_) :
+    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
+        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
-        bandWidth(bandWidth_)
+        bandWidth(bandWidth_),
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -327,42 +330,47 @@ namespace lsm
         // Loop over all nodes.
         for (unsigned int i=0;i<nNodes;i++)
         {
-            // Absolute value of the signed distance function.
-            double absoluteSignedDistance = std::abs(signedDistance[i]);
-
-            // Node lies inside band.
-            if (absoluteSignedDistance < bandWidth)
+            // Check that the node isn't on the domain boundary, and if it is
+            // then check that the boundary isn't fixed.
+            if (!mesh.nodes[i].isDomain || !isFixed)
             {
-                // Flag node as active.
-                mesh.nodes[i].isActive = true;
+                // Absolute value of the signed distance function.
+                double absoluteSignedDistance = std::abs(signedDistance[i]);
 
-                // Update narrow band array.
-                narrowBand[nNarrowBand] = i;
-
-                // Increment number of nodes.
-                nNarrowBand++;
-
-                // Node lines at edge of band.
-                if (absoluteSignedDistance > mineWidth)
+                // Node lies inside band.
+                if (absoluteSignedDistance < bandWidth)
                 {
-                    // Node is a mine.
-                    mesh.nodes[i].isMine = true;
+                    // Flag node as active.
+                    mesh.nodes[i].isActive = true;
 
-                    // Update mine array.
-                    mines[nMines] = i;
+                    // Update narrow band array.
+                    narrowBand[nNarrowBand] = i;
 
-                    // Increment mine count.
-                    nMines++;
+                    // Increment number of nodes.
+                    nNarrowBand++;
 
-                    // TODO:
-                    // Check when number of mines exceeds array size!
+                    // Node lines at edge of band.
+                    if (absoluteSignedDistance > mineWidth)
+                    {
+                        // Node is a mine.
+                        mesh.nodes[i].isMine = true;
+
+                        // Update mine array.
+                        mines[nMines] = i;
+
+                        // Increment mine count.
+                        nMines++;
+
+                        // TODO:
+                        // Check when number of mines exceeds array size!
+                    }
                 }
-            }
-            // Node is outside band.
-            else
-            {
-                // Flag node as inactive.
-                mesh.nodes[i].isActive = false;
+                // Node is outside band.
+                else
+                {
+                    // Flag node as inactive.
+                    mesh.nodes[i].isActive = false;
+                }
             }
         }
     }

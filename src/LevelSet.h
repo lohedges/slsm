@@ -73,8 +73,11 @@ namespace lsm
 
             \param bandWidth_
                 The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6);
+        LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
         /*! \param mesh_
@@ -88,8 +91,12 @@ namespace lsm
 
             \param bandWidth_
                 The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6);
+        LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5,
+            unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Update the level set function.
         /*! \param timeStep
@@ -143,6 +150,7 @@ namespace lsm
     private:
         Mesh& mesh;                             //!< A reference to the finite element mesh.
         unsigned int bandWidth;                 //!< The width of the narrow band region.
+        bool isFixed;                           //!< Whether the domain boundary is fixed.
 
         //! Default initialisation of the level set function (Swiss cheese configuration).
         void initialise();
