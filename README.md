@@ -37,6 +37,10 @@ a target, i.e.
 $ make
 ```
 
+Note that you don't have to install the library in order to use it. You can
+always build locally then link against the library in the `lib` directory
+inside of the repository.
+
 ## Compiling and linking
 To use LibLSM with a C/C++ code first include the LibLSM header file somewhere
 in the code.
