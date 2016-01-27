@@ -76,116 +76,120 @@ namespace lsm
                     // Convert to node index.
                     n2 = mesh.elements[i].nodes[n2];
 
-                    // One node is inside, the other is outside. The edge is cut.
-                    if ((mesh.nodes[n1].status|mesh.nodes[n2].status) == NodeStatus::CUT)
+                    // Check that both nodes are inside the narrow band region.
+                    if (mesh.nodes[n1].isActive && mesh.nodes[n2].isActive)
                     {
-                        // Compute the distance from node 1 to the intersection point (by interpolation).
-                        double d = levelSet.signedDistance[n1]
-                                / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
-
-                        // Initialise boundary point coordinate.
-                        Coord coord;
-
-                        // Make sure that the boundary point hasn't already been added.
-                        int index = isAdded(coord, n1, j, d);
-
-                        // Boundary point is new.
-                        if (index < 0)
+                        // One node is inside, the other is outside. The edge is cut.
+                        if ((mesh.nodes[n1].status|mesh.nodes[n2].status) == NodeStatus::CUT)
                         {
-                            mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
-                            mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
-                            mesh.nodes[n1].nBoundaryPoints++;
-                            mesh.nodes[n2].nBoundaryPoints++;
+                            // Compute the distance from node 1 to the intersection point (by interpolation).
+                            double d = levelSet.signedDistance[n1]
+                                    / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
-                            // Store boundary point for cut edge.
-                            boundaryPoints[nCut] = nPoints;
+                            // Initialise boundary point coordinate.
+                            Coord coord;
 
-                            // Initialise boundary point.
-                            initialisePoint(points[nPoints], coord);
+                            // Make sure that the boundary point hasn't already been added.
+                            int index = isAdded(coord, n1, j, d);
 
-                            // Increment number of boundary points.
-                            nPoints++;
-                        }
-                        else
-                        {
-                            // Store existing boundary point.
-                            boundaryPoints[nCut] = index;
-                        }
+                            // Boundary point is new.
+                            if (index < 0)
+                            {
+                                mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
+                                mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
+                                mesh.nodes[n1].nBoundaryPoints++;
+                                mesh.nodes[n2].nBoundaryPoints++;
 
-                        // Increment number of cut edges.
-                        nCut++;
-                    }
+                                // Store boundary point for cut edge.
+                                boundaryPoints[nCut] = nPoints;
 
-                    // Both nodes lie on the boundary.
-                    else if ((mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
-                        (mesh.nodes[n2].status & NodeStatus::BOUNDARY))
-                    {
-                        // Initialise boundary point coordinate.
-                        Coord coord;
+                                // Initialise boundary point.
+                                initialisePoint(points[nPoints], coord);
 
-                        // Create boundary segment.
-                        BoundarySegment segment;
+                                // Increment number of boundary points.
+                                nPoints++;
+                            }
+                            else
+                            {
+                                // Store existing boundary point.
+                                boundaryPoints[nCut] = index;
+                            }
 
-                        // Assign element index.
-                        segment.element = i;
-
-                        // Make sure that the start boundary point hasn't already been added.
-                        int index = isAdded(coord, n1, 0, 0);
-
-                        // Boundary point is new.
-                        if (index < 0)
-                        {
-                            // Set index equal to current number of points.
-                            index = nPoints;
-
-                            mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
-                            mesh.nodes[n1].nBoundaryPoints++;
-
-                            // Initialise boundary point.
-                            initialisePoint(points[nPoints], coord);
-
-                            // Increment number of boundary points.
-                            nPoints++;
+                            // Increment number of cut edges.
+                            nCut++;
                         }
 
-                        // Assign start point index.
-                        segment.start = index;
-
-                        // Make sure that the end boundary point hasn't already been added.
-                        index = isAdded(coord, n2, 0, 0);
-
-                        // Boundary point is new.
-                        if (index < 0)
+                        // Both nodes lie on the boundary.
+                        else if ((mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
+                            (mesh.nodes[n2].status & NodeStatus::BOUNDARY))
                         {
-                            // Set index equal to current number of points.
-                            index = nPoints;
+                            // Initialise boundary point coordinate.
+                            Coord coord;
 
-                            mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
-                            mesh.nodes[n2].nBoundaryPoints++;
+                            // Create boundary segment.
+                            BoundarySegment segment;
 
-                            // Initialise boundary point.
-                            initialisePoint(points[nPoints], coord);
+                            // Assign element index.
+                            segment.element = i;
 
-                            // Increment number of boundary points.
-                            nPoints++;
+                            // Make sure that the start boundary point hasn't already been added.
+                            int index = isAdded(coord, n1, 0, 0);
+
+                            // Boundary point is new.
+                            if (index < 0)
+                            {
+                                // Set index equal to current number of points.
+                                index = nPoints;
+
+                                mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
+                                mesh.nodes[n1].nBoundaryPoints++;
+
+                                // Initialise boundary point.
+                                initialisePoint(points[nPoints], coord);
+
+                                // Increment number of boundary points.
+                                nPoints++;
+                            }
+
+                            // Assign start point index.
+                            segment.start = index;
+
+                            // Make sure that the end boundary point hasn't already been added.
+                            index = isAdded(coord, n2, 0, 0);
+
+                            // Boundary point is new.
+                            if (index < 0)
+                            {
+                                // Set index equal to current number of points.
+                                index = nPoints;
+
+                                mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
+                                mesh.nodes[n2].nBoundaryPoints++;
+
+                                // Initialise boundary point.
+                                initialisePoint(points[nPoints], coord);
+
+                                // Increment number of boundary points.
+                                nPoints++;
+                            }
+
+                            // Assign end point index.
+                            segment.end = index;
+
+                            // Compute the length of the boundary segment.
+                            segment.length = segmentLength(segment);
+
+                            // Update total boundary length.
+                            length += segment.length;
+
+                            // Create element to segment lookup.
+                            mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
+                            mesh.elements[i].nBoundarySegments++;
+
+                            // Add segment to vector.
+                            segments[nSegments] = segment;
+                            nSegments++;
                         }
-
-                        // Assign end point index.
-                        segment.end = index;
-
-                        // Compute the length of the boundary segment.
-                        segment.length = segmentLength(segment);
-
-                        // Update total boundary length.
-                        length += segment.length;
-
-                        // Create element to segment lookup.
-                        mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                        mesh.elements[i].nBoundarySegments++;
-
-                        // Add segment to vector.
-                        segments[nSegments] = segment;
-                        nSegments++;
                     }
                 }
 
