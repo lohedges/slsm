@@ -68,7 +68,6 @@ namespace lsm
 
     error:
         exit(EXIT_FAILURE);
-
     }
 
     double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
