@@ -494,6 +494,9 @@ namespace lsm
 
         // Work out boundary integral length associated with each boundary point.
         computePointLengths();
+
+        // Estimate the local interface curvature.
+        computeCurvature();
     }
 
     double Boundary::computeAreaFractions()
@@ -576,6 +579,10 @@ namespace lsm
         // Set edge and distance equal to zero when considering boundary points lying exactly
         // on top of a mesh node.
 
+        errno = 0;
+        // Check for discretisation errors.
+        lsm_check(node < levelSet.nNodes, "Boundary discretisation error! Try reducing the CFL limit.");
+
         // Bottom edge.
         if (edge == 0)
         {
@@ -618,6 +625,9 @@ namespace lsm
 
         // If we've made it this far, then point is new.
         return -1;
+
+    error:
+        exit(EXIT_FAILURE);
     }
 
     void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
@@ -633,6 +643,10 @@ namespace lsm
         // Initialise movement limit (CFL condition).
         point.negativeLimit = -levelSet.moveLimit;
         point.positiveLimit = levelSet.moveLimit;
+
+        // Initialise segment indices.
+        point.segments[0] = levelSet.nNodes;
+        point.segments[1] = levelSet.nNodes;
 
         // Check whether point lies within half a grid spacing of the domain boundary.
         // If so, modify the lower movement limit so that point can't move outside of
@@ -827,6 +841,106 @@ namespace lsm
             // Add half segment length to each boundary point.
             points[segments[i].start].length += 0.5 * segments[i].length;
             points[segments[i].end].length += 0.5 * segments[i].length;
+
+            // Update point to segment lookup for start point.
+
+            if (points[segments[i].start].segments[0] == levelSet.nNodes)
+                points[segments[i].start].segments[0] = i;
+
+            else if (points[segments[i].start].segments[1] == levelSet.nNodes)
+                points[segments[i].start].segments[1] = i;
+
+            // Update point to segment lookup for end point.
+
+            if (points[segments[i].end].segments[0] == levelSet.nNodes)
+                points[segments[i].end].segments[0] = i;
+
+            else if (points[segments[i].end].segments[1] == levelSet.nNodes)
+                points[segments[i].end].segments[1] = i;
         }
+    }
+
+    void Boundary::computeCurvature()
+    {
+        /* Sensitivities with respect to changes in the length of the boundary
+           are proportional to the local curvature of the interface. To estimate
+           the local curvature around a boundary point we use the following
+           protocol:
+
+             1) Determine the two boundary segments to which the point belongs.
+                The point joins the segments, i.e. it lies in the middle.
+
+             2) Calculate the weighted mid-point of the line connecting the end
+                points of the two segments. This means that the mid-point is
+                weighted by the length of the segments, i.e. if the lengths are
+                the same then the mid-point is exactly in the middle, if one
+                segment is longer then the mid-point lies closer to that segment.
+
+             3) Work out the distance between the boundary point and the
+                mid-point. This provides an estimate of the local deformation of
+                the interface, i.e. if the distance is zero then all three points
+                lie on a straight line.
+
+             4) Look at the signed distance function either side of the mid-point
+                to determine the sign of the curvature.
+         */
+
+        // Loop over all boundary points.
+        for (unsigned int i=0;i<nPoints;i++)
+        {
+            // Segment indices.
+            unsigned int segment1 = points[i].segments[0];
+            unsigned int segment2 = points[i].segments[1];
+
+            errno = 0;
+            // Check for discretisation errors.
+            lsm_check(((segment1 != levelSet.nNodes) && segment2 != levelSet.nNodes),
+             "Boundary discretisation error! Try reducing the CFL limit.");
+
+            // Find indices of the neighbouring boundary points.
+            // The point of interest will lie in the middle of the two points.
+
+            // Index of first neighbouring point.
+            unsigned int point1 = segments[segment1].start;
+            if (point1 == i) point1 = segments[segment1].end;
+
+            // Index of second neighbouring point.
+            unsigned int point2 = segments[segment2].start;
+            if (point2 == i) point2 = segments[segment2].end;
+
+            // Separation between point1 and point2 in x and y directions.
+            double dx = points[point2].coord.x - points[point1].coord.x;
+            double dy = points[point2].coord.y - points[point1].coord.y;
+
+            // Compute weight factor for segments lengths.
+            double weight = segments[segment1].length
+                          / (segments[segment1].length + segments[segment2].length);
+
+            // Compute weighted mid-point of line separating point1 and point2.
+            double x = points[point1].coord.x + weight*dx;
+            double y = points[point1].coord.y + weight*dy;
+
+            // Separation between point and mid-point in x and y directions.
+            dx = x - points[i].coord.x;
+            dy = y - points[i].coord.y;
+
+            // Approximate curvature as the radial distance from the mid-point.
+            points[i].curvature = sqrt(dx*dx + dy*dy);
+
+            // Normalise separation vector.
+            dx /= points[i].curvature;
+            dy /= points[i].curvature;
+
+            // Work out closest element in direction of mid-point vector.
+            unsigned int elem = mesh.getElement(x + dx, y + dy);
+
+            // Negative curvature if the element is inside the structure.
+            if (mesh.elements[elem].area > 0.5) points[i].curvature *= -1;
+        }
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
     }
 }

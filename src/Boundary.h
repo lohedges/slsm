@@ -22,6 +22,7 @@
 #include <functional>
 
 #include "Common.h"
+#include "Debug.h"
 #include "LevelSet.h"
 
 /*! \file Boundary.h
@@ -37,10 +38,12 @@ namespace lsm
     {
         Coord coord;                        //!< Coordinate of the boundary point.
         double length;                      //!< Integral length of the boundary point.
+        double curvature;                   //!< Local interface curvature around point.
         double velocity;                    //!< Normal velocity (positive acts inwards).
         double negativeLimit;               //!< Movement limit in negative direction (inwards).
         double positiveLimit;               //!< Movement limit in positive direction (outwards).
         bool isDomain;                      //!< Whether the point lies close to the domain boundary.
+        unsigned int segments[2];           //!< The indices of the two segments to which a point contributes.
         std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
     };
 
@@ -195,6 +198,9 @@ namespace lsm
 
         //! Compute the (potentially weighted) integral length for each boundary point.
         void computePointLengths();
+
+        //! Compute the local curvature around each boundary point.
+        void computeCurvature();
     };
 }
 
