@@ -22,7 +22,6 @@
 #include <functional>
 
 #include "Common.h"
-#include "Debug.h"
 #include "LevelSet.h"
 
 /*! \file Boundary.h
@@ -43,7 +42,8 @@ namespace lsm
         double negativeLimit;               //!< Movement limit in negative direction (inwards).
         double positiveLimit;               //!< Movement limit in positive direction (outwards).
         bool isDomain;                      //!< Whether the point lies close to the domain boundary.
-        unsigned int segments[2];           //!< The indices of the two segments to which a point contributes.
+        unsigned int nSegments;             //!< The number of boundary segments that a point belongs to.
+        unsigned int segments[2];           //!< The indices of the two segments to which a point belongs.
         std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
     };
 

@@ -532,7 +532,10 @@ namespace lsm
             // Reset the number of boundary points associated with the element.
             mesh.nodes[i].nBoundaryPoints = 0;
 
-            if (levelSet.signedDistance[i] == 0)
+            // Flag node as being on the boundary if the signed distance is within
+            // a small tolerance of the zero contour. This avoids problems with
+            // rounding errors when generating the discretised boundary.
+            if (std::abs(levelSet.signedDistance[i]) < 1e-6)
             {
                 mesh.nodes[i].status = NodeStatus::BOUNDARY;
             }
@@ -579,10 +582,6 @@ namespace lsm
         // Set edge and distance equal to zero when considering boundary points lying exactly
         // on top of a mesh node.
 
-        errno = 0;
-        // Check for discretisation errors.
-        lsm_check(node < levelSet.nNodes, "Boundary discretisation error! Try reducing the CFL limit.");
-
         // Bottom edge.
         if (edge == 0)
         {
@@ -625,16 +624,15 @@ namespace lsm
 
         // If we've made it this far, then point is new.
         return -1;
-
-    error:
-        exit(EXIT_FAILURE);
     }
 
     void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
     {
-        // Initialise position, length, and isDomain.
+        // Initialise position, length, curvature, number of segments, and isDomain.
         point.coord = coord;
         point.length = 0;
+        point.curvature = 0;
+        point.nSegments = 0;
         point.isDomain = false;
 
         // Assume two sensitivities to start with (objective and a single constraint).
@@ -643,10 +641,6 @@ namespace lsm
         // Initialise movement limit (CFL condition).
         point.negativeLimit = -levelSet.moveLimit;
         point.positiveLimit = levelSet.moveLimit;
-
-        // Initialise segment indices.
-        point.segments[0] = levelSet.nNodes;
-        point.segments[1] = levelSet.nNodes;
 
         // Check whether point lies within half a grid spacing of the domain boundary.
         // If so, modify the lower movement limit so that point can't move outside of
@@ -843,20 +837,12 @@ namespace lsm
             points[segments[i].end].length += 0.5 * segments[i].length;
 
             // Update point to segment lookup for start point.
-
-            if (points[segments[i].start].segments[0] == levelSet.nNodes)
-                points[segments[i].start].segments[0] = i;
-
-            else if (points[segments[i].start].segments[1] == levelSet.nNodes)
-                points[segments[i].start].segments[1] = i;
+            points[segments[i].start].segments[points[segments[i].start].nSegments] = i;
+            points[segments[i].start].nSegments++;
 
             // Update point to segment lookup for end point.
-
-            if (points[segments[i].end].segments[0] == levelSet.nNodes)
-                points[segments[i].end].segments[0] = i;
-
-            else if (points[segments[i].end].segments[1] == levelSet.nNodes)
-                points[segments[i].end].segments[1] = i;
+            points[segments[i].end].segments[points[segments[i].end].nSegments] = i;
+            points[segments[i].end].nSegments++;
         }
     }
 
@@ -892,11 +878,6 @@ namespace lsm
             unsigned int segment1 = points[i].segments[0];
             unsigned int segment2 = points[i].segments[1];
 
-            errno = 0;
-            // Check for discretisation errors.
-            lsm_check(((segment1 != levelSet.nNodes) && segment2 != levelSet.nNodes),
-             "Boundary discretisation error! Try reducing the CFL limit.");
-
             // Find indices of the neighbouring boundary points.
             // The point of interest will lie in the middle of the two points.
 
@@ -914,7 +895,7 @@ namespace lsm
 
             // Compute weight factor for segments lengths.
             double weight = segments[segment1].length
-                          / (segments[segment1].length + segments[segment2].length);
+                            / (segments[segment1].length + segments[segment2].length);
 
             // Compute weighted mid-point of line separating point1 and point2.
             double x = points[point1].coord.x + weight*dx;
@@ -937,10 +918,5 @@ namespace lsm
             // Negative curvature if the element is inside the structure.
             if (mesh.elements[elem].area > 0.5) points[i].curvature *= -1;
         }
-
-        return;
-
-    error:
-        exit(EXIT_FAILURE);
     }
 }
