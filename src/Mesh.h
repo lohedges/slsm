@@ -51,9 +51,9 @@ namespace lsm
             NONE            = 0,                //!< No status.
             INSIDE          = (1 << 0),         //!< Node lies inside the boundary.
             OUTSIDE         = (1 << 1),         //!< Node lies outside the boundary.
-            BOUNDARY        = (1 << 2),         //!< Node is cut by the boundary.
+            BOUNDARY        = (1 << 2),         //!< Node lies on the boundary.
             MASKED          = (1 << 3),         //!< Node is masked (for inserting obstacles, etc.)
-            CUT             = (INSIDE|OUTSIDE), //!< Node pair cuts the boundary.
+            CUT             = (INSIDE|OUTSIDE), //!< Node pair is cut by the boundary.
         };
     }
 
