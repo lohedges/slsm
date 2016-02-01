@@ -390,9 +390,7 @@ namespace lsm
                                     heapPtr[naddr] = heap->push(naddr, std::abs(d));
                                 }
                             }
-                        }
-                        else
-                        {
+
                             // Now update the far field point in the second order stencil.
                             // "jump" over a frozen node if needed.
 
