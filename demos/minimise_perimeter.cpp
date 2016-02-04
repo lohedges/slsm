@@ -16,6 +16,7 @@
 */
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 
 #include "lsm.h"
@@ -45,8 +46,11 @@ int main(int argc, char** argv)
     // This is the CFL limit.
     double moveLimit = 0.5;
 
-    // Temperature of the thermal bath.
+    // Default temperature of the thermal bath.
     double temperature = 0.02;
+
+    // Override temperature if command-line argument is passed.
+    if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
     double maxTime = 1000;
@@ -108,8 +112,11 @@ int main(int argc, char** argv)
     // Time measurements.
     std::vector<double> times;
 
-    // Boundary length measurements.
+    // Boundary length measurements (objective).
     std::vector<double> lengths;
+
+    // Material area fraction measurements (constraint).
+    std::vector<double> areas;
 
     /* Lambda values for the optimiser.
        These are reused, i.e. the solution from the current iteration is
@@ -205,16 +212,26 @@ int main(int argc, char** argv)
             io.saveLevelSetVTK(times.size(), mesh, levelSet);
             io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
 
-            // Store the average radius.
+            // Store the perimeter.
             lengths.push_back(boundary.length);
+
+            // Store the material area.
+            areas.push_back(boundary.area / meshArea);
         }
     }
 
-    // Print results to file (perimeter vs time).
+    // Print results to file (perimeter vs time (and area)).
     FILE *pFile;
-    pFile = fopen("perimeter.txt", "w");
+    std::ostringstream fileName, num;
+    num.str("");
+    fileName.str("");
+    num << std::fixed << std::setprecision(4) << temperature;
+    fileName << "perimeter_" << num.str() << ".txt";
+
+    pFile = fopen(fileName.str().c_str(), "w");
     for (unsigned int i=0;i<times.size();i++)
-        fprintf(pFile, "%lf %lf\n", times[i] - times[0], lengths[i]);
+        fprintf(pFile, "%lf %lf %lf\n", times[i] - times[0], lengths[i], areas[i]);
+    fclose(pFile);
 
     std::cout << "\nDone!\n";
 
