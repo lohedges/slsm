@@ -208,6 +208,7 @@ int main(int argc, char** argv)
     pFile = fopen("hole_shrink.txt", "w");
     for (unsigned int i=0;i<times.size();i++)
         fprintf(pFile, "%lf %lf\n", times[i] - times[0], (lengths[0] - lengths[i]) / (2 * M_PI));
+    fclose(pFile);
 
     std::cout << "\nDone!\n";
 
