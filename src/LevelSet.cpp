@@ -35,8 +35,6 @@ namespace lsm
 
         errno = EINVAL;
         lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-
-        errno = EINVAL;
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
@@ -73,8 +71,6 @@ namespace lsm
 
         errno = EINVAL;
         lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-
-        errno = EINVAL;
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
