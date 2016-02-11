@@ -84,7 +84,7 @@ namespace lsm
                         {
                             // Compute the distance from node 1 to the intersection point (by interpolation).
                             double d = levelSet.signedDistance[n1]
-                                    / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
+                                     / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
 
                             // Initialise boundary point coordinate.
                             Coord coord;
@@ -778,10 +778,10 @@ namespace lsm
         // closer to the centre.
 
         double d1 = (point1.x - centre.x) * (point1.x - centre.x)
-                + (point1.y - centre.y) * (point1.y - centre.y);
+                  + (point1.y - centre.y) * (point1.y - centre.y);
 
         double d2 = (point2.x - centre.x) * (point2.x - centre.x)
-                + (point2.y - centre.y) * (point2.y - centre.y);
+                  + (point2.y - centre.y) * (point2.y - centre.y);
 
         return (d1 > d2) ? false : true;
     }
@@ -895,7 +895,7 @@ namespace lsm
 
             // Compute weight factor for segments lengths.
             double weight = segments[segment1].length
-                            / (segments[segment1].length + segments[segment2].length);
+                          / (segments[segment1].length + segments[segment2].length);
 
             // Compute weighted mid-point of line separating point1 and point2.
             double x = points[point1].coord.x + weight*dx;
