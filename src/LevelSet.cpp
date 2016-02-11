@@ -872,6 +872,7 @@ namespace lsm
     {
         // Approximate the gradient using the 5th order Hamilton-Jacobi WENO approximation.
         // Taken from pages 34-35 of "Level Set Methods and Dynamic Implicit Surfaces".
+        // See: http://web.stanford.edu/class/cs237c/Lecture16.pdf
 
         double oneQuarter        = 1.0  / 4.0;
         double thirteenTwelths   = 13.0 / 12.0;
