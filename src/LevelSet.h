@@ -183,7 +183,7 @@ namespace lsm
          */
         double computeGradient(const unsigned int);
 
-        //! Compute WENO gradient approximation.
+        //! Compute Hamilton-Jacobi WENO gradient approximation.
         /*! \param v1
                 The value of the function at the first stencil point.
 
@@ -202,7 +202,7 @@ namespace lsm
             \return
                 The smoothed function (gradient).
          */
-        double gradWENO(double, double, double, double, double);
+        double gradHJWENO(double, double, double, double, double);
     };
 }
 
