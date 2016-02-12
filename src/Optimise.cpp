@@ -130,7 +130,7 @@ namespace lsm
         opt.set_maxeval(500);
 
         // Set convergence tolerance.
-        opt.set_xtol_rel(1e-6);
+        opt.set_xtol_rel(1e-8);
 
         // Specify whether we want to minimise or maximise the objective function.
         if (isMax) opt.set_max_objective(callbackWrapper, &objectiveWrapper);
@@ -143,9 +143,36 @@ namespace lsm
         // The optimum value of the objective function.
         double optObjective;
 
-        // Perform the optimisation. The previous lambda values will
-        // be used as an initial estimate for the solution.
-        returnCode = opt.optimize(lambdas, optObjective);
+        // Whether a single optimisation has been attempted.
+        bool isAttempted = false;
+
+        // Keep trying optmisation until a solution is found.
+        while ((returnCode < 0) || !isAttempted)
+        {
+            isAttempted = true;
+
+            // Attempt optimisation.
+            try
+            {
+                returnCode = opt.optimize(lambdas, optObjective);
+            }
+
+            // Catch roundoff errors.
+            catch (nlopt::roundoff_limited)
+            {
+                // Reduce the constraint change targets.
+                for (unsigned int i=0;i<nConstraints;i++)
+                    constraintDistancesScaled[i] *= 0.7;
+
+            }
+
+            // Catch argument errors.
+            catch (std::invalid_argument)
+            {
+                errno = EINVAL;
+                lsm_log_err("Invalid arguments!");
+            }
+        }
 
         // Compute the optimum displacement vector.
         computeDisplacements(lambdas);
@@ -333,9 +360,15 @@ namespace lsm
             negativeLambdaLimits[i] /= scaleFactors[i];
             positiveLambdaLimits[i] /= scaleFactors[i];
 
-            // Check that initial lambda values are in range.
-            if (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] = 0;
-            else if (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] = 0;
+            /* Rescale the lambda values so that they are in range.
+
+               N.B. Resetting the lambda values to zero can cause spurious
+               errors with the optimiser when close to convergence. Solutions
+               may be found with lambda = 0 (for the objective) which will result
+               in undefined velocities.
+             */
+            while (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] *= 0.9;
+            while (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] *= 0.9;
         }
     }
 
