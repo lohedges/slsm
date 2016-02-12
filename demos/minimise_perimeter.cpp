@@ -24,7 +24,7 @@
 /*! \file minimise_perimeter.cpp
     \brief An example code showing perimeter minimisation with noise.
 
-    The output file, "perimeter.txt", contains the measured boundary length vs
+    The output file, "perimeter_*.txt", contains the measured boundary length vs
     time data for the optmisation run. Level set information for each sample
     interval is written to ParaView readable VTK files, "level-set_*.vtk".
     Boundary segment data is written to "boundary-segments_*.txt".
@@ -128,9 +128,9 @@ int main(int argc, char** argv)
     std::cout << "\nStarting perimeter minimisation demo...\n\n";
 
     // Print output header.
-    printf("----------------------\n");
-    printf("%6s %8s %6s\n", "Time", "Length", "Area");
-    printf("----------------------\n");
+    printf("-------------------------\n");
+    printf("%9s %8s %6s\n", "Time", "Length", "Area");
+    printf("-------------------------\n");
 
     // Integrate until we exceed the maximim time.
     while (time < maxTime)
@@ -206,7 +206,7 @@ int main(int argc, char** argv)
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.2f %8.1f %6.2f\n", time, boundary.length, boundary.area / meshArea);
+            printf("%9.2f %8.1f %6.2f\n", time, boundary.length, boundary.area / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), mesh, levelSet);
@@ -220,7 +220,7 @@ int main(int argc, char** argv)
         }
     }
 
-    // Print results to file (perimeter vs time (and area)).
+    // Print results to file.
     FILE *pFile;
     std::ostringstream fileName, num;
     num.str("");
