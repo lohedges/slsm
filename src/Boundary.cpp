@@ -865,7 +865,8 @@ namespace lsm
              3) Work out the distance between the boundary point and the
                 mid-point. This provides an estimate of the local deformation of
                 the interface, i.e. if the distance is zero then all three points
-                lie on a straight line.
+                lie on a straight line. By approximating the interface as a circle
+                we can use simple geometry to estimate the curvature.
 
              4) Look at the signed distance function either side of the mid-point
                 to determine the sign of the curvature.
@@ -893,7 +894,7 @@ namespace lsm
             double dx = points[point2].coord.x - points[point1].coord.x;
             double dy = points[point2].coord.y - points[point1].coord.y;
 
-            // Compute weight factor for segments lengths.
+            // Compute weight factor for segment lengths.
             double weight = segments[segment1].length
                           / (segments[segment1].length + segments[segment2].length);
 
@@ -905,12 +906,16 @@ namespace lsm
             dx = x - points[i].coord.x;
             dy = y - points[i].coord.y;
 
-            // Approximate curvature as the radial distance from the mid-point.
-            points[i].curvature = sqrt(dx*dx + dy*dy);
+            // Distance to mid-point.
+            double length = sqrt(dx*dx + dy*dy);
+
+            // Approximate the curvature.
+            points[i].curvature = length /
+                (length*length + 0.5*segments[segment1].length*segments[segment1].length);
 
             // Normalise separation vector.
-            dx /= points[i].curvature;
-            dy /= points[i].curvature;
+            dx /= length;
+            dy /= length;
 
             // Work out closest element in direction of mid-point vector.
             unsigned int elem = mesh.getElement(x + dx, y + dy);
