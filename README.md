@@ -94,21 +94,24 @@ $ make devel test
 ```
 
 ## Demos
-Currently there is a single demo showing how to use the library:
+There are several example codes showing how to use the library:
 
 * `demos/hole_shrinking.cpp`
+* `demos/minimise_area.cpp`
+* `demos/minimise_perimeter.cpp`
 
-The makefile will build an executable, which can be run (from the top level
-directory) as follows
+The Makefile will build standalone executables, which can be run (from the top level
+directory) as follows, e.g.
 
 ```bash
 $ ./demos/hole_shrinking
 
 ```
 
-The demo serves as a test of our numerical implementation, showing the
-shrinking of a hole at constant velocity. The comments in the source
-file provide further details of the calculations.
+The demos serve as a test of our numerical implementation, showing the
+shrinking of a hole at constant velocity, the minimisation of perimeter at
+constant area, and the minimisation of area at constant perimeter. The comments
+in the source file provide further details of the calculations.
 
 ## Completed
 

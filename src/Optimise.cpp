@@ -163,7 +163,6 @@ namespace lsm
                 // Reduce the constraint change targets.
                 for (unsigned int i=0;i<nConstraints;i++)
                     constraintDistancesScaled[i] *= 0.7;
-
             }
 
             // Catch argument errors.
