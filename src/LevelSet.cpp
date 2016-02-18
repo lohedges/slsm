@@ -153,8 +153,7 @@ namespace lsm
         if ((sqrt2T * sqrt(timeStep)) > (0.5 * moveLimit))
         {
             // Calculate time step scale factor.
-            scale = (2.0 * sqrt2T / moveLimit);
-            scale *= (timeStep * scale);
+            scale = (8.0 * timeStep * temperature) / (moveLimit * moveLimit);
 
             // Scale the time step.
             timeStep /= scale;
