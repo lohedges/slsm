@@ -86,12 +86,16 @@ namespace lsm
         void discretise();
 
         //! Calculate the material area fraction in each element.
+        /*! \return
+                The total element area fraction.
+         */
         double computeAreaFractions();
 
-        //! Calculate the number of holes (number of closed loops).
-        /*! \return The number of holes.
+        //! Compute the local curvature around each boundary point.
+        /*! \return
+                The mean boundary point curvature.
          */
-        unsigned int computeHoles();
+        double computeCurvatures();
 
         /// Vector of boundary points.
         std::vector<BoundaryPoint> points;
@@ -107,6 +111,9 @@ namespace lsm
 
         /// The total length of the boundary.
         double length;
+
+        /// The mean curvature.
+        double curvature;
 
         /// The total area fraction of the mesh.
         double area;
@@ -198,9 +205,6 @@ namespace lsm
 
         //! Compute the (potentially weighted) integral length for each boundary point.
         void computePointLengths();
-
-        //! Compute the local curvature around each boundary point.
-        void computeCurvature();
     };
 }
 

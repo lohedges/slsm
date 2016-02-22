@@ -494,9 +494,6 @@ namespace lsm
 
         // Work out boundary integral length associated with each boundary point.
         computePointLengths();
-
-        // Estimate the local interface curvature.
-        computeCurvature();
     }
 
     double Boundary::computeAreaFractions()
@@ -522,6 +519,199 @@ namespace lsm
         }
 
         return area;
+    }
+
+    double Boundary::computeCurvatures()
+    {
+        // This method requires that element area fractions have already been
+        // calculated using computeAreaFractions.
+
+        /* Sensitivities with respect to changes in the length of the boundary
+           are proportional to the local curvature of the interface. To estimate
+           the curvature around a boundary point we take the point and its two
+           nearest neighbours (those that belong to the same segments as the
+           point). We now assume that all three points lie on the perimeter of
+           a circle and use simple geometry to work out its radius, R. The
+           curvature is then approximated as 1 / R.
+         */
+
+        // Zero the mean curvature.
+        curvature = 0;
+
+        // Loop over all boundary points.
+        for (unsigned int i=0;i<nPoints;i++)
+        {
+            // Segment indices.
+            unsigned int segment1 = points[i].segments[0];
+            unsigned int segment2 = points[i].segments[1];
+
+            // Find the indices of the neighbouring boundary points.
+            // The point of interest will lie in the middle of the two points.
+
+            // Index of first neighbouring point.
+            unsigned int point1 = segments[segment1].start;
+            if (point1 == i) point1 = segments[segment1].end;
+
+            // Index of second neighbouring point.
+            unsigned int point2 = segments[segment2].start;
+            if (point2 == i) point2 = segments[segment2].end;
+
+            // Assign coordinates for the three points.
+            double x1 = points[point1].coord.x;
+            double y1 = points[point1].coord.y;
+            double x2 = points[i].coord.x;
+            double y2 = points[i].coord.y;
+            double x3 = points[point2].coord.x;
+            double y3 = points[point2].coord.y;
+
+            // Calculate the gradients of the lines connecting 1 --> 2 and 2 --> 3.
+            double m12 = (y2 - y1) / (x2 - x1);
+            double m23 = (y3 - y2) / (x3 - x2);
+
+            // Coordinates of circle centre.
+            double x, y;
+
+            // Whether the curvature is zero.
+            bool isZero = false;
+
+            // Line 1 --> 2 is vertical.
+            if (std::abs(x1 - x2) < 1e-6)
+            {
+                // Circle y coordinate lies at mid-point.
+                y = 0.5 * (y1 + y2);
+
+                // Line 2 --> 3 is also vertical.
+                if (std::abs(x2 - x3) < 1e-6) isZero = true;
+
+                // Line 2 --> 3 is horizontal.
+                else if (std::abs(y2 - y3) < 1e-6)
+                {
+                    // Circle x coordinate lies at mid-point.
+                    x = 0.5 * (x2 + x3);
+                }
+
+                // Solve for x coordinate of circle centre.
+                else
+                {
+                    x = -y*m23 + 0.5*(x2 + x3) - 0.5*(y2 + y3);
+                }
+            }
+
+            // Line 1 --> 2 is horizontal.
+            else if (std::abs(y1 - y2) < 1e-6)
+            {
+                // Circle x coordinate lies at mid-point.
+                x = 0.5 * (x1 + x2);
+
+                // Line 2 --> 3 is also horizontal.
+                if (std::abs(y2 - y3) < 1e-6) isZero = true;
+
+                // Line 2 --> 3 is vertical.
+                else if (std::abs(x2 - x3) < 1e-6)
+                {
+                    // Circle y coordinate lies at mid-point.
+                    y = 0.5 * (y2 + y3);
+                }
+
+                // Solve for y coordinate of circle centre.
+                else
+                {
+                    y = (-1.0 / m23) * (x - 0.5*(x2 + x3)) - 0.5*(y2 + y3);
+                }
+            }
+
+            // Line 2 --> 3 is vertical.
+            else if (std::abs(x2 - x3) < 1e-6)
+            {
+                // Circle y coordinate lies at mid-point.
+                y = 0.5 * (y2 + y3);
+
+                // Line 1 --> 2 is also vertical.
+                if (std::abs(x1 - x2) < 1e-6) isZero = true;
+
+                // Line 1 --> 2 is horizontal.
+                else if (std::abs(y1 - y2) < 1e-6)
+                {
+                    // Circle x coordinate lies at mid-point.
+                    x = 0.5 * (x1 + x2);
+                }
+
+                // Solve for x coordinate of circle centre.
+                else
+                {
+                    x = -y*m12 + 0.5*(x1 + x2) - 0.5*(y1 + y2);
+                }
+            }
+
+            // Line 2 --> 3 is horizontal.
+            else if (std::abs(y2 - y3) < 1e-6)
+            {
+                // Circle x coordinate lies at mid-point.
+                x = 0.5 * (x2 + x3);
+
+                // Line 1 --> 2 is also horizontal.
+                if (std::abs(y1 - y2) < 1e-6) isZero = true;
+
+                // Line 1 --> 2 is vertical.
+                else if (std::abs(x1 - x2) < 1e-6)
+                {
+                    // Circle y coordinate lies at mid-point.
+                    y = 0.5 * (y1 + y2);
+                }
+
+                // Solve for y coordinate of circle centre.
+                else
+                {
+                    y = (-1.0 / m12) * (x - 0.5*(x1 + x2)) - 0.5*(y1 + y2);
+                }
+            }
+
+            else
+            {
+                // Solve for the x coordinate of the circle centre.
+                x = (m12*m23*(y3 - y1) + m12*(x2 + x3) - m23*(x1 + x2)) / (2*(m12 - m23));
+
+                // Solve for the y coordinate of the circle centre.
+                y = (-1.0 / m12) * (x - 0.5*(x1 + x2)) + 0.5*(y1 + y2);
+
+            }
+
+            // All three points fall on a line.
+            if (isZero) points[i].curvature = 0;
+
+            // Calculate the curvature and direction.
+            else
+            {
+                // Separation between the boundary point and circle centre.
+                double dx = x - points[i].coord.x;
+                double dy = y - points[i].coord.y;
+
+                // Compute the circle radius.
+                double radius = sqrt(dx*dx + dy*dy);
+
+                // Approximate the curvature.
+                points[i].curvature = 1.0 / radius;
+
+                // Normalise the separation.
+                dx /= radius;
+                dy /= radius;
+
+                // Work out closest elements indices for inward and outward normal vector.
+                unsigned int elem1 = mesh.getElement(points[i].coord.x + dx, points[i].coord.y + dy);
+                unsigned int elem2 = mesh.getElement(points[i].coord.x - dx, points[i].coord.y - dy);
+
+                // Negative curvature if element 1 is inside the structure.
+                if (mesh.elements[elem1].area >= mesh.elements[elem2].area) points[i].curvature *= -1;
+
+                // Increment the curvature.
+                curvature += points[i].curvature;
+            }
+        }
+
+        // Compute the mean curvature.
+        curvature /= nPoints;
+
+        return curvature;
     }
 
     void Boundary::computeMeshStatus()
@@ -843,184 +1033,6 @@ namespace lsm
             // Update point to segment lookup for end point.
             points[segments[i].end].segments[points[segments[i].end].nSegments] = i;
             points[segments[i].end].nSegments++;
-        }
-    }
-
-    void Boundary::computeCurvature()
-    {
-        /* Sensitivities with respect to changes in the length of the boundary
-           are proportional to the local curvature of the interface. To estimate
-           the curvature around a boundary point we take the point and its two
-           nearest neighbours (those that belong to the same segments as the
-           point). We now assume that all three points lie on the perimeter of
-           a circle and use simple geometry to work out its radius, R. The
-           curvature is then approximated as 1 / R.
-         */
-
-        // Loop over all boundary points.
-        for (unsigned int i=0;i<nPoints;i++)
-        {
-            // Segment indices.
-            unsigned int segment1 = points[i].segments[0];
-            unsigned int segment2 = points[i].segments[1];
-
-            // Find the indices of the neighbouring boundary points.
-            // The point of interest will lie in the middle of the two points.
-
-            // Index of first neighbouring point.
-            unsigned int point1 = segments[segment1].start;
-            if (point1 == i) point1 = segments[segment1].end;
-
-            // Index of second neighbouring point.
-            unsigned int point2 = segments[segment2].start;
-            if (point2 == i) point2 = segments[segment2].end;
-
-            // Assign coordinates for the three points.
-            double x1 = points[point1].coord.x;
-            double y1 = points[point1].coord.y;
-            double x2 = points[i].coord.x;
-            double y2 = points[i].coord.y;
-            double x3 = points[point2].coord.x;
-            double y3 = points[point2].coord.y;
-
-            // Calculate the gradients of the lines connecting 1 --> 2 and 2 --> 3.
-            double m12 = (y2 - y1) / (x2 - x1);
-            double m23 = (y3 - y2) / (x3 - x2);
-
-            // Coordinates of circle centre.
-            double x, y;
-
-            // Whether the curvature is zero.
-            bool isZero = false;
-
-            // Line 1 --> 2 is vertical.
-            if (std::abs(x1 - x2) < 1e-6)
-            {
-                // Circle y coordinate lies at mid-point.
-                y = 0.5 * (y1 + y2);
-
-                // Line 2 --> 3 is also vertical.
-                if (std::abs(x2 - x3) < 1e-6) isZero = true;
-
-                // Line 2 --> 3 is horizontal.
-                else if (std::abs(y2 - y3) < 1e-6)
-                {
-                    // Circle x coordinate lies at mid-point.
-                    x = 0.5 * (x2 + x3);
-                }
-
-                // Solve for x coordinate of circle centre.
-                else
-                {
-                    x = -y*m23 + 0.5*(x2 + x3) - 0.5*(y2 + y3);
-                }
-            }
-
-            // Line 1 --> 2 is horizontal.
-            else if (std::abs(y1 - y2) < 1e-6)
-            {
-                // Circle x coordinate lies at mid-point.
-                x = 0.5 * (x1 + x2);
-
-                // Line 2 --> 3 is also horizontal.
-                if (std::abs(y2 - y3) < 1e-6) isZero = true;
-
-                // Line 2 --> 3 is vertical.
-                else if (std::abs(x2 - x3) < 1e-6)
-                {
-                    // Circle y coordinate lies at mid-point.
-                    y = 0.5 * (y2 + y3);
-                }
-
-                // Solve for y coordinate of circle centre.
-                else
-                {
-                    y = (-1.0 / m23) * (x - 0.5*(x2 + x3)) - 0.5*(y2 + y3);
-                }
-            }
-
-            // Line 2 --> 3 is vertical.
-            else if (std::abs(x2 - x3) < 1e-6)
-            {
-                // Circle y coordinate lies at mid-point.
-                y = 0.5 * (y2 + y3);
-
-                // Line 1 --> 2 is also vertical.
-                if (std::abs(x1 - x2) < 1e-6) isZero = true;
-
-                // Line 1 --> 2 is horizontal.
-                else if (std::abs(y1 - y2) < 1e-6)
-                {
-                    // Circle x coordinate lies at mid-point.
-                    x = 0.5 * (x1 + x2);
-                }
-
-                // Solve for x coordinate of circle centre.
-                else
-                {
-                    x = -y*m12 + 0.5*(x1 + x2) - 0.5*(y1 + y2);
-                }
-            }
-
-            // Line 2 --> 3 is horizontal.
-            else if (std::abs(y2 - y3) < 1e-6)
-            {
-                // Circle x coordinate lies at mid-point.
-                x = 0.5 * (x2 + x3);
-
-                // Line 1 --> 2 is also horizontal.
-                if (std::abs(y1 - y2) < 1e-6) isZero = true;
-
-                // Line 1 --> 2 is vertical.
-                else if (std::abs(x1 - x2) < 1e-6)
-                {
-                    // Circle y coordinate lies at mid-point.
-                    y = 0.5 * (y1 + y2);
-                }
-
-                // Solve for y coordinate of circle centre.
-                else
-                {
-                    y = (-1.0 / m12) * (x - 0.5*(x1 + x2)) - 0.5*(y1 + y2);
-                }
-            }
-
-            else
-            {
-                // Solve for the x coordinate of the circle centre.
-                x = (m12*m23*(y3 - y1) + m12*(x2 + x3) - m23*(x1 + x2)) / (2*(m12 - m23));
-
-                // Solve for the y coordinate of the circle centre.
-                y = (-1.0 / m12) * (x - 0.5*(x1 + x2)) + 0.5*(y1 + y2);
-
-            }
-
-            // All three points fall on a line.
-            if (isZero) points[i].curvature = 0;
-
-            // Calculate the curvature and direction.
-            else
-            {
-                // Separation between the boundary point and circle centre.
-                double dx = x - points[i].coord.x;
-                double dy = y - points[i].coord.y;
-
-                // Compute the circle radius.
-                double radius = sqrt(dx*dx + dy*dy);
-
-                // Approximate the curvature.
-                points[i].curvature = 1.0 / radius;
-
-                // Normalise the separation.
-                dx /= radius;
-                dy /= radius;
-
-                // Work out closest element in direction of mid-point vector.
-                unsigned int elem = mesh.getElement(points[i].coord.x + dx, points[i].coord.y + dy);
-
-                // Negative curvature if the element is inside the structure.
-                if (mesh.elements[elem].area > 0.5) points[i].curvature *= -1;
-            }
         }
     }
 }
