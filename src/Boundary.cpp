@@ -686,8 +686,8 @@ namespace lsm
                 double dx = x - points[i].coord.x;
                 double dy = y - points[i].coord.y;
 
-                // Compute the circle radius.
-                double radius = sqrt(dx*dx + dy*dy);
+                // Compute the circle radius (can't be less than half a grid spacing).
+                double radius = std::max(0.5, sqrt(dx*dx + dy*dy));
 
                 // Approximate the curvature.
                 points[i].curvature = 1.0 / radius;
@@ -703,7 +703,7 @@ namespace lsm
                 // Negative curvature if element 1 is inside the structure.
                 if (mesh.elements[elem1].area >= mesh.elements[elem2].area) points[i].curvature *= -1;
 
-                // Increment the curvature.
+                // Increment the total curvature.
                 curvature += points[i].curvature;
             }
         }
