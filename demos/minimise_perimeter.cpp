@@ -51,10 +51,10 @@
 
     The output file, "minimise_perimeter.txt", contains the measured distance vs
     time data for the optmisation run. Additional columns provide data for the
-    mean curvature at each time step (compute by the code) as well as the
-    analytical estimate of 1 / R. Level set information for each sample interval
-    is written to ParaView readable VTK files, "level-set_*.vtk". Boundary
-    segment data is written to "boundary-segments_*.txt".
+    velocity and mean curvature at each time step (computed by the code) as well
+    as the analytical curvature estimate of 1 / R. Level set information for each
+    sample interval is written to ParaView readable VTK files, "level-set_*.vtk".
+    Boundary segment data is written to "boundary-segments_*.txt".
  */
 
 int main(int argc, char** argv)
@@ -223,13 +223,24 @@ int main(int argc, char** argv)
         }
     }
 
-    // Print results to file (distance vs time).
+    // Distance measurements.
+    std::vector<double> distances;
+
+    // Compute the distance moved at each time interval.
+    for (unsigned int i=0;i<times.size();i++)
+        distances.push_back((lengths[0] - lengths[i]) / (2 * M_PI));
+
+    // Print results to file.
     FILE *pFile;
     pFile = fopen("minimise_perimeter.txt", "w");
-    for (unsigned int i=0;i<times.size();i++)
+    for (unsigned int i=1;i<times.size();i++)
     {
-        fprintf(pFile, "%lf %lf %lf %lf\n", times[i] - times[0],
-            (lengths[0] - lengths[i]) / (2 * M_PI), curvatures[i], ((2 * M_PI) / lengths[i]));
+        // Distance and time increments.
+        double deltaDist = distances[i] - distances[i-1];
+        double deltaTime = times[i] - times[i-1];
+
+        fprintf(pFile, "%lf %lf %lf %lf %lf\n", times[i] - times[0],
+            distances[i], deltaDist / deltaTime, curvatures[i], ((2 * M_PI) / lengths[i]));
     }
     fclose(pFile);
 
