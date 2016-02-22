@@ -22,7 +22,9 @@
 #include "lsm.h"
 
 /*! \file minimise_perimeter_constrained.cpp
+
     \brief An example code showing perimeter minimisation with noise.
+    Minimisation is performed subject to a lower bound on the area (hole area).
 
     The output file, "perimeter_*.txt", contains the measured boundary length vs
     time data for the optmisation run. Level set information for each sample

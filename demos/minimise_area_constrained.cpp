@@ -22,7 +22,9 @@
 #include "lsm.h"
 
 /*! \file minimise_perimeter.cpp
-    \brief An example code showing area minimisation with noise.
+
+    \brief An example code showing area minimisation with noise. Minimisation
+    is performed subject to a lower bound on the perimeter.
 
     The output file, "area_*.txt", contains the measured material area vs
     time data for the optmisation run. Level set information for each sample

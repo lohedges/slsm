@@ -26,6 +26,7 @@
 #include "lsm.h"
 
 /*! \file minimise_area.cpp
+
     \brief An example code showing a hole shrinking during unconstrained
     area maximisation.
 
