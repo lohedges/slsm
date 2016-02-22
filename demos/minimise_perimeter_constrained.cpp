@@ -15,45 +15,19 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Make sure we have PI defined.
-#ifndef M_PI
-    #define M_PI 3.1415926535897932384626433832795
-#endif
-
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 
 #include "lsm.h"
 
-/*! \file minimise_perimeter.cpp
-    \brief An example code showing a hole shrinking during unconstrained
-    perimeter minimisation.
+/*! \file minimise_perimeter_constrained.cpp
+    \brief An example code showing perimeter minimisation with noise.
 
-    This demo provides a simple test to confirm that a single hole will
-    shrink with velocity proportional to its curvature.
-
-    At each iteration we optimise for the velocity vector that maximises
-    the reduction in the boundary perimeter, subject to the CFL displacement
-    limit. While this trivial optimisation could be performed by hand, it
-    provides a useful test of our numerical implementation, especially the
-    scaling that is required for stability inside the Optimise class.
-
-    For a perfect continuous circle, all boundary points should move at a
-    velocity proportional to the curvature, 1 / R. The time step will be
-    rescaled if the curvature is too large and boundary point velocities
-    cause violation of the CFL condition.
-
-    We compute the velocity by measuring the distance that the hole boundary
-    displaces as a function of time. This can be done by measuring the change
-    in the boundary length over time and comparing the radius at each time
-    interval (radius = perimeter / (2 x pi)).
-
-    The output file, "minimise_perimeter.txt", contains the measured distance vs
-    time data for the optmisation run. Additional columns provide data for the
-    mean curvature at each time step (compute by the code) as well as the
-    analytical estimate of 1 / R. Level set information for each sample interval
-    is written to ParaView readable VTK files, "level-set_*.vtk". Boundary
-    segment data is written to "boundary-segments_*.txt".
+    The output file, "perimeter_*.txt", contains the measured boundary length vs
+    time data for the optmisation run. Level set information for each sample
+    interval is written to ParaView readable VTK files, "level-set_*.vtk".
+    Boundary segment data is written to "boundary-segments_*.txt".
  */
 
 int main(int argc, char** argv)
@@ -72,24 +46,46 @@ int main(int argc, char** argv)
     // This is the CFL limit.
     double moveLimit = 0.5;
 
+    // Default temperature of the thermal bath.
+    double temperature = 0.02;
+
+    // Override temperature if command-line argument is passed.
+    if (argc == 2) temperature = atof(argv[1]);
+
     // Set maximum running time.
-    double maxTime = 5000;
+    double maxTime = 1000;
+
+    // Set minimum material area.
+    double minArea = 0.6;
 
     // Set sampling interval.
-    double sampleInterval = 50;
+    double sampleInterval = 10;
 
     // Set time of the next sample.
-    double nextSample = 50;
+    double nextSample = 10;
 
     // Initialise a 200x200 non-periodic mesh.
     lsm::Mesh mesh(200, 200, false);
 
-    // Create a hole in the centre with a radius of 80 grid units.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(100, 100, 80));
+    // Calculate the area of the mesh.
+    double meshArea = mesh.width * mesh.height;
 
-    // Initialise the level set object (from the hole vector).
-    lsm::LevelSet levelSet(mesh, holes, moveLimit, 6, true);
+    // Initialise the level set object.
+    lsm::LevelSet levelSet(mesh, moveLimit, 6, true);
+
+    // Create a solid slab of material with a small square in the middle.
+    for (unsigned int i=0;i<mesh.nNodes;i++)
+    {
+        unsigned int x = int(mesh.nodes[i].coord.x);
+        unsigned int y = int(mesh.nodes[i].coord.y);
+
+        // Cut out square hole.
+        if (x >= 80 && x <= 120 && y >= 80 && y <= 120)
+            levelSet.signedDistance[i] = -1;
+
+        // Fill with material.
+        else levelSet.signedDistance[i] = 1;
+    }
 
     // Initialise io object.
     lsm::InputOutput io;
@@ -109,6 +105,9 @@ int main(int argc, char** argv)
     // Compute the initial boundary point curvatures.
     boundary.computeCurvatures();
 
+    // Initialise random number generator.
+    lsm::MersenneTwister rng;
+
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
 
@@ -118,41 +117,46 @@ int main(int argc, char** argv)
     // Time measurements.
     std::vector<double> times;
 
-    // Boundary length measurements.
+    // Boundary length measurements (objective).
     std::vector<double> lengths;
 
-    // Boundary curvature measurements.
-    std::vector<double> curvatures;
+    // Material area fraction measurements (constraint).
+    std::vector<double> areas;
 
     /* Lambda values for the optimiser.
        These are reused, i.e. the solution from the current iteration is
        used as an estimate for the next, hence we declare the vector
        outside of the main loop.
      */
-    std::vector<double> lambdas(1);
+    std::vector<double> lambdas(2);
 
-    std::cout << "\nStarting unconstrained perimeter minimisation demo...\n\n";
+    std::cout << "\nStarting constrained perimeter minimisation demo...\n\n";
 
     // Print output header.
-    printf("--------------------------\n");
-    printf("%6s %8s %10s\n", "Time", "Length", "Curvature");
-    printf("--------------------------\n");
+    printf("-------------------------\n");
+    printf("%9s %8s %6s\n", "Time", "Length", "Area");
+    printf("-------------------------\n");
 
     // Integrate until we exceed the maximim time.
     while (time < maxTime)
     {
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
+        {
             boundary.points[i].sensitivities[0] = boundary.points[i].curvature;
+            boundary.points[i].sensitivities[1] = -1.0;
+        }
 
         // Time step associated with the iteration.
         double timeStep;
 
-        // Constraint distance vector. Since there are no constraints the
-        // vector can be left unassigned.
-        std::vector<double> constraintDistances(1);
+        // Constraint distance vector.
+        std::vector<double> constraintDistances;
 
-        /* Initialise the optimisation object for material area maximisation.
+        // Push current distance from constraint violation into vector.
+        constraintDistances.push_back(meshArea*minArea - boundary.area);
+
+        /* Initialise the optimisation object for perimeter minimisation.
 
            The Optimise class is a lightweight object so there is no cost for
            reinitialising at every iteration. A smart compiler will optimise
@@ -167,7 +171,7 @@ int main(int argc, char** argv)
         optimise.solve();
 
         // Extend boundary point velocities to all narrow band nodes.
-        levelSet.computeVelocities(boundary.points);
+        levelSet.computeVelocities(boundary.points, timeStep, temperature, rng);
 
         // Compute gradient of the signed distance function within the narrow band.
         levelSet.computeGradients();
@@ -205,31 +209,38 @@ int main(int argc, char** argv)
         // Check if the next sample time has been reached.
         while (time >= nextSample)
         {
-            // Record the time, boundary length, and mean curvature.
+            // Record the time.
             times.push_back(time);
-            lengths.push_back(boundary.length);
-            curvatures.push_back(boundary.curvature);
 
             // Update the time of the next sample.
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f %10.4f\n", time, boundary.length, boundary.curvature);
+            printf("%9.2f %8.1f %6.2f\n", time, boundary.length, boundary.area / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), mesh, levelSet);
             io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
+
+            // Store the perimeter.
+            lengths.push_back(boundary.length);
+
+            // Store the material area.
+            areas.push_back(boundary.area / meshArea);
         }
     }
 
-    // Print results to file (distance vs time).
+    // Print results to file.
     FILE *pFile;
-    pFile = fopen("minimise_perimeter.txt", "w");
+    std::ostringstream fileName, num;
+    num.str("");
+    fileName.str("");
+    num << std::fixed << std::setprecision(4) << temperature;
+    fileName << "perimeter_" << num.str() << ".txt";
+
+    pFile = fopen(fileName.str().c_str(), "w");
     for (unsigned int i=0;i<times.size();i++)
-    {
-        fprintf(pFile, "%lf %lf %lf %lf\n", times[i] - times[0],
-            (lengths[0] - lengths[i]) / (2 * M_PI), curvatures[i], ((2 * M_PI) / lengths[i]));
-    }
+        fprintf(pFile, "%lf %lf %lf\n", times[i] - times[0], lengths[i], areas[i]);
     fclose(pFile);
 
     std::cout << "\nDone!\n";
