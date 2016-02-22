@@ -134,7 +134,7 @@ int main(int argc, char** argv)
     {
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
-            boundary.points[i].sensitivities[0] = -1.0;
+            boundary.points[i].sensitivities[0] = 1.0;
 
         // Time step associated with the iteration.
         double timeStep;
