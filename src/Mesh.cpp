@@ -159,6 +159,9 @@ namespace lsm
             // Zero number of connected elements.
             nodes[i].nElements = 0;
 
+            // Zero number of boundary points.
+            nodes[i].nBoundaryPoints = 0;
+
             // Work out node coordinates.
             x = i % (width + 1);
             y = int(i / (width + 1));
