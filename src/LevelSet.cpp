@@ -53,6 +53,9 @@ namespace lsm
         // Initialise the narrow band.
         initialiseNarrowBand();
 
+        // Compute initial gradient estimate.
+        computeGradients();
+
         return;
 
     error:
@@ -89,6 +92,9 @@ namespace lsm
         // Initialise the narrow band.
         initialiseNarrowBand();
 
+        // Compute initial gradient estimate.
+        computeGradients();
+
         return;
 
     error:
@@ -110,6 +116,9 @@ namespace lsm
                 if (signedDistance[node] > 0)
                     signedDistance[node] = 0;
             }
+
+            // Reset the number of boundary points.
+            mesh.nodes[node].nBoundaryPoints = 0;
         }
 
         // Check mine nodes.
