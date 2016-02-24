@@ -531,12 +531,16 @@ namespace lsm
            region, then interpolate to each boundary point.
          */
 
+        // Whether the curvature at a boundary point has been set.
+        bool isSet[nPoints];
+
         // Weighting factor for each point.
         double weight[nPoints];
 
         // Initialise arrays.
         for (unsigned int i=0;i<nPoints;i++)
         {
+            isSet[i] = false;
             weight[i] = 0;
             points[i].curvature = 0;
         }
@@ -593,31 +597,36 @@ namespace lsm
 
                 double curve = (gradXX*gradY2 - 2*gradY*gradX*gradXY + gradYY*gradX2) / denominator;
 
-                // Point lies exactly on a node.
-                if (mesh.nodes[node].nBoundaryPoints == 1)
+                // Loop over all boundary points.
+                for (unsigned int j=0;j<mesh.nodes[node].nBoundaryPoints;j++)
                 {
-                    points[mesh.nodes[node].boundaryPoints[0]].curvature = curve;
-                    weight[mesh.nodes[node].boundaryPoints[0]] = 1.0;
-                }
+                    // Boundary point index.
+                    unsigned int point = mesh.nodes[node].boundaryPoints[j];
 
-                // Point cuts an edge.
-                else
-                {
-                    // Loop over all boundary points.
-                    for (unsigned int j=0;j<2;j++)
+                    // Distance from the boundary point to the node.
+                    double dx = mesh.nodes[node].coord.x - points[point].coord.x;
+                    double dy = mesh.nodes[node].coord.y - points[point].coord.y;
+
+                    // Squared distance.
+                    double rSqd = dx*dx + dy*dy;
+
+                    // If boundary point lies exactly on the node, then set curvature
+                    // to that of the node.
+                    if (rSqd < 1e-6)
                     {
-                        // Boundary point index.
-                        unsigned int point = mesh.nodes[node].boundaryPoints[j];
+                        points[point].curvature = curve;
+                        weight[point] = 1.0;
+                        isSet[point] = true;
+                    }
 
-                        // Distance from the boundary point to the node.
-                        double dx = mesh.nodes[node].coord.x - points[point].coord.x;
-                        double dy = mesh.nodes[node].coord.y - points[point].coord.y;
-
-                        // Squared distance.
-                        double rSqd = dx*dx + dy*dy;
-
-                        points[point].curvature += curve / rSqd;
-                        weight[point] += 1.0 / rSqd;
+                    else
+                    {
+                        // Update curvature estimate if not already set.
+                        if (!isSet[point])
+                        {
+                            points[point].curvature += curve / rSqd;
+                            weight[point] += 1.0 / rSqd;
+                        }
                     }
                 }
             }
