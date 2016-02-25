@@ -134,12 +134,12 @@ namespace lsm
          */
         double computeVelocities(std::vector<BoundaryPoint>&, double&, const double, MersenneTwister&);
 
-        //! Compute the gradient of the signed distance function.
+        //! Compute the modulus of the gradient of the signed distance function.
         void computeGradients();
 
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
         std::vector<double> velocity;           //!< The nodal signed normal velocity.
-        std::vector<double> gradient;           //!< The nodal gradient of the level set function.
+        std::vector<double> gradient;           //!< The nodal gradient of the level set function (modulus).
         std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
         std::vector<unsigned int> mines;        //!< Indices of nodes at the edge of the narrow band.
         const unsigned int nNodes;              //!< The number of nodes in the finite element grid.
@@ -174,7 +174,7 @@ namespace lsm
          */
         void initialiseVelocities(const std::vector<BoundaryPoint>&);
 
-        //! Compute the nodal gradient of the signed distance function.
+        //! Compute the modulus of the gradient of the signed distance function at a node.
         /*! \param node
                 The node index.
 
