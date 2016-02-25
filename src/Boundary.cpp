@@ -642,10 +642,6 @@ namespace lsm
             {
                 points[i].curvature /= weight[i];
 
-                // Make sure that curvature isn't too large.
-                if (points[i].curvature > 1.0) points[i].curvature = 1.0;
-                else if (points[i].curvature < -1.0) points[i].curvature = -1.0;
-
                 // Increment the total curvature.
                 curvature += points[i].curvature;
             }
