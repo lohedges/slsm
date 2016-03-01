@@ -49,7 +49,7 @@ namespace lsm
         initialiseElements();
     }
 
-    unsigned int Mesh::getClosestNode(const Coord& point)
+    unsigned int Mesh::getClosestNode(const Coord& point) const
     {
         // Get element index.
         unsigned int element = getElement(point);
@@ -79,7 +79,7 @@ namespace lsm
         }
     }
 
-    unsigned int Mesh::getClosestNode(double x, double y)
+    unsigned int Mesh::getClosestNode(double x, double y) const
     {
         // Get element index.
         unsigned int element = getElement(x, y);
@@ -109,7 +109,7 @@ namespace lsm
         }
     }
 
-    unsigned int Mesh::getElement(const Coord& point)
+    unsigned int Mesh::getElement(const Coord& point) const
     {
         // Subtract a small value to ensure that we round down.
         double x = point.x - 1e-6;
@@ -127,7 +127,7 @@ namespace lsm
         return (elementY*width + elementX);
     }
 
-    unsigned int Mesh::getElement(double x, double y)
+    unsigned int Mesh::getElement(double x, double y) const
     {
         // Subtract a small value to ensure that we round down.
         x -= 1e-6;

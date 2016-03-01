@@ -145,7 +145,7 @@ namespace lsm
             \return
                 The index of the closest node.
          */
-        unsigned int getClosestNode(const Coord&);
+        unsigned int getClosestNode(const Coord&) const;
 
         //! For a given x-y coordinate, find the index of the closest node.
         /*! \param x
@@ -157,7 +157,7 @@ namespace lsm
             \return
                 The index of the closest node.
          */
-        unsigned int getClosestNode(double, double);
+        unsigned int getClosestNode(double, double) const;
 
         //! For a given x-y coordinate, find the element that contains the point.
         /*! \param point
@@ -166,7 +166,7 @@ namespace lsm
             \return
                 The index of the containing element.
          */
-        unsigned int getElement(const Coord&);
+        unsigned int getElement(const Coord&) const;
 
         //! For a given x-y coordinate, find the element that contains the point.
         /*! \param x
@@ -178,7 +178,7 @@ namespace lsm
             \return
                 The index of the containing element.
          */
-        unsigned int getElement(double, double);
+        unsigned int getElement(double, double) const;
 
         std::vector<Element> elements;  //!< Fixed grid elements (cells).
         std::vector<Node> nodes;        //!< Fixed grid nodes.
