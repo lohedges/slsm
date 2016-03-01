@@ -96,21 +96,21 @@ $ make devel test
 ## Demos
 There are several example codes showing how to use the library:
 
-* `demos/hole_shrinking.cpp`
 * `demos/minimise_area.cpp`
 * `demos/minimise_perimeter.cpp`
+* `demos/minimise_area_constrained.cpp`
+* `demos/minimise_perimeter_constrained.cpp`
+* `demos/shape_match.cpp`
 
 The Makefile will build standalone executables, which can be run (from the top level
 directory) as follows, e.g.
 
 ```bash
-$ ./demos/hole_shrinking
+$ ./demos/minimise_area
 
 ```
 
-The demos serve as a test of our numerical implementation, showing the
-shrinking of a hole at constant velocity, the minimisation of perimeter at
-constant area, and the minimisation of area at constant perimeter. The comments
+The demos serve as a test of our numerical implementation. The comments
 in the source file provide further details of the calculations.
 
 ## Completed
@@ -150,12 +150,6 @@ in the current directory, or from a user defined path.
 Solve for the optimum boundary point velocity vector using the SLP method.
 I have made numerous modifications to the method in order to remove unphysical
 velocity capping and ensure that variable scaling is consistent and transparent.
-
-## To Do
-Next on the agenda...
-
-* Test gradient calculation.
-* Fix hole calculation.
 
 ## Limitations
 * Limited to two-dimensional systems.
