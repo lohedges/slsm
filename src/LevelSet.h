@@ -46,8 +46,10 @@ namespace lsm
         The class provides methods for initialising and reinitialising the signed
         distance function. The default initialisation uses a set of linearly spaced
         circular holes to create the classic "Swiss cheese" starting configuration.
-        Alternatively, the user can pass the constructor a vector of holes that
-        will be used to define the initial structure.
+        Alternatively, the user can pass the constructor a vector of holes or point
+        coordinates that will be used to define the initial structure. A vector
+        of coordinates defining the interface of a target structure can be used
+        for shape matching simulations.
 
         Reinitialisation of the signed distance function is performed using an
         implementation of the Fast Marching Method. A second-order stencil is used
@@ -98,6 +100,69 @@ namespace lsm
         LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5,
             unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
+        //! Constructor.
+        /*! \param mesh_
+                A reference to the fixed grid, finite-element mesh.
+
+            \param points
+                A vector of point coordinates (clockwise ordered and closed).
+
+            \param moveLimit_
+                The CFL limit (in units of the mesh grid spacing).
+
+            \param bandWidth_
+                The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
+         */
+        LevelSet(Mesh&, const std::vector<Coord>&, double moveLimit_ = 0.5,
+            unsigned int bandWidth_ = 6, bool isFixed_ = false);
+
+        //! Constructor.
+        /*! \param mesh_
+                A reference to the fixed grid, finite-element mesh.
+
+            \param holes
+                A vector of holes for the initial interface.
+
+            \param points
+                A vector of point coordinates for the target interface (clockwise ordered and closed).
+
+            \param moveLimit_
+                The CFL limit (in units of the mesh grid spacing).
+
+            \param bandWidth_
+                The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
+         */
+        LevelSet(Mesh&, const std::vector<Hole>&, const std::vector<Coord>&,
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+
+        //! Constructor.
+        /*! \param mesh_
+                A reference to the fixed grid, finite-element mesh.
+
+            \param initialPoints
+                A vector of point coordinates for the initial interface (clockwise ordered and closed).
+
+            \param targetPoints
+                A vector of point coordinates for the target interface (clockwise ordered and closed).
+
+            \param moveLimit_
+                The CFL limit (in units of the mesh grid spacing).
+
+            \param bandWidth_
+                The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
+         */
+        LevelSet(Mesh&, const std::vector<Coord>&, const std::vector<Coord>&,
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+
         //! Update the level set function.
         /*! \param timeStep
                 The time step.
@@ -140,6 +205,7 @@ namespace lsm
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
         std::vector<double> velocity;           //!< The nodal signed normal velocity.
         std::vector<double> gradient;           //!< The nodal gradient of the level set function (modulus).
+        std::vector<double> target;             //!< Signed distance target (for shape matching).
         std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
         std::vector<unsigned int> mines;        //!< Indices of nodes at the edge of the narrow band.
         const unsigned int nNodes;              //!< The number of nodes in the finite element grid.
@@ -151,6 +217,7 @@ namespace lsm
         Mesh& mesh;                             //!< A reference to the finite element mesh.
         unsigned int bandWidth;                 //!< The width of the narrow band region.
         bool isFixed;                           //!< Whether the domain boundary is fixed.
+        bool isTarget;                          //!< Whether a target interface is defined.
 
         //! Default initialisation of the level set function (Swiss cheese configuration).
         void initialise();
@@ -160,6 +227,12 @@ namespace lsm
                 A vector of holes.
          */
         void initialise(const std::vector<Hole>&);
+
+        //! Initialise the level set from a vector of user-defined points.
+        /* \param points
+                A vector of point coordinates.
+         */
+        void initialise(const std::vector<Coord>&);
 
         //! Helper function for initialise methods.
         //! Initialises the level set function as the distance to the closest domain boundary.

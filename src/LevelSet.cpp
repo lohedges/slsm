@@ -29,7 +29,8 @@ namespace lsm
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixed(isFixed_),
+        isTarget(false)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -68,7 +69,8 @@ namespace lsm
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixed(isFixed_),
+        isTarget(false)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -88,6 +90,150 @@ namespace lsm
 
         // Initialise level set function from hole array.
         initialise(holes);
+
+        // Initialise the narrow band.
+        initialiseNarrowBand();
+
+        // Compute initial gradient estimate.
+        computeGradients();
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
+    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& points,
+        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        nNodes(mesh_.nNodes),
+        moveLimit(moveLimit_),
+        mesh(mesh_),
+        bandWidth(bandWidth_),
+        isFixed(isFixed_),
+        isTarget(false)
+    {
+        int size = 0.2*mesh.nNodes;
+
+        errno = EINVAL;
+        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+
+        // Resize data structures.
+        signedDistance.resize(nNodes);
+        velocity.resize(nNodes);
+        gradient.resize(nNodes);
+        narrowBand.resize(nNodes);
+
+        // Make sure that memory is sufficient (for small test systems).
+        size = std::max(25, size);
+        mines.resize(size);
+
+        // Initialise level set function from point array.
+        initialise(points);
+
+        // Initialise the narrow band.
+        initialiseNarrowBand();
+
+        // Compute initial gradient estimate.
+        computeGradients();
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
+    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
+        const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        nNodes(mesh_.nNodes),
+        moveLimit(moveLimit_),
+        mesh(mesh_),
+        bandWidth(bandWidth_),
+        isFixed(isFixed_),
+        isTarget(true)
+    {
+        int size = 0.2*mesh.nNodes;
+
+        errno = EINVAL;
+        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+
+        // Resize data structures.
+        signedDistance.resize(nNodes);
+        velocity.resize(nNodes);
+        gradient.resize(nNodes);
+        target.resize(nNodes);
+        narrowBand.resize(nNodes);
+
+        // Make sure that memory is sufficient (for small test systems).
+        size = std::max(25, size);
+        mines.resize(size);
+
+        // Initialise level set function from point array.
+        initialise(points);
+        reinitialise();
+
+        // Copy into target signed distance function.
+        for (unsigned int i=0;i<nNodes;i++)
+        {
+            target[i] = signedDistance[i];
+            signedDistance[i] = 1e6;
+        }
+
+        // Initialise level set function from hole array.
+        initialise(holes);
+
+        // Initialise the narrow band.
+        initialiseNarrowBand();
+
+        // Compute initial gradient estimate.
+        computeGradients();
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
+    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& initialPoints,
+        const std::vector<Coord>& targetPoints, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        nNodes(mesh_.nNodes),
+        moveLimit(moveLimit_),
+        mesh(mesh_),
+        bandWidth(bandWidth_),
+        isFixed(isFixed_),
+        isTarget(true)
+    {
+        int size = 0.2*mesh.nNodes;
+
+        errno = EINVAL;
+        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+
+        // Resize data structures.
+        signedDistance.resize(nNodes);
+        velocity.resize(nNodes);
+        gradient.resize(nNodes);
+        target.resize(nNodes);
+        narrowBand.resize(nNodes);
+
+        // Make sure that memory is sufficient (for small test systems).
+        size = std::max(25, size);
+        mines.resize(size);
+
+        // Initialise level set function from target point array.
+        initialise(targetPoints);
+        reinitialise();
+
+        // Copy into target signed distance function.
+        for (unsigned int i=0;i<nNodes;i++)
+        {
+            target[i] = signedDistance[i];
+            signedDistance[i] = 1e6;
+        }
+
+        // Initialise level set function from initialisation points array.
+        initialise(initialPoints);
 
         // Initialise the narrow band.
         initialiseNarrowBand();
@@ -274,7 +420,7 @@ namespace lsm
 
     void LevelSet::initialise(const std::vector<Hole>& holes)
     {
-        // First initialise LSF based on domain boundary.
+        // First initialise the signed distance based on domain boundary.
         closestDomainBoundary();
 
         /* Now test signed distance against the surface of each hole.
@@ -303,6 +449,54 @@ namespace lsm
                 if (dist < signedDistance[i])
                     signedDistance[i] = dist;
             }
+        }
+    }
+
+    void LevelSet::initialise(const std::vector<Coord>& points)
+    {
+        // First initialise the signed distance based on domain boundary.
+        closestDomainBoundary();
+
+        /* The points define a piece-wise linear surface, i.e. they are
+           assumed to be ordered (clockwise) with each pair of points
+           forming a segment of the boundary. The first and last point
+           in the vector should be identical, i.e. we have a closed loop
+           (for an n-gon there would be n+1 points).
+
+           The signed distance at each node is tested against each segment.
+
+           N.B. We currently only support single closed interface
+         */
+
+        // Loop over all nodes.
+        for (unsigned int i=0;i<nNodes;i++)
+        {
+            // Nodal coordinates.
+            double x0 = mesh.nodes[i].coord.x;
+            double y0 = mesh.nodes[i].coord.y;
+
+            // Loop over all interface segments.
+            for (unsigned int j=0;j<points.size()-1;j++)
+            {
+                // Assign point coordinates.
+                double x1 = points[j].x;
+                double y1 = points[j].y;
+                double x2 = points[j+1].x;
+                double y2 = points[j+1].y;
+
+                double numerator   = (x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1);
+                double denominator = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+
+                // Signed distance from the segment.
+                double dist = numerator / denominator;
+
+                // If distance is less than current value, then update.
+                if (dist < signedDistance[i])
+                    signedDistance[i] = dist;
+            }
+
+            // Invert the signed distance function, i.e. the points define the surface of a hole.
+            signedDistance[i] *= -1;
         }
     }
 
