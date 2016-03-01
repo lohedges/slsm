@@ -54,9 +54,6 @@ namespace lsm
         // Initialise the narrow band.
         initialiseNarrowBand();
 
-        // Compute initial gradient estimate.
-        computeGradients();
-
         return;
 
     error:
@@ -94,9 +91,6 @@ namespace lsm
         // Initialise the narrow band.
         initialiseNarrowBand();
 
-        // Compute initial gradient estimate.
-        computeGradients();
-
         return;
 
     error:
@@ -133,9 +127,6 @@ namespace lsm
 
         // Initialise the narrow band.
         initialiseNarrowBand();
-
-        // Compute initial gradient estimate.
-        computeGradients();
 
         return;
 
@@ -186,9 +177,6 @@ namespace lsm
         // Initialise the narrow band.
         initialiseNarrowBand();
 
-        // Compute initial gradient estimate.
-        computeGradients();
-
         return;
 
     error:
@@ -237,9 +225,6 @@ namespace lsm
 
         // Initialise the narrow band.
         initialiseNarrowBand();
-
-        // Compute initial gradient estimate.
-        computeGradients();
 
         return;
 
