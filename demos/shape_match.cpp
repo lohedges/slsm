@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 
     // Maximum displacement per iteration, in units of the mesh spacing.
     // This is the CFL limit.
-    double moveLimit = 0.05;
+    double moveLimit = 0.1;
 
     // Default temperature of the thermal bath.
     double temperature = 0;
@@ -57,33 +57,63 @@ int main(int argc, char** argv)
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 10;
+    double maxTime = 100;
 
     // Set sampling interval.
-    double sampleInterval = 0.1;
+    double sampleInterval = 1;
 
     // Set time of the next sample.
-    double nextSample = 0.1;
+    double nextSample = 1;
 
-    // Initialise a 200x200 non-periodic mesh.
-    lsm::Mesh mesh(200, 200, false);
+    // Initialise a 400x400 non-periodic mesh.
+    lsm::Mesh mesh(400, 400, false);
 
-    // Create a hole in the centre with a radius of 80 grid units.
+    // Create a hole in the centre with a radius of 100 grid units.
     std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(100, 100, 60));
+    holes.push_back(lsm::Hole(200, 200, 100));
 
-    // Create a hexagon in the centre with a radius of 60 grid units.
+    // Initialise the points vector.
     std::vector<lsm::Coord> points;
-    points.push_back(lsm::Coord({70, 48}));
-    points.push_back(lsm::Coord({40, 100}));
-    points.push_back(lsm::Coord({70, 152}));
-    points.push_back(lsm::Coord({130, 152}));
-    points.push_back(lsm::Coord({160, 100}));
-    points.push_back(lsm::Coord({130, 48}));
-    points.push_back(lsm::Coord({70, 48}));
 
-    // Perimeter of the hexagon.
-    double perimeter = 360;
+    // Read the shape file.
+    std::ifstream shapeFile;
+    shapeFile.open("shapes/stanford-bunny.txt");
+
+    if (shapeFile.good())
+    {
+        // Point coordinates.
+        double x, y;
+
+        // Push coordinates into points vector.
+        while (shapeFile >> x >> y)
+            points.push_back(lsm::Coord({x, y}));
+    }
+    else
+    {
+        std::cerr << "[ERROR]: Invalid shape file!\n";
+        exit(EXIT_FAILURE);
+    }
+
+    shapeFile.close();
+
+    // Perimeter of the target shape.
+    double perimeter = 0;
+
+    /* Sum the length of the edges in the polygon.
+
+       Note that the perimeter is used to estimate the mismatch
+       between the current shape and the target. The mismatch
+       may not converge to zero due to discretisation errors
+       of the initial interface, i.e. we should actually compute
+       the perimeter of the discretised target.
+     */
+    for (unsigned int i=0;i<points.size()-1;i++)
+    {
+        double dx = points[i].x - points[i+1].x;
+        double dy = points[i].y - points[i+1].y;
+
+        perimeter += sqrt(dx*dx + dy*dy);
+    }
 
     // Initialise the level set object.
     lsm::LevelSet levelSet(mesh, holes, points, moveLimit, 6, true);
@@ -191,7 +221,7 @@ int main(int argc, char** argv)
         while (time >= nextSample)
         {
             // Current perimeter mismatch.
-            double mismatch = boundary.length - perimeter;
+            double mismatch = perimeter - boundary.length;
 
             // Record the time and boundary length.
             times.push_back(time);
