@@ -53,14 +53,14 @@ in the code.
 Then to compile, we can use something like the following:
 
 ```bash
-$ g++ -std=c++11 example.cpp -llsm
+$ g++ -std=c++11 example.cpp -llsm -lnlopt
 ```
 
 This assumes that we have used the default install location `/usr/local`. If
 we specify an install location, we would use a command more like the following:
 
 ```bash
-$ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -llsm
+$ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -llsm -lnlopt
 ```
 
 Note that the `-std=c++11` compiler flag is needed for `std::function` and
