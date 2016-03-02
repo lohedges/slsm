@@ -276,6 +276,35 @@ namespace lsm
                 The smoothed function (gradient).
          */
         double gradHJWENO(double, double, double, double, double);
+
+        //! Test if a point lies inside a polygon.
+        /*! \param point
+                The coordinates of the point.
+
+            \param vertices
+                The vertices of the polygon (closed and ordered).
+
+            \return
+                Whether the point lies inside the polygon.
+         */
+        bool isInsidePolygon(const Coord&, const std::vector<Coord>&) const;
+
+        //! Test if a point lies left, on, or right of an infinite line.
+        /*! \param vertex1
+                The coordinate of the first vertex.
+
+            \param vertex2
+                The coordinate of the second vertex.
+
+            \param point
+                The coordinates of the point of interest.
+
+            \return
+                > 0 if the point is left of the line through vertex1 and vertex2,
+                = 0 if the point is on the line,
+                < 0 if right of the line.
+         */
+        int isLeftOfLine(const Coord&, const Coord&, const Coord&) const;
     };
 }
 

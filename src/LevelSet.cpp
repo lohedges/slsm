@@ -480,8 +480,9 @@ namespace lsm
                     signedDistance[i] = dist;
             }
 
-            // Invert the signed distance function, i.e. the points define the surface of a hole.
-            signedDistance[i] *= -1;
+            // Invert the signed distance function if the point lies outside the polygon.
+            if (!isInsidePolygon(mesh.nodes[i].coord, points))
+                signedDistance[i] *= -1;
         }
     }
 
@@ -1086,7 +1087,7 @@ namespace lsm
         double w2 = alpha2 / totalWeight;
         double w3 = alpha3 / totalWeight;
 
-        // Sum three stencil components.
+        // Sum the three stencil components.
         double grad = w1 * (2*v1 - 7*v2 + 11*v3)
                     + w2 * (5*v3 - v2 + 2*v4)
                     + w3 * (2*v3 + 5*v4 - v5);
@@ -1094,5 +1095,54 @@ namespace lsm
         grad *= (1.0 / 6.0);
 
         return grad;
+    }
+
+    bool LevelSet::isInsidePolygon(const Coord& point, const std::vector<Coord>& vertices) const
+    {
+        /* Test whether a point lies inside a polygon.
+
+           The polygon is defined by a vector of vertices. These must be ordered
+           and closed, i.e. there are n vertices with vertices[n] = vertices[0].
+
+           The test calculates the winding number of the point and returns false
+           only when it is zero.
+
+           Adapted from: http://geomalgorithms.com/a03-_inclusion.html
+         */
+
+        int windingNumber = 0;
+
+        // Loop through all vertices.
+        for (unsigned int i=0;i<vertices.size()-1;i++)
+        {
+            // Point lies above the vertex.
+            if (vertices[i].y <= point.y)
+            {
+                // Point lies below the next vertex.
+                if (vertices[i+1].y > point.y)
+
+                    // Point is to the left of the edge.
+                    if (isLeftOfLine(vertices[i], vertices[i+1], point) > 0)
+                        windingNumber++;
+            }
+            else
+            {
+                // Point lies above the vertex.
+                if (vertices[i+1].y <= point.y)
+
+                    // Point lies to the right of the edge.
+                    if (isLeftOfLine(vertices[i], vertices[i+1], point) < 0)
+                        windingNumber--;
+            }
+        }
+
+        if (windingNumber == 0) return false;
+        else return true;
+    }
+
+    int LevelSet::isLeftOfLine(const Coord& vertex1, const Coord& vertex2, const Coord& point) const
+    {
+        return ((vertex2.x - vertex1.x) * (point.y - vertex1.y)
+            - (point.x -  vertex1.x) * (vertex2.y - vertex1.y));
     }
 }
