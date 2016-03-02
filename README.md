@@ -67,6 +67,12 @@ Note that the `-std=c++11` compiler flag is needed for `std::function` and
 `std::random`.
 
 ## Dependencies
+Documentation can be generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen)
+by running `make doc`. Note that the `doc` target is a dependency of`install`,
+so you will require a working doxygen installation. If you do not require
+documentation then simply remove `doc` from the `install` dependency list in
+the Makefile.
+
 LibLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
 psuedorandom number generator. A C++11 implementation using `std::random` is
 included as a bundled header file, `MersenneTwister.h`. See the source code or
