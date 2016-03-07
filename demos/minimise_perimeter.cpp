@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 #endif
 
     // Print git branch info, if present.
-#ifdef COMMIT
+#ifdef BRANCH
     std::cout << "Git branch: " << BRANCH << "\n";
 #endif
 
