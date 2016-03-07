@@ -32,7 +32,10 @@
  */
 
 // Sensitivity function prototype.
-double computeMismatch(const lsm::Coord&, const lsm::Mesh&, const lsm::LevelSet&);
+double computeSensitivity(const lsm::Coord&, const lsm::Mesh&, const lsm::LevelSet&);
+
+// Objective function prototype.
+double computeObjective(const lsm::Mesh&, const std::vector<double>&);
 
 int main(int argc, char** argv)
 {
@@ -96,25 +99,6 @@ int main(int argc, char** argv)
 
     shapeFile.close();
 
-    // Perimeter of the target shape.
-    double perimeter = 0;
-
-    /* Sum the length of the edges in the polygon.
-
-       Note that the perimeter is used to estimate the mismatch
-       between the current shape and the target. The mismatch
-       may not converge to zero due to discretisation errors
-       of the initial interface, i.e. we should actually compute
-       the perimeter of the discretised target.
-     */
-    for (unsigned int i=0;i<points.size()-1;i++)
-    {
-        double dx = points[i].x - points[i+1].x;
-        double dy = points[i].y - points[i+1].y;
-
-        perimeter += sqrt(dx*dx + dy*dy);
-    }
-
     // Initialise the level set object.
     lsm::LevelSet levelSet(mesh, holes, points, moveLimit, 6, true);
 
@@ -126,6 +110,19 @@ int main(int argc, char** argv)
 
     // Initialise the boundary object.
     lsm::Boundary boundary(mesh, levelSet);
+
+    // Initialise target area fraction vector.
+    std::vector<double> targetArea(mesh.nElements);
+
+    // Discretise the target structure.
+    boundary.discretise(true);
+
+    // Compute the element area fractions.
+    boundary.computeAreaFractions();
+
+    // Store the target area fractions.
+    for (unsigned int i=0;i<mesh.nElements;i++)
+        targetArea[i] = mesh.elements[i].area;
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -164,7 +161,7 @@ int main(int argc, char** argv)
     {
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
-            boundary.points[i].sensitivities[0] = computeMismatch(boundary.points[i].coord, mesh, levelSet);
+            boundary.points[i].sensitivities[0] = computeSensitivity(boundary.points[i].coord, mesh, levelSet);
 
         // Time step associated with the iteration.
         double timeStep;
@@ -220,8 +217,12 @@ int main(int argc, char** argv)
         // Check if the next sample time has been reached.
         while (time >= nextSample)
         {
-            // Current perimeter mismatch.
-            double mismatch = perimeter - boundary.length;
+            // Compute the element area fractions.
+            boundary.computeAreaFractions();
+
+            // Current area mismatch.
+            double mismatch = computeObjective(mesh, targetArea)
+                            / (mesh.width * mesh.height);
 
             // Record the time and boundary length.
             times.push_back(time);
@@ -258,7 +259,7 @@ int main(int argc, char** argv)
 }
 
 // Sensitivity function definition.
-double computeMismatch(const lsm::Coord& coord,
+double computeSensitivity(const lsm::Coord& coord,
     const lsm::Mesh& mesh, const lsm::LevelSet& levelSet)
 {
     /* Interpolate nodal signed distance mismatch to a boundary point
@@ -311,4 +312,16 @@ double computeMismatch(const lsm::Coord& coord,
     // Return the sign of the interpolated mismatch.
     if (mismatch < 0) return -1.0;
     else return 1.0;
+}
+
+// Objective function definition.
+double computeObjective(const lsm::Mesh& mesh, const std::vector<double>& targetArea)
+{
+    double areaMismatch = 0;
+
+    // Compute the total absolute area mismatch.
+    for (unsigned int i=0;i<mesh.nElements;i++)
+        areaMismatch += std::abs(targetArea[i] - mesh.elements[i].area);
+
+    return areaMismatch;
 }
