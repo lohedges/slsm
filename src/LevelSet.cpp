@@ -165,11 +165,7 @@ namespace lsm
         reinitialise();
 
         // Copy into target signed distance function.
-        for (unsigned int i=0;i<nNodes;i++)
-        {
-            target[i] = signedDistance[i];
-            signedDistance[i] = 1e6;
-        }
+        target = signedDistance;
 
         // Initialise level set function from hole array.
         initialise(holes);
@@ -214,11 +210,7 @@ namespace lsm
         reinitialise();
 
         // Copy into target signed distance function.
-        for (unsigned int i=0;i<nNodes;i++)
-        {
-            target[i] = signedDistance[i];
-            signedDistance[i] = 1e6;
-        }
+        target = signedDistance;
 
         // Initialise level set function from initialisation points array.
         initialise(initialPoints);
