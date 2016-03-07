@@ -83,7 +83,10 @@ namespace lsm
         Boundary(Mesh&, LevelSet&);
 
         //! Use linear interpolation to compute the discretised boundary
-        void discretise();
+        /*! \param isTarget
+                Whether to discretise the target signed distance function.
+         */
+        void discretise(bool isTarget = false);
 
         //! Calculate the material area fraction in each element.
         /*! \return
@@ -126,7 +129,10 @@ namespace lsm
         LevelSet& levelSet;
 
         //! Determine the status of the elements and nodes of the finite element grid.
-        void computeMeshStatus();
+        /*! \param signedDistance
+                A pointer to the signed distance function vector.
+         */
+        void computeMeshStatus(const std::vector<double>* signedDistance) const;
 
         //! Check whether a boundary point has already been added.
         /*! \param point

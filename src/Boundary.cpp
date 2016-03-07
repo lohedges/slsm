@@ -27,7 +27,7 @@ namespace lsm
     {
     }
 
-    void Boundary::discretise()
+    void Boundary::discretise(bool isTarget)
     {
         // Allocate memory for boundary points and segments.
         // 20% of node count is a reasonable estimate.
@@ -47,8 +47,17 @@ namespace lsm
         // Zero the boundary length.
         length = 0;
 
+        // Initialise a pointer to the signed distance vector.
+        std::vector<double>* signedDistance;
+
+        // Point to the target signed distance.
+        if (isTarget) signedDistance = &levelSet.target;
+
+        // Point to the current signed distance function.
+        else signedDistance = &levelSet.signedDistance;
+
         // Compute the status of nodes and elements in the finite element mesh.
-        computeMeshStatus();
+        computeMeshStatus(signedDistance);
 
         // Loop over all elements.
         for (unsigned int i=0;i<mesh.nElements;i++)
@@ -76,15 +85,15 @@ namespace lsm
                     // Convert to node index.
                     n2 = mesh.elements[i].nodes[n2];
 
-                    // Check that both nodes are inside the narrow band region.
-                    if (mesh.nodes[n1].isActive && mesh.nodes[n2].isActive)
+                    // Check that both nodes are inside the narrow band region (only for non-target discretisation).
+                    if (isTarget || (mesh.nodes[n1].isActive && mesh.nodes[n2].isActive))
                     {
                         // One node is inside, the other is outside. The edge is cut.
                         if ((mesh.nodes[n1].status|mesh.nodes[n2].status) == NodeStatus::CUT)
                         {
                             // Compute the distance from node 1 to the intersection point (by interpolation).
-                            double d = levelSet.signedDistance[n1]
-                                     / (levelSet.signedDistance[n1] - levelSet.signedDistance[n2]);
+                            double d = (*signedDistance)[n1]
+                                     / ((*signedDistance)[n1] - (*signedDistance)[n2]);
 
                             // Initialise boundary point coordinate.
                             Coord coord;
@@ -305,7 +314,7 @@ namespace lsm
                         // Node index.
                         unsigned int node = mesh.elements[i].nodes[j];
 
-                        lsfSum += levelSet.signedDistance[node];
+                        lsfSum += (*signedDistance)[node];
                     }
 
                     // Create boundary segment.
@@ -653,7 +662,7 @@ namespace lsm
         return curvature;
     }
 
-    void Boundary::computeMeshStatus()
+    void Boundary::computeMeshStatus(const std::vector<double>* signedDistance) const
     {
         // Calculate node status.
         for (unsigned int i=0;i<mesh.nNodes;i++)
@@ -664,11 +673,11 @@ namespace lsm
             // Flag node as being on the boundary if the signed distance is within
             // a small tolerance of the zero contour. This avoids problems with
             // rounding errors when generating the discretised boundary.
-            if (std::abs(levelSet.signedDistance[i]) < 1e-6)
+            if (std::abs((*signedDistance)[i]) < 1e-6)
             {
                 mesh.nodes[i].status = NodeStatus::BOUNDARY;
             }
-            else if (levelSet.signedDistance[i] < 0)
+            else if ((*signedDistance)[i] < 0)
             {
                 mesh.nodes[i].status = NodeStatus::OUTSIDE;
             }
