@@ -277,6 +277,21 @@ namespace lsm
          */
         double gradHJWENO(double, double, double, double, double);
 
+        //! Compute the minimum distance between a point and a line segment.
+        /*! \param vertex1
+                The coordinate of the first vertex.
+
+            \param vertex2
+                The coordinate of the second vertex.
+
+            \param point
+                The coordinates of the point of interest.
+
+            \return
+                The minimum distance to the line segment.
+         */
+        double pointToLineDistance(const Coord&, const Coord&, const Coord&) const;
+
         //! Test if a point lies inside a polygon.
         /*! \param point
                 The coordinates of the point.

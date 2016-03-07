@@ -434,7 +434,7 @@ namespace lsm
         // First initialise the signed distance based on domain boundary.
         closestDomainBoundary();
 
-        /* The points define a piece-wise linear surface, i.e. they are
+        /* The points define a piece-wise linear interface, i.e. they are
            assumed to be ordered (clockwise) with each pair of points
            forming a segment of the boundary. The first and last point
            in the vector should be identical, i.e. we have a closed loop
@@ -442,38 +442,25 @@ namespace lsm
 
            The signed distance at each node is tested against each segment.
 
-           N.B. We currently only support single closed interface
+           N.B. We currently only support single closed interface.
          */
 
         // Loop over all nodes.
         for (unsigned int i=0;i<nNodes;i++)
         {
-            // Nodal coordinates.
-            double x0 = mesh.nodes[i].coord.x;
-            double y0 = mesh.nodes[i].coord.y;
-
             // Loop over all interface segments.
             for (unsigned int j=0;j<points.size()-1;j++)
             {
-                // Assign point coordinates.
-                double x1 = points[j].x;
-                double y1 = points[j].y;
-                double x2 = points[j+1].x;
-                double y2 = points[j+1].y;
-
-                double numerator   = (x2 - x1)*(y1 - y0) - (x1 - x0)*(y2 - y1);
-                double denominator = sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
-
-                // Signed distance from the segment.
-                double dist = numerator / denominator;
+                // Compute the minimum distance to the line segment j --> j+1.
+                double dist = pointToLineDistance(points[j], points[j+1], mesh.nodes[i].coord);
 
                 // If distance is less than current value, then update.
                 if (dist < signedDistance[i])
                     signedDistance[i] = dist;
             }
 
-            // Invert the signed distance function if the point lies outside the polygon.
-            if (!isInsidePolygon(mesh.nodes[i].coord, points))
+            // Invert the signed distance function if the point lies inside the polygon.
+            if (isInsidePolygon(mesh.nodes[i].coord, points))
                 signedDistance[i] *= -1;
         }
     }
@@ -1087,6 +1074,53 @@ namespace lsm
         grad *= (1.0 / 6.0);
 
         return grad;
+    }
+
+    double LevelSet::pointToLineDistance(const Coord& vertex1, const Coord& vertex2, const Coord& point) const
+    {
+        // Separation components between vertices.
+        double dx = vertex2.x - vertex1.x;
+        double dy = vertex2.y - vertex1.y;
+
+        // Squared separation.
+        double rSqd = dx*dx + dy*dy;
+
+        // Return separation between point and either vertex.
+        if (rSqd < 1e-6)
+        {
+            dx = point.x - vertex1.x;
+            dy = point.y - vertex1.y;
+
+            return sqrt(dx*dx + dy*dy);
+        }
+
+        /* Consider the line extending the segment, parameterized as v + t (w - v).
+           We find the projection of the point p onto the line. It falls where
+
+             t = [(p-v) . (w-v)] / |w-v|^2
+
+           We clamp t from [0,1] to handle points outside the segment vw, i.e. if
+           t < 0 then we use the distance from p to v, and if t > 1 we use the
+           distance from p to w.
+
+           (Where v = vertex1, w = vertex2, and p = point)
+         */
+        else
+        {
+            double t = ((point.x - vertex1.x) * dx + (point.y - vertex1.y) * dy ) / rSqd;
+
+            t = std::max(0.0, std::min(1.0, t));
+
+            // Project onto the line.
+            double x = vertex1.x + t * dx;
+            double y = vertex1.y + t * dy;
+
+            // Compute distance from the point.
+            dx = x - point.x;
+            dy = y - point.y;
+
+            return sqrt(dx*dx + dy*dy);
+        }
     }
 
     bool LevelSet::isInsidePolygon(const Coord& point, const std::vector<Coord>& vertices) const
