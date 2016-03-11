@@ -530,17 +530,9 @@ namespace lsm
         return area;
     }
 
-    double Boundary::computeCurvatures()
+    void Boundary::computeNormalVectors()
     {
-        /* Sensitivities with respect to changes in the length of the boundary
-           are proportional to the local curvature of the interface.
-
-           To estimate the curvature around a boundary point we compute the
-           divergence of the level set normal vector within the narrow band
-           region, then interpolate to each boundary point.
-         */
-
-        // Whether the curvature at a boundary point has been set.
+        // Whether the normal vector at a boundary point has been set.
         bool isSet[nPoints];
 
         // Weighting factor for each point.
@@ -551,7 +543,8 @@ namespace lsm
         {
             isSet[i] = false;
             weight[i] = 0;
-            points[i].curvature = 0;
+            points[i].normal[0] = 0;
+            points[i].normal[1] = 0;
         }
 
         // Loop over all narrow band nodes.
@@ -567,7 +560,7 @@ namespace lsm
                 unsigned int x = mesh.nodes[node].coord.x;
                 unsigned int y = mesh.nodes[node].coord.y;
 
-                // Calculate the normal vector divergence by central finite differences.
+                // Calculate the normal vector by central finite differences.
 
                 // Gradient in the x direction.
                 double gradX = 0.5*(levelSet.signedDistance[mesh.xyToIndex[x+1][y]]
@@ -577,34 +570,12 @@ namespace lsm
                 double gradY = 0.5*(levelSet.signedDistance[mesh.xyToIndex[x][y+1]]
                              - levelSet.signedDistance[mesh.xyToIndex[x][y-1]]);
 
-                // Squared gradients.
-                double gradX2 = gradX * gradX;
-                double gradY2 = gradY * gradY;
-
                 // Absolute gradient.
                 double grad = sqrt(gradX*gradX + gradY*gradY);
 
-                // Gradient ^ (3/2).
-                double denominator = grad * grad * grad;
-
-                // Second derivatives.
-
-                double gradXX = levelSet.signedDistance[mesh.xyToIndex[x+1][y]]
-                              + levelSet.signedDistance[mesh.xyToIndex[x-1][y]]
-                              - 2.0*levelSet.signedDistance[node];
-
-                double gradYY = levelSet.signedDistance[mesh.xyToIndex[x][y+1]]
-                              + levelSet.signedDistance[mesh.xyToIndex[x][y-1]]
-                              - 2.0*levelSet.signedDistance[node];
-
-                double gradXY = levelSet.signedDistance[mesh.xyToIndex[x+1][y+1]]
-                              - levelSet.signedDistance[mesh.xyToIndex[x+1][y-1]]
-                              - levelSet.signedDistance[mesh.xyToIndex[x-1][y+1]]
-                              + levelSet.signedDistance[mesh.xyToIndex[x-1][y-1]];
-
-                gradXY /= 4.0;
-
-                double curve = (gradXX*gradY2 - 2*gradY*gradX*gradXY + gradYY*gradX2) / denominator;
+                // Compute the two normal vector components.
+                double xNormal = gradX / grad;
+                double yNormal = gradY / grad;
 
                 // Loop over all boundary points.
                 for (unsigned int j=0;j<mesh.nodes[node].nBoundaryPoints;j++)
@@ -619,21 +590,23 @@ namespace lsm
                     // Squared distance.
                     double rSqd = dx*dx + dy*dy;
 
-                    // If boundary point lies exactly on the node, then set curvature
-                    // to that of the node.
+                    // If boundary point lies exactly on the node, then set normal
+                    // vector to that of the node.
                     if (rSqd < 1e-6)
                     {
-                        points[point].curvature = curve;
+                        points[point].normal[0] = xNormal;
+                        points[point].normal[1] = yNormal;
                         weight[point] = 1.0;
                         isSet[point] = true;
                     }
 
                     else
                     {
-                        // Update curvature estimate if not already set.
+                        // Update normal vector estimate if not already set.
                         if (!isSet[point])
                         {
-                            points[point].curvature += curve / rSqd;
+                            points[point].normal[0] += xNormal / rSqd;
+                            points[point].normal[1] += yNormal / rSqd;
                             weight[point] += 1.0 / rSqd;
                         }
                     }
@@ -641,25 +614,38 @@ namespace lsm
             }
         }
 
-        // Zero the mean curvature.
-        curvature = 0;
-
-        // Compute interpolated curvature.
+        // Compute interpolated normal vector.
         for (unsigned int i=0;i<nPoints;i++)
         {
             if (!points[i].isDomain)
             {
-                points[i].curvature /= weight[i];
+                points[i].normal[0] /= weight[i];
+                points[i].normal[1] /= weight[i];
 
-                // Increment the total curvature.
-                curvature += points[i].curvature;
+                // Compute the new vector norm.
+                double norm = sqrt(points[i].normal[0]*points[i].normal[0]
+                            + points[i].normal[1]*points[i].normal[1]);
+
+                points[i].normal[0] /= norm;
+                points[i].normal[1] /= norm;
             }
         }
+    }
 
-        // Compute the mean curvature.
-        curvature /= nPoints;
+    double Boundary::computePerimeter(const BoundaryPoint& point)
+    {
+        double length = 0;
 
-        return curvature;
+        // Sum the distance to each neighbour.
+        for (unsigned int i=0;i<point.nNeighbours;i++)
+        {
+            double dx = point.coord.x - points[point.neighbours[i]].coord.x;
+            double dy = point.coord.y - points[point.neighbours[i]].coord.y;
+
+            length += sqrt(dx*dx + dy*dy);
+        }
+
+        return length;
     }
 
     void Boundary::computeMeshStatus(const std::vector<double>* signedDistance) const
@@ -766,11 +752,11 @@ namespace lsm
 
     void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
     {
-        // Initialise position, length, curvature, number of segments, and isDomain.
+        // Initialise position, length, number of segments, and isDomain.
         point.coord = coord;
         point.length = 0;
-        point.curvature = 0;
         point.nSegments = 0;
+        point.nNeighbours = 0;
         point.isDomain = false;
 
         // Assume two sensitivities to start with (objective and a single constraint).
@@ -981,6 +967,14 @@ namespace lsm
             // Update point to segment lookup for end point.
             points[segments[i].end].segments[points[segments[i].end].nSegments] = i;
             points[segments[i].end].nSegments++;
+
+            // Update nearest neigbours for the start point.
+            points[segments[i].start].neighbours[points[segments[i].start].nNeighbours] = segments[i].end;
+            points[segments[i].start].nNeighbours++;
+
+            // Update nearest neigbours for the end point.
+            points[segments[i].end].neighbours[points[segments[i].end].nNeighbours] = segments[i].start;
+            points[segments[i].end].nNeighbours++;
         }
     }
 }

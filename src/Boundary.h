@@ -37,13 +37,15 @@ namespace lsm
     {
         Coord coord;                        //!< Coordinate of the boundary point.
         double length;                      //!< Integral length of the boundary point.
-        double curvature;                   //!< Local interface curvature around point.
         double velocity;                    //!< Normal velocity (positive acts inwards).
+        double normal[2];                   //!< Inward pointing normal vector.
         double negativeLimit;               //!< Movement limit in negative direction (inwards).
         double positiveLimit;               //!< Movement limit in positive direction (outwards).
         bool isDomain;                      //!< Whether the point lies close to the domain boundary.
         unsigned int nSegments;             //!< The number of boundary segments that a point belongs to.
         unsigned int segments[2];           //!< The indices of the two segments to which a point belongs.
+        unsigned int neighbours[2];         //!< The indices of the neighbouring points.
+        unsigned int nNeighbours;           //!< The number of neighbouring boundary points.
         std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
     };
 
@@ -94,11 +96,17 @@ namespace lsm
          */
         double computeAreaFractions();
 
-        //! Compute the local curvature around each boundary point.
-        /*! \return
-                The mean boundary point curvature.
+        //! Compute the local normal vector at each boundary point.
+        void computeNormalVectors();
+
+        //! Compute the local perimeter for a boundary point.
+        /*! \param point
+                A reference to the boundary point.
+
+            \return
+                The perimeter around the boundary point.
          */
-        double computeCurvatures();
+        double computePerimeter(const BoundaryPoint&);
 
         /// Vector of boundary points.
         std::vector<BoundaryPoint> points;
@@ -114,9 +122,6 @@ namespace lsm
 
         /// The total length of the boundary.
         double length;
-
-        /// The mean curvature.
-        double curvature;
 
         /// The total area fraction of the mesh.
         double area;
@@ -205,7 +210,7 @@ namespace lsm
                 A reference to the boundary segment.
 
             \return
-                The length of the bounary segment.
+                The length of the boundary segment.
          */
         double segmentLength(const BoundarySegment&);
 
