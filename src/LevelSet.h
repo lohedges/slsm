@@ -123,6 +123,28 @@ namespace lsm
         /*! \param mesh_
                 A reference to the fixed grid, finite-element mesh.
 
+            \param initialHoles
+                A vector of holes for the initial interface.
+
+            \param targetHoles
+                A vector of holes for the target interface.
+
+            \param moveLimit_
+                The CFL limit (in units of the mesh grid spacing).
+
+            \param bandWidth_
+                The width of the narrow band region.
+
+            \param isFixed_
+                Whether the domain boundary is fixed.
+         */
+        LevelSet(Mesh&, const std::vector<Hole>&, const std::vector<Hole>&,
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+
+        //! Constructor.
+        /*! \param mesh_
+                A reference to the fixed grid, finite-element mesh.
+
             \param holes
                 A vector of holes for the initial interface.
 

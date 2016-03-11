@@ -134,6 +134,51 @@ namespace lsm
         exit(EXIT_FAILURE);
     }
 
+    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& initialHoles,
+        const std::vector<Hole>& targetHoles, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        nNodes(mesh_.nNodes),
+        moveLimit(moveLimit_),
+        mesh(mesh_),
+        bandWidth(bandWidth_),
+        isFixed(isFixed_),
+        isTarget(true)
+    {
+        int size = 0.2*mesh.nNodes;
+
+        errno = EINVAL;
+        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+
+        // Resize data structures.
+        signedDistance.resize(nNodes);
+        velocity.resize(nNodes);
+        gradient.resize(nNodes);
+        target.resize(nNodes);
+        narrowBand.resize(nNodes);
+
+        // Make sure that memory is sufficient (for small test systems).
+        size = std::max(25, size);
+        mines.resize(size);
+
+        // Initialise level set function the target holes vector.
+        initialise(targetHoles);
+        reinitialise();
+
+        // Copy into target signed distance function.
+        target = signedDistance;
+
+        // Initialise level set function the initial holes vector.
+        initialise(initialHoles);
+
+        // Initialise the narrow band.
+        initialiseNarrowBand();
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
         const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         nNodes(mesh_.nNodes),
