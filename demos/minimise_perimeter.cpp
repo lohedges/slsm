@@ -107,8 +107,8 @@ int main(int argc, char** argv)
     // Compute the initial element area fractions.
     boundary.computeAreaFractions();
 
-    // Compute the initial boundary point curvatures.
-    boundary.computeCurvatures();
+    // Compute the initial boundary point normal vectors.
+    boundary.computeNormalVectors();
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -142,9 +142,27 @@ int main(int argc, char** argv)
     // Integrate until we exceed the maximim time.
     while (time < maxTime)
     {
+        // Zero the mean curvature.
+        double curvature = 0;
+
+        // Initialise the sensitivity object.
+        lsm::Sensitivity sensitivity;
+
+        // Initialise the sensitivity callback.
+        using namespace std::placeholders;
+        lsm::SensitivityCallback callback = std::bind(&lsm::Boundary::computePerimeter, boundary, _1);
+
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
-            boundary.points[i].sensitivities[0] = boundary.points[i].curvature;
+        {
+            boundary.points[i].sensitivities[0] =
+                sensitivity.computeSensitivity(boundary.points[i], callback);
+
+            curvature += boundary.points[i].sensitivities[0];
+        }
+
+        // Compute mean curvature.
+        curvature /= boundary.points.size();
 
         // Time step associated with the iteration.
         double timeStep;
@@ -197,8 +215,8 @@ int main(int argc, char** argv)
         // Compute the element area fractions.
         boundary.computeAreaFractions();
 
-        // Compute the boundary point curvatures.
-        boundary.computeCurvatures();
+        // Compute the boundary point normal vectors.
+        boundary.computeNormalVectors();
 
         // Increment the time.
         time += timeStep;
@@ -209,13 +227,13 @@ int main(int argc, char** argv)
             // Record the time, boundary length, and mean curvature.
             times.push_back(time);
             lengths.push_back(boundary.length);
-            curvatures.push_back(boundary.curvature);
+            curvatures.push_back(curvature);
 
             // Update the time of the next sample.
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f %10.4f\n", time, boundary.length, boundary.curvature);
+            printf("%6.1f %8.1f %10.4f\n", time, boundary.length, curvature);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), mesh, levelSet);

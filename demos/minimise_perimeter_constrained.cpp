@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
     // Maximum displacement per iteration, in units of the mesh spacing.
     // This is the CFL limit.
-    double moveLimit = 0.5;
+    double moveLimit = 0.1;
 
     // Default temperature of the thermal bath.
     double temperature = 0.02;
@@ -104,8 +104,8 @@ int main(int argc, char** argv)
     // Compute the initial element area fractions.
     boundary.computeAreaFractions();
 
-    // Compute the initial boundary point curvatures.
-    boundary.computeCurvatures();
+    // Compute the initial boundary point normal vectors.
+    boundary.computeNormalVectors();
 
     // Initialise random number generator.
     lsm::MersenneTwister rng;
@@ -142,10 +142,18 @@ int main(int argc, char** argv)
     // Integrate until we exceed the maximim time.
     while (time < maxTime)
     {
+        // Initialise the sensitivity object.
+        lsm::Sensitivity sensitivity;
+
+        // Initialise the sensitivity callback.
+        using namespace std::placeholders;
+        lsm::SensitivityCallback callback = std::bind(&lsm::Boundary::computePerimeter, boundary, _1);
+
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
         {
-            boundary.points[i].sensitivities[0] = boundary.points[i].curvature;
+            boundary.points[i].sensitivities[0] =
+                sensitivity.computeSensitivity(boundary.points[i], callback);
             boundary.points[i].sensitivities[1] = -1.0;
         }
 
@@ -202,8 +210,8 @@ int main(int argc, char** argv)
         // Compute the element area fractions.
         boundary.computeAreaFractions();
 
-        // Compute the boundary point curvatures.
-        boundary.computeCurvatures();
+        // Compute the boundary point normal vectors.
+        boundary.computeNormalVectors();
 
         // Increment the time.
         time += timeStep;
