@@ -224,7 +224,7 @@ int main(int argc, char** argv)
             double mismatch = computeObjective(mesh, targetArea)
                             / (mesh.width * mesh.height);
 
-            // Record the time and boundary length.
+            // Record the time and area mismatch.
             times.push_back(time);
             mismatches.push_back(mismatch);
 
