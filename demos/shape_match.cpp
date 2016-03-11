@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     // Time measurements.
     std::vector<double> times;
 
-    // Boundary length measurements.
+    // Area mismatch measurements.
     std::vector<double> mismatches;
 
     /* Lambda values for the optimiser.
