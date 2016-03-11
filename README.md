@@ -157,6 +157,11 @@ Solve for the optimum boundary point velocity vector using the SLP method.
 I have made numerous modifications to the method in order to remove unphysical
 velocity capping and ensure that variable scaling is consistent and transparent.
 
+### Sensitivity
+A general purpose class for computing boundary point sensitivities by finite
+differences. A callback function allows sensitivities to be calculated with
+respect to an arbitrary function.
+
 ## Limitations
 * Limited to two-dimensional systems.
 * Finite element mesh is assumed to be a fixed two-dimensional grid comprised
