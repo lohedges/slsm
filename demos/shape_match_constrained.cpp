@@ -23,13 +23,28 @@
 
 /*! \file shape_match_constrained.cpp
 
-    \brief An example showing perimeter optimisation with a shape matching
+    \brief An example showing perimeter minimisation with a shape matching
     constraint.
 
-    The output file, "shape-match-constrained_*.txt", contains the measured mismatch vs
-    time data for the optmisation run. Level set information for each sample
-    interval is written to ParaView readable VTK files, "level-set_*.vtk".
-    Boundary segment data is written to "boundary-segments_*.txt".
+    Here we construct a simple example showing frustrated perimeter minimisation.
+    The pathway to the optimum shape (a circle) passes through a local minimum
+    from which it is difficult to escape. The shape matching constraint means
+    that any significant change in perimeter at the local minimum results in
+    constraint violation, i.e. fluctuations are supressed. In the absence of
+    noise the system remains permanently trapped in local minimum.
+
+    The matched shape is a narrow-necked dumbell constructed from two vertically
+    offset, overlapping circles. The initial configuration is a circle centred
+    in the middle of the dumbbell neck. The optimisation pathway first forms
+    a small dumbbell in the centre. Evolution towards the global minimum
+    requires a fluctuation in the size of one of lobes of the dumbbell, which
+    drives motion in one of the vertical directions (up or down).
+
+    The output file, "shape-match-constrained_*.txt", contains the measured
+    perimeter and mismatch vs time data for the optmisation run. Level set
+    information for each sample interval is written to ParaView readable VTK
+    files, "level-set_*.vtk".  Boundary segment data is written to
+    "boundary-segments_*.txt".
  */
 
 // Sensitivity function prototype.
@@ -55,22 +70,22 @@ int main(int argc, char** argv)
     double moveLimit = 0.05;
 
     // Default temperature of the thermal bath.
-    double temperature = 0;
+    double temperature = 0.15;
 
     // Override temperature if command-line argument is passed.
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 3000;
+    double maxTime = 5000;
 
     // Set maximimum area mismatch.
     double maxMismatch = 0.2;
 
     // Set sampling interval.
-    double sampleInterval = 30;
+    double sampleInterval = 50;
 
     // Set time of the next sample.
-    double nextSample = 30;
+    double nextSample = 50;
 
     // Initialise a 200x200 non-periodic mesh.
     lsm::Mesh mesh(200, 200, false);
@@ -81,8 +96,8 @@ int main(int argc, char** argv)
     std::vector<lsm::Hole> initialHoles;
     std::vector<lsm::Hole> targetHoles;
 
-    // Create a hole in the centre with a radius of 80 grid units.
-    initialHoles.push_back(lsm::Hole(100, 100, 80));
+    // Create a hole in the centre with a radius of 60 grid units.
+    initialHoles.push_back(lsm::Hole(100, 100, 60));
 
     // Create a dumbell from two vertically offset holes.
     targetHoles.push_back(lsm::Hole(100, 62, 40));
