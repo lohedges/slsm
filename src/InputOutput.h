@@ -47,11 +47,17 @@ namespace lsm
             \param levelSet
                 A reference to the level set object.
 
+            \param isVelocity
+                Whether to write velocity information to file (optional).
+
+            \param isGradient
+                Whether to write gradient information to file (optional).
+
             \param outputDirectory
                 The output directory path (optional).
          */
-        void saveLevelSetVTK(const unsigned int&, const Mesh&,
-            const LevelSet&, const std::string& outputDirectory = "") const;
+        void saveLevelSetVTK(const unsigned int&, const Mesh&, const LevelSet&,
+            bool isVelocity = false, bool isGradient = false, const std::string& outputDirectory = "") const;
 
         //! Save the level set function as a ParaView VTK file.
         /*! \param fileName
@@ -62,8 +68,15 @@ namespace lsm
 
             \param levelSet
                 A reference to the level set object.
+
+            \param isVelocity
+                Whether to write velocity information to file (optional).
+
+            \param isGradient
+                Whether to write gradient information to file (optional).
          */
-        void saveLevelSetVTK(const std::ostringstream&, const Mesh&, const LevelSet&) const;
+        void saveLevelSetVTK(const std::ostringstream&, const Mesh&,
+            const LevelSet&, bool isVelocity = false, bool isGradient = false) const;
 
         //! Save the level set function as a plain text file.
         /*! \param datapoint

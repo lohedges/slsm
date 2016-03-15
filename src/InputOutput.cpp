@@ -25,8 +25,8 @@ namespace lsm
 {
     InputOutput::InputOutput() {}
 
-    void InputOutput::saveLevelSetVTK(const unsigned int& datapoint,
-        const Mesh& mesh, const LevelSet& levelSet, const std::string& outputDirectory) const
+    void InputOutput::saveLevelSetVTK(const unsigned int& datapoint, const Mesh& mesh,
+        const LevelSet& levelSet, bool isVelocity, bool isGradient, const std::string& outputDirectory) const
     {
         std::ostringstream fileName, num;
 
@@ -42,7 +42,8 @@ namespace lsm
         saveLevelSetVTK(fileName, mesh, levelSet);
     }
 
-    void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName, const Mesh& mesh, const LevelSet& levelSet) const
+    void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName,
+        const Mesh& mesh, const LevelSet& levelSet, bool isVelocity, bool isGradient) const
     {
         FILE *pFile;
 
@@ -71,16 +72,22 @@ namespace lsm
             fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
 
         // Write the nodal velocity to file.
-        fprintf(pFile, "SCALARS velocity float 1\n");
-        fprintf(pFile, "LOOKUP_TABLE default\n");
-        for (unsigned int i=0;i<mesh.nNodes;i++)
-            fprintf(pFile, "%lf\n", levelSet.velocity[i]);
+        if (isVelocity)
+        {
+            fprintf(pFile, "SCALARS velocity float 1\n");
+            fprintf(pFile, "LOOKUP_TABLE default\n");
+            for (unsigned int i=0;i<mesh.nNodes;i++)
+                fprintf(pFile, "%lf\n", levelSet.velocity[i]);
+        }
 
         // Write the nodal gradient to file.
-        fprintf(pFile, "SCALARS gradient float 1\n");
-        fprintf(pFile, "LOOKUP_TABLE default\n");
-        for (unsigned int i=0;i<mesh.nNodes;i++)
-            fprintf(pFile, "%lf\n", levelSet.gradient[i]);
+        if (isGradient)
+        {
+            fprintf(pFile, "SCALARS gradient float 1\n");
+            fprintf(pFile, "LOOKUP_TABLE default\n");
+            for (unsigned int i=0;i<mesh.nNodes;i++)
+                fprintf(pFile, "%lf\n", levelSet.gradient[i]);
+        }
 
         fclose(pFile);
 
