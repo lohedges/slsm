@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     printf("%9s %8s %6s\n", "Time", "Length", "Area");
     printf("-------------------------\n");
 
-    // Integrate until we exceed the maximim time.
+    // Integrate until we exceed the maximum time.
     while (time < maxTime)
     {
         // Initialise the sensitivity object.

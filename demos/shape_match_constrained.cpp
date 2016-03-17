@@ -78,7 +78,7 @@ int main(int argc, char** argv)
     // Set maximum running time.
     double maxTime = 5000;
 
-    // Set maximimum area mismatch.
+    // Set maximumum area mismatch.
     double maxMismatch = 0.2;
 
     // Set sampling interval.
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
     printf("%6s %8s %10s\n", "Time", "Length", "Mismatch");
     printf("--------------------------\n");
 
-    // Integrate until we exceed the maximim time.
+    // Integrate until we exceed the maximum time.
     while (time < maxTime)
     {
         // Initialise the sensitivity object.

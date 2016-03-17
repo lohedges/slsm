@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     printf("%6s %8s %10s\n", "Time", "Length", "Curvature");
     printf("--------------------------\n");
 
-    // Integrate until we exceed the maximim time.
+    // Integrate until we exceed the maximum time.
     while (time < maxTime)
     {
         // Zero the mean curvature.

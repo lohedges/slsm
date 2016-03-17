@@ -156,7 +156,7 @@ int main(int argc, char** argv)
     printf("%6s %11s\n", "Time", "Mismatch");
     printf("------------------\n");
 
-    // Integrate until we exceed the maximim time.
+    // Integrate until we exceed the maximum time.
     while (time < maxTime)
     {
         // Assign boundary point sensitivities.

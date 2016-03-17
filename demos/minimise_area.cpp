@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     printf("%6s %8s\n", "Time", "Length");
     printf("---------------\n");
 
-    // Integrate until we exceed the maximim time.
+    // Integrate until we exceed the maximum time.
     while (time < maxTime)
     {
         // Assign boundary point sensitivities.
