@@ -50,8 +50,8 @@
 // Sensitivity function prototype.
 double computeSensitivity(const lsm::Coord&, const lsm::Mesh&, const lsm::LevelSet&);
 
-// Objective function prototype.
-double computeObjective(const lsm::Mesh&, const std::vector<double>&);
+// Mismatch function prototype.
+double computeMismatch(const lsm::Mesh&, const std::vector<double>&);
 
 int main(int argc, char** argv)
 {
@@ -195,7 +195,7 @@ int main(int argc, char** argv)
         std::vector<double> constraintDistances;
 
         // Current area mismatch.
-        double mismatch = computeObjective(mesh, targetArea);
+        double mismatch = computeMismatch(mesh, targetArea);
 
         // Push current distance from constraint violation into vector.
         constraintDistances.push_back(meshArea*maxMismatch - mismatch);
@@ -344,8 +344,8 @@ double computeSensitivity(const lsm::Coord& coord,
     else return 1.0;
 }
 
-// Objective function definition.
-double computeObjective(const lsm::Mesh& mesh, const std::vector<double>& targetArea)
+// Mismatch function definition.
+double computeMismatch(const lsm::Mesh& mesh, const std::vector<double>& targetArea)
 {
     double areaMismatch = 0;
 
