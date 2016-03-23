@@ -104,10 +104,11 @@ There are several example codes showing how to use the library:
 
 * `demos/minimise_area.cpp`
 * `demos/minimise_perimeter.cpp`
-* `demos/shape_match.cpp`
 * `demos/minimise_area_constrained.cpp`
 * `demos/minimise_perimeter_constrained.cpp`
-* `demos/shape_match_constrained.cpp`
+* `demos/shape_match.cpp`
+* `demos/dumbbell.cpp`
+* `demos/umbrella_sample.cpp`
 
 The Makefile will build standalone executables, which can be run (from the top level
 directory) as follows, e.g.
