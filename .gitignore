@@ -11,6 +11,8 @@ demos/minimise_perimeter
 demos/minimise_area_constrained
 demos/minimise_perimeter_constrained
 demos/shape_match
+demos/dumbbell
+demos/umbrella
 tests/boundary_tests
 tests/fast_marching_tests
 tests/heap_tests
