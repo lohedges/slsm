@@ -21,26 +21,28 @@
 
 #include "lsm.h"
 
-/*! \file shape_match_constrained.cpp
+/*! \file dumbbell.cpp
 
     \brief An example showing perimeter minimisation with a shape matching
     constraint.
 
-    Here we construct a simple example showing frustrated perimeter minimisation.
-    The pathway to the optimum shape (a circle) passes through a local minimum
-    from which it is difficult to escape. The shape matching constraint means
-    that any significant change in perimeter at the local minimum results in
-    constraint violation, i.e. fluctuations are supressed. In the absence of
-    noise the system remains permanently trapped in local minimum.
+    Here we construct a simple example system with two minima separated by
+    a free energy barrier. The matched shape is a narrow-necked dumbbell
+    constructed from two vertically offset, overlapping circles. The initial
+    configuration is a circle centred in the upper lobe of the dumbbell.
+    We construct two minima by modifying the perimeter (objective)
+    sensitivities in the upper and lower half of the domain. Sensitivities
+    are reduced in the lower half, hence it's possible to form a circle with
+    a smaller perimeter at the same cost.
 
-    The matched shape is a narrow-necked dumbell constructed from two vertically
-    offset, overlapping circles. The initial configuration is a circle centred
-    in the middle of the dumbbell neck. The optimisation pathway first forms
-    a small dumbbell in the centre. Evolution towards the global minimum
-    requires a fluctuation in the size of one of lobes of the dumbbell, which
-    drives motion in one of the vertical directions (up or down).
+    To reach the global minimum in the lower lobe the shape must pass through
+    the neck of the dumbbell. This transition requires a significant deformation
+    to the interface and a corresponding increase in the perimeter of the zero
+    contour. The pathway is not possible at zero temperature since it requires
+    a fluctuation that is uphill in free energy. As such the circle remains
+    trapped in the upper lobe.
 
-    The output file, "shape-match-constrained_*.txt", contains the measured
+    The output file, "dumbbell_*.txt", contains the measured
     perimeter and mismatch vs time data for the optmisation run. Level set
     information for each sample interval is written to ParaView readable VTK
     files, "level-set_*.vtk".  Boundary segment data is written to
@@ -52,6 +54,9 @@ double computeSensitivity(const lsm::Coord&, const lsm::Mesh&, const lsm::LevelS
 
 // Mismatch function prototype.
 double computeMismatch(const lsm::Mesh&, const std::vector<double>&);
+
+// Perimeter function prototype.
+double computePerimeter(const std::vector<lsm::BoundaryPoint>&, double, double);
 
 int main(int argc, char** argv)
 {
@@ -81,27 +86,33 @@ int main(int argc, char** argv)
     // Set maximumum area mismatch.
     double maxMismatch = 0.2;
 
+    // Set sensitivity reduction factor.
+    double reduce = 0.5;
+
     // Set sampling interval.
     double sampleInterval = 50;
 
     // Set time of the next sample.
     double nextSample = 50;
 
-    // Initialise a 200x200 non-periodic mesh.
-    lsm::Mesh mesh(200, 200, false);
+    // Initialise a 100x100 non-periodic mesh.
+    lsm::Mesh mesh(100, 100, false);
 
     // Store the mesh area.
     double meshArea = mesh.width * mesh.height;
 
+    // Half mesh height.
+    double halfHeight = 0.5 * mesh.height;
+
     std::vector<lsm::Hole> initialHoles;
     std::vector<lsm::Hole> targetHoles;
 
-    // Create a hole in the centre with a radius of 60 grid units.
-    initialHoles.push_back(lsm::Hole(100, 100, 60));
+    // Create a dumbbell from two vertically offset holes.
+    targetHoles.push_back(lsm::Hole(50, 31, 20));
+    targetHoles.push_back(lsm::Hole(50, 69, 20));
 
-    // Create a dumbell from two vertically offset holes.
-    targetHoles.push_back(lsm::Hole(100, 62, 40));
-    targetHoles.push_back(lsm::Hole(100, 138, 40));
+    // Initialise the system with a circle in the upper lobe.
+    initialHoles.push_back(lsm::Hole(50, 64, 15));
 
     // Initialise the level set object.
     lsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
@@ -120,6 +131,7 @@ int main(int argc, char** argv)
 
     // Discretise the target structure.
     boundary.discretise(true);
+    io.saveBoundarySegmentsTXT(0, mesh, boundary);
 
     // Compute the element area fractions.
     boundary.computeAreaFractions();
@@ -162,7 +174,7 @@ int main(int argc, char** argv)
      */
     std::vector<double> lambdas(2);
 
-    std::cout << "\nStarting constrained shape matching demo...\n\n";
+    std::cout << "\nStarting dumbbell demo...\n\n";
 
     // Print output header.
     printf("--------------------------\n");
@@ -184,7 +196,12 @@ int main(int argc, char** argv)
         {
             boundary.points[i].sensitivities[0] =
                 sensitivity.computeSensitivity(boundary.points[i], callback);
-            boundary.points[i].sensitivities[1] = computeSensitivity(boundary.points[i].coord, mesh, levelSet);
+            boundary.points[i].sensitivities[1] =
+                computeSensitivity(boundary.points[i].coord, mesh, levelSet);
+
+            // Reduce perimeter sensitivities in the lower half.
+            if (boundary.points[i].coord.y < halfHeight)
+                boundary.points[i].sensitivities[0] *= reduce;
         }
 
         // Time step associated with the iteration.
@@ -253,16 +270,19 @@ int main(int argc, char** argv)
         // Check if the next sample time has been reached.
         while (time >= nextSample)
         {
+            // Compute the weighted boundary perimeter.
+            double length = computePerimeter(boundary.points, halfHeight, reduce);
+
             // Record the time, length, and mismatch area.
             times.push_back(time);
-            lengths.push_back(boundary.length);
+            lengths.push_back(length);
             mismatches.push_back(mismatch);
 
             // Update the time of the next sample.
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f %10.4f\n", time, boundary.length, mismatch / meshArea);
+            printf("%6.1f %8.1f %10.4f\n", time, length, mismatch / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), mesh, levelSet);
@@ -276,7 +296,7 @@ int main(int argc, char** argv)
     num.str("");
     fileName.str("");
     num << std::fixed << std::setprecision(4) << temperature;
-    fileName << "shape-match-constrained_" << num.str() << ".txt";
+    fileName << "dumbbell_" << num.str() << ".txt";
 
     pFile = fopen(fileName.str().c_str(), "w");
     for (unsigned int i=0;i<times.size();i++)
@@ -354,4 +374,21 @@ double computeMismatch(const lsm::Mesh& mesh, const std::vector<double>& targetA
         areaMismatch += std::abs(targetArea[i] - mesh.elements[i].area);
 
     return areaMismatch;
+}
+
+// Perimeter function definition.
+double computePerimeter(const std::vector<lsm::BoundaryPoint>& points,
+    double halfHeight, double reduce)
+{
+    double length = 0;
+
+    // Compute the total boundary perimeter.
+    for (unsigned int i=0;i<points.size();i++)
+    {
+        // Reduce the perimeter contribution in the lower half.
+        if (points[i].coord.y < halfHeight) length += reduce*points[i].length;
+        else length += points[i].length;
+    }
+
+    return length;
 }
