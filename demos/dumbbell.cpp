@@ -81,7 +81,7 @@ int main(int argc, char** argv)
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 5000;
+    double maxTime = 200;
 
     // Set maximumum area mismatch.
     double maxMismatch = 0.2;
@@ -90,10 +90,10 @@ int main(int argc, char** argv)
     double reduce = 0.5;
 
     // Set sampling interval.
-    double sampleInterval = 50;
+    double sampleInterval = 5;
 
     // Set time of the next sample.
-    double nextSample = 50;
+    double nextSample = 5;
 
     // Initialise a 100x100 non-periodic mesh.
     lsm::Mesh mesh(100, 100, false);
@@ -112,7 +112,7 @@ int main(int argc, char** argv)
     targetHoles.push_back(lsm::Hole(50, 69, 20));
 
     // Initialise the system with a circle in the upper lobe.
-    initialHoles.push_back(lsm::Hole(50, 64, 15));
+    initialHoles.push_back(lsm::Hole(50, 69, 20));
 
     // Initialise the level set object.
     lsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
