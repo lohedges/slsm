@@ -57,8 +57,8 @@ int main(int argc, char** argv)
     // Set maximum running time.
     double maxTime = 1000;
 
-    // Set minimum material area.
-    double minPerimeter = 400;
+    // Set maximum perimeter.
+    double maxPerimeter = 400;
 
     // Set sampling interval.
     double sampleInterval = 10;
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
         std::vector<double> constraintDistances;
 
         // Push current distance from constraint violation into vector.
-        constraintDistances.push_back(minPerimeter - boundary.length);
+        constraintDistances.push_back(maxPerimeter - boundary.length);
 
         /* Initialise the optimisation object for perimeter minimisation.
 
