@@ -164,6 +164,11 @@ A general purpose class for computing boundary point sensitivities by finite
 differences. A callback function allows sensitivities to be calculated with
 respect to an arbitrary function.
 
+### Todo
+* Work out why constraint fails when noisy sensitivity is used, e.g. perimeter
+constraint. Minimising area at constant perimeter fails, whereas minimising
+perimeter at constant area works.
+
 ## Limitations
 * Limited to two-dimensional systems.
 * Finite element mesh is assumed to be a fixed two-dimensional grid comprised
