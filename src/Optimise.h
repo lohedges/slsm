@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <limits>
+#include <numeric>
 #include <nlopt.hpp>
 
 #include "Boundary.h"
@@ -70,8 +71,8 @@ namespace lsm
                 A reference to a vector of boundary points.
 
             \param constraintDistances_
-                Distance from violation for each constraint (negative values
-                indicate that we want to reduce the constraint function).
+                Distance from each constraint (negative values indicate that
+                the constraint is satisfied).
 
             \param lambdas_
                 The optimum lambda values. This array is modified.
@@ -117,8 +118,11 @@ namespace lsm
         /// The number of boundary points.
         unsigned int nPoints;
 
-        /// The number of constraints.
+        /// The number of active constraints.
         unsigned int nConstraints;
+
+        /// The number of initial constraints.
+        unsigned int nConstraintsInitial;
 
         /// A reference to a vector of boundary points.
         std::vector<BoundaryPoint>& boundaryPoints;
@@ -137,6 +141,12 @@ namespace lsm
 
         /// Whether to maximise the objective function.
         bool isMax;
+
+        /// Whether constraints are active.
+        std::vector<bool> isActive;
+
+        /// A map between indices for active constraints.
+        std::vector<unsigned int> indexMap;
 
         /// The boundary point displacement vector.
         std::vector<double> displacements;
