@@ -24,7 +24,6 @@
 
 #include <iostream>
 #include <limits>
-#include <numeric>
 #include <nlopt.hpp>
 
 #include "Boundary.h"
@@ -141,9 +140,6 @@ namespace lsm
 
         /// Whether to maximise the objective function.
         bool isMax;
-
-        /// Whether constraints are active.
-        std::vector<bool> isActive;
 
         /// A map between indices for active constraints.
         std::vector<unsigned int> indexMap;

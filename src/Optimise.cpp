@@ -30,17 +30,17 @@ namespace lsm
     }
 
     Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
-                    const std::vector<double>& constraintDistances_,
-                    std::vector<double>& lambdas_,
-                    double& timeStep_,
-                    double maxDisplacement_,
-                    bool isMax_) :
-                    boundaryPoints(boundaryPoints_),
-                    constraintDistances(constraintDistances_),
-                    lambdas(lambdas_),
-                    timeStep(timeStep_),
-                    maxDisplacement(maxDisplacement_),
-                    isMax(isMax_)
+                       const std::vector<double>& constraintDistances_,
+                       std::vector<double>& lambdas_,
+                       double& timeStep_,
+                       double maxDisplacement_,
+                       bool isMax_) :
+                       boundaryPoints(boundaryPoints_),
+                       constraintDistances(constraintDistances_),
+                       lambdas(lambdas_),
+                       timeStep(timeStep_),
+                       maxDisplacement(maxDisplacement_),
+                       isMax(isMax_)
     {
         errno = EINVAL;
         lsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
@@ -61,8 +61,6 @@ namespace lsm
         negativeLambdaLimits.resize(nConstraints + 1);
         positiveLambdaLimits.resize(nConstraints + 1);
         scaleFactors.resize(nConstraints + 1);
-        isActive.resize(nConstraints + 1);
-        indexMap.resize(nConstraints + 1);
 
         // Copy constraint distances.
         constraintDistancesScaled = constraintDistances;
@@ -88,7 +86,7 @@ namespace lsm
 
     double Optimise::solve()
     {
-        // Store number of boundary points.
+        // Store the number of boundary points.
         // This can change between successive optimisation calls.
         nPoints = boundaryPoints.size();
 
@@ -96,11 +94,8 @@ namespace lsm
         displacements.resize(nPoints);
         isSideLimit.resize(nPoints);
 
-        // Flag all constraints as active.
-        std::fill(isActive.begin(), isActive.end(), true);
-
-        // Initialise the index map for active constraints.
-        std::iota(indexMap.begin(), indexMap.end(), 0);
+        // Compute scaled constraint change distances and remove inactive constraints.
+        computeConstraintDistances();
 
         // Compute the scale factors for the objective end constraints.
         computeScaleFactors();
@@ -108,9 +103,6 @@ namespace lsm
         // Scale inital lambda estimates.
         for (unsigned int i=0;i<nConstraints+1;i++)
             lambdas[i] /= scaleFactors[i];
-
-        // Compute scaled constraint change distances.
-        computeConstraintDistances();
 
         // Compute the lambda limits.
         computeLambdaLimits();
@@ -190,10 +182,7 @@ namespace lsm
 
         // Calculate the unscaled lambda values.
         for (unsigned int i=0;i<nConstraints+1;i++)
-        {
-            if (isActive[i])
-                lambdas[indexMap[i]] *= scaleFactors[indexMap[i]];
-        }
+            lambdas[i] *= scaleFactors[i];
 
         // Effective time step.
         timeStep = std::abs(lambdas[0]);
@@ -208,15 +197,17 @@ namespace lsm
             // Return the lambda vector to its original size.
             lambdas.resize(1 + nConstraintsInitial);
 
-            // Copy the lambda values back into position.
-            for (unsigned int i=1;i<nConstraints;i++)
+            // Check for constraints.
+            if (nConstraints > 0)
             {
-                if (isActive[i])
-                    lambdas[i] = lambdas[indexMap[i]];
+                // Copy the lambda values back into position.
+                // Loop backwards to avoid overwriting data.
+                for (unsigned int i=nConstraints+1;i>0;i--)
+                    lambdas[indexMap[i]] = lambdas[i];
             }
         }
 
-        // Return unscaled objective change.
+        // Return the unscaled objective change.
         return (optObjective / scaleFactors[0]);
     }
 
@@ -300,9 +291,19 @@ namespace lsm
            constraints and the original constraints vector.
          */
 
+        // Initialise the index map.
+        indexMap.clear();
+        indexMap.push_back(0);
+
+        // Number of active contraints.
+        unsigned int nActive = 0;
+
         // Loop over all constraints.
         for (unsigned int i=0;i<nConstraints;i++)
         {
+            // Flag constraint as active.
+            bool isActive = true;
+
             // Min and max constraint changes.
             double min = 0;
             double max = 0;
@@ -348,24 +349,20 @@ namespace lsm
             {
                 // Flag constraint as inactive.
                 if (constraintDistances[i] > max)
-                    isActive[i+1] = false;
+                    isActive = false;
             }
-        }
 
-        // Active constraint tally counter.
-        unsigned int nActive = 0;
-
-        // Remove any inactive constraints.
-        for (unsigned int i=0;i<nConstraints;i++)
-        {
             // Constraint is active.
-            if (isActive[i+1])
+            if (isActive)
             {
-                // Store constraint violation.
+                // Shift initial lambda estimate.
+                lambdas[nActive+1] = lambdas[i+1];
+
+                // Shift constraint distance.
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
 
-                // Remap the constraint index.
-                indexMap[nActive+1] = i + 1;
+                // Map the constraint index: active --> original
+                indexMap.push_back(i+1);
 
                 // Incremement the number of active constraints.
                 nActive++;
@@ -381,10 +378,10 @@ namespace lsm
             scaleFactors.resize(nActive + 1);
             constraintDistancesScaled.resize(nActive);
 
-            // Backup the original number of constraints.
+            // Store the original number of constraints.
             nConstraintsInitial = nConstraints;
 
-            // Reduce constraint number.
+            // Reduce the number of constraints.
             nConstraints = nActive;
         }
     }
@@ -407,43 +404,39 @@ namespace lsm
         // Loop over objective and constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
         {
-            // Only consider objective and active constraints.
-            if (isActive[i])
+            // Remap the sensitivity index: active --> original
+            unsigned int k = indexMap[i];
+
+            // Initialise max sensitivity.
+            double maxSens = std::numeric_limits<double>::min();
+
+            // Loop over all boundary points.
+            for (unsigned int j=0;j<boundaryPoints.size();j++)
             {
-                // Store (potentially) remapped index.
-                unsigned int index = indexMap[i];
+                // Take absolute sensitivity.
+                double sens = std::abs(boundaryPoints[j].sensitivities[k]);
 
-                // Initialise max sensitivity.
-                double maxSens = std::numeric_limits<double>::min();
-
-                // Loop over all boundary points.
-                for (unsigned int j=0;j<boundaryPoints.size();j++)
-                {
-                    // Take absolute sensitivity.
-                    double sens = std::abs(boundaryPoints[j].sensitivities[index]);
-
-                    // Check max sensitivity.
-                    if (sens > maxSens) maxSens = sens;
-                }
-
-                // Store limits.
-                negativeLambdaLimits[index] = -maxDisplacement / maxSens;
-                positiveLambdaLimits[index] =  maxDisplacement / maxSens;
-
-                // Scale limits.
-                negativeLambdaLimits[index] /= scaleFactors[i];
-                positiveLambdaLimits[index] /= scaleFactors[i];
-
-                /* Rescale the lambda values so that they are in range.
-
-                   N.B. Resetting the lambda values to zero can cause spurious
-                   errors with the optimiser when close to convergence. Solutions
-                   may be found with lambda = 0 (for the objective) which will
-                   result in undefined velocities.
-                */
-                while (lambdas[index] < negativeLambdaLimits[index]) lambdas[index] *= 0.9;
-                while (lambdas[index] > positiveLambdaLimits[index]) lambdas[index] *= 0.9;
+                // Check max sensitivity.
+                if (sens > maxSens) maxSens = sens;
             }
+
+            // Store limits.
+            negativeLambdaLimits[i] = -maxDisplacement / maxSens;
+            positiveLambdaLimits[i] =  maxDisplacement / maxSens;
+
+            // Scale limits.
+            negativeLambdaLimits[i] /= scaleFactors[i];
+            positiveLambdaLimits[i] /= scaleFactors[i];
+
+            /* Rescale the lambda values so that they are in range.
+
+                N.B. Resetting the lambda values to zero can cause spurious
+                errors with the optimiser when close to convergence. Solutions
+                may be found with lambda = 0 (for the objective) which will
+                result in undefined velocities.
+            */
+            while (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] *= 0.9;
+            while (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] *= 0.9;
         }
     }
 
@@ -461,8 +454,11 @@ namespace lsm
             // Add components for active constraints.
             for (unsigned int j=1;j<nConstraints+1;j++)
             {
-                if (isActive[j])
-                    displacements[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[j];
+                // Remap the sensitivity index: active --> original
+                unsigned int k = indexMap[j];
+
+                // Update displacement vector.
+                displacements[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[k];
             }
 
             // Check side limits if point lies close to domain boundary.
@@ -482,15 +478,15 @@ namespace lsm
     {
         // This method assumes that displacements have already been calculated.
 
-        // Remap the index.
-        index = indexMap[index];
+        // Remap the sensitivity index: active --> original
+        unsigned int j = indexMap[index];
 
         // Intialise function.
         double func = 0;
 
         // Integrate function over boundary points.
         for (unsigned int i=0;i<nPoints;i++)
-            func += (scaleFactors[index] * displacements[i] * boundaryPoints[i].sensitivities[index] * boundaryPoints[i].length);
+            func += (scaleFactors[index] * displacements[i] * boundaryPoints[i].sensitivities[j] * boundaryPoints[i].length);
 
         if (index == 0) return func;
         else return (func - (scaleFactors[index] * constraintDistancesScaled[index - 1]));
@@ -498,9 +494,6 @@ namespace lsm
 
     void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
     {
-        // Remap the index.
-        index = indexMap[index];
-
         // Whether we're at the origin, i.e. all lambda values are zero.
         bool isOrigin = false;
 
@@ -541,29 +534,25 @@ namespace lsm
             // Loop over all functions (objective, then constraints).
             for (unsigned int j=0;j<nConstraints+1;j++)
             {
-                // Only consider objective and active constraints.
-                if (isActive[j])
+                // Remap the sensitivity index: active --> original
+                unsigned int k = indexMap[j];
+
+                // Scale factor.
+                double scaleFactor = scaleFactors[index] * scaleFactors[k];
+
+                if (!isSideLimit[i])
                 {
-                    // Remap the index.
-                    unsigned int k = indexMap[j];
-
-                    // Scale factor.
-                    double scaleFactor = scaleFactors[index] * scaleFactors[k];
-
-                    if (!isSideLimit[i])
-                    {
-                        gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                    * boundaryPoints[i].sensitivities[k]
-                                    * boundaryPoints[i].length
-                                    * scaleFactor);
-                    }
-                    else if (isOrigin)
-                    {
-                        gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                    * boundaryPoints[i].sensitivities[k]
-                                    * boundaryPoints[i].length
-                                    * 0.5 * scaleFactor);
-                    }
+                    gradient[k] += (boundaryPoints[i].sensitivities[index]
+                                * boundaryPoints[i].sensitivities[k]
+                                * boundaryPoints[i].length
+                                * scaleFactor);
+                }
+                else if (isOrigin)
+                {
+                    gradient[k] += (boundaryPoints[i].sensitivities[index]
+                                * boundaryPoints[i].sensitivities[k]
+                                * boundaryPoints[i].length
+                                * 0.5 * scaleFactor);
                 }
             }
         }
@@ -619,11 +608,7 @@ namespace lsm
         {
             // Scale lambda values.
             for (unsigned int i=0;i<nConstraints+1;i++)
-            {
-                // Only consider active constraints.
-                if (isActive[i])
-                    lambdas[indexMap[i]] *= scale;
-            }
+                lambdas[i] *= scale;
 
             // Recompute the displacement vector.
             computeDisplacements(lambdas);
