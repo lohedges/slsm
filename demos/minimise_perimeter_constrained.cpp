@@ -49,22 +49,22 @@ int main(int argc, char** argv)
     double moveLimit = 0.1;
 
     // Default temperature of the thermal bath.
-    double temperature = 0.02;
+    double temperature = 0.1;
 
     // Override temperature if command-line argument is passed.
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 1000;
+    double maxTime = 500;
 
     // Set minimum material area.
     double minArea = 0.6;
 
     // Set sampling interval.
-    double sampleInterval = 10;
+    double sampleInterval = 5;
 
     // Set time of the next sample.
-    double nextSample = 10;
+    double nextSample = 5;
 
     // Initialise a 200x200 non-periodic mesh.
     lsm::Mesh mesh(200, 200, false);
