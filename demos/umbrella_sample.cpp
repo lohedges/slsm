@@ -46,7 +46,7 @@
     a harmonic bias potential. By combining sampling data from different
     umbrella windows we can calculate the free energy profile for the
     transition between the upper and lower lobe. Our bias potential constrains
-    the y centre of mass of the shape <y>, i.e. the bias is k*(y_s - y_i)^2,
+    the y centre of mass of the shape <y>, i.e. the bias is (k/2)*(y_s - y_i)^2,
     where k is the spring constant, y_s is the <y> for the current sample,
     and y_i is the <y> for umbrella window i.
 
@@ -514,7 +514,7 @@ double computeCentreOfMass(std::vector<lsm::BoundaryPoint>& points)
 // Bias potential function definition.
 double computeBiasPotential(double value, double centre, double spring)
 {
-    return spring*spring*(value - centre)*(value - centre);
+    return 0.5*spring*(value - centre)*(value - centre);
 }
 
 // Acceptance function definition.
