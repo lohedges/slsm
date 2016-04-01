@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 
     // Maximum displacement per iteration, in units of the mesh spacing.
     // This is the CFL limit.
-    double moveLimit = 0.5;
+    double moveLimit = 0.05;
 
     // Set maximum running time.
     double maxTime = 5000;
