@@ -277,7 +277,7 @@ int main(int argc, char** argv)
 
                     // Reduce perimeter sensitivities in the lower half.
                     if (boundary.points[i].coord.y < 100)
-                        boundary.points[i].sensitivities[0] *= 0.5;
+                        boundary.points[i].sensitivities[0] *= reduce;
                 }
 
                 // Time step associated with the iteration.
