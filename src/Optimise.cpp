@@ -398,7 +398,7 @@ namespace lsm
 
            and the largest lambda that doesn't trigger the CFL limit is
 
-            lambda = CFL / max(abs(sensitivity))
+             lambda = CFL / max(abs(sensitivity))
          */
 
         // Loop over objective and constraints.
@@ -481,7 +481,7 @@ namespace lsm
         // Remap the sensitivity index: active --> original
         unsigned int j = indexMap[index];
 
-        // Intialise function.
+        // Initialise function.
         double func = 0;
 
         // Integrate function over boundary points.
