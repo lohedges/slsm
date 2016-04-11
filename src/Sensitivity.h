@@ -44,9 +44,9 @@ namespace lsm
     public:
         //! Constructor.
         /*! \param delta_
-                The finite-difference derivative length.
+                The finite-difference derivative length (perturbation).
         */
-        Sensitivity(double delta_ = 0.1);
+        Sensitivity(double delta_ = 1e-4);
 
         //! Compute finite-difference sensitivity for an arbitrary function.
         /*! \param point
