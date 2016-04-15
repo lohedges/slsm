@@ -572,33 +572,18 @@ namespace lsm
         // Loop over all boundary points.
         for (unsigned int i=0;i<nPoints;i++)
         {
-            // Whether CFL is violated.
-            bool isCFL = false;
+            // Absolute displacement.
+            double disp = std::abs(displacements[i]);
 
-            // Displacement limit (absolute site dependent CFL).
-            double dispLimit;
-
-            if (displacements[i] < boundaryPoints[i].negativeLimit)
+            // Displacement exceeds the CFL limit.
+            if (disp > maxDisplacement)
             {
-                dispLimit = -boundaryPoints[i].negativeLimit;
-                isCFL = true;
-            }
-            else if (displacements[i] > boundaryPoints[i].positiveLimit)
-            {
-                dispLimit = boundaryPoints[i].positiveLimit;
-                isCFL = true;
-            }
-
-            if (isCFL)
-            {
-                double disp = std::abs(displacements[i]);
-
                 // Check if current maximum is exceeded.
                 if (disp > maxDisp)
                 {
                     // Store maximum displacement and scaling factor.
                     maxDisp = disp;
-                    scale = dispLimit / maxDisp;
+                    scale = maxDisplacement / maxDisp;
                 }
             }
         }
