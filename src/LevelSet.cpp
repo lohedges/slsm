@@ -640,28 +640,32 @@ namespace lsm
                 // Index of the neighbouring node.
                 unsigned int neighbour = mesh.nodes[node].neighbours[j];
 
-                // Distance from the boundary point to the node.
-                double dx = mesh.nodes[neighbour].coord.x - boundaryPoints[i].coord.x;
-                double dy = mesh.nodes[neighbour].coord.y - boundaryPoints[i].coord.y;
-
-                // Squared distance.
-                double rSqd = dx*dx + dy*dy;
-
-                // If boundary point lies exactly on the node, then set velocity
-                // to that of the boundary point.
-                if (rSqd < 1e-6)
+                // Make sure neighbour is in bounds.
+                if (neighbour < mesh.nNodes)
                 {
-                    velocity[neighbour] = boundaryPoints[i].velocity;
-                    weight[neighbour] = 1.0;
-                    isSet[neighbour] = true;
-                }
-                else if (rSqd <= 1.0)
-                {
-                    // Update velocity estimate if not already set.
-                    if (!isSet[neighbour])
+                    // Distance from the boundary point to the node.
+                    double dx = mesh.nodes[neighbour].coord.x - boundaryPoints[i].coord.x;
+                    double dy = mesh.nodes[neighbour].coord.y - boundaryPoints[i].coord.y;
+
+                    // Squared distance.
+                    double rSqd = dx*dx + dy*dy;
+
+                    // If boundary point lies exactly on the node, then set velocity
+                    // to that of the boundary point.
+                    if (rSqd < 1e-6)
                     {
-                        velocity[neighbour] += boundaryPoints[i].velocity / rSqd;
-                        weight[neighbour] += 1.0 / rSqd;
+                        velocity[neighbour] = boundaryPoints[i].velocity;
+                        weight[neighbour] = 1.0;
+                        isSet[neighbour] = true;
+                    }
+                    else if (rSqd <= 1.0)
+                    {
+                        // Update velocity estimate if not already set.
+                        if (!isSet[neighbour])
+                        {
+                            velocity[neighbour] += boundaryPoints[i].velocity / rSqd;
+                            weight[neighbour] += 1.0 / rSqd;
+                        }
                     }
                 }
             }
