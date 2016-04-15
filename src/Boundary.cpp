@@ -29,18 +29,11 @@ namespace lsm
 
     void Boundary::discretise(bool isTarget)
     {
-        /* Allocate memory for boundary points and segments.
-
-           20% of the total node count is a reasonable estimate.
-           To avoid problems in small systems we add boundary nodes
-           of the level set domain.
-         */
-        int size = 0.2*mesh.nNodes;
-        size += 2*(1 + mesh.width) + 2*(1 + mesh.height);
-
-        // Resize vectors.
-        points.resize(size);
-        segments.resize(size);
+        // Clear and reserve vector memory.
+        points.clear();
+        segments.clear();
+        points.reserve(mesh.nNodes);
+        segments.reserve(mesh.nNodes);
 
         // Reset the number of points and segments.
         nPoints = nSegments = 0;
@@ -114,7 +107,9 @@ namespace lsm
                                 boundaryPoints[nCut] = nPoints;
 
                                 // Initialise boundary point.
-                                initialisePoint(points[nPoints], coord);
+                                BoundaryPoint point;
+                                initialisePoint(point, coord);
+                                points.push_back(point);
 
                                 // Increment number of boundary points.
                                 nPoints++;
@@ -155,7 +150,9 @@ namespace lsm
                                 mesh.nodes[n1].nBoundaryPoints++;
 
                                 // Initialise boundary point.
-                                initialisePoint(points[nPoints], coord);
+                                BoundaryPoint point;
+                                initialisePoint(point, coord);
+                                points.push_back(point);
 
                                 // Increment number of boundary points.
                                 nPoints++;
@@ -177,7 +174,9 @@ namespace lsm
                                 mesh.nodes[n2].nBoundaryPoints++;
 
                                 // Initialise boundary point.
-                                initialisePoint(points[nPoints], coord);
+                                BoundaryPoint point;
+                                initialisePoint(point, coord);
+                                points.push_back(point);
 
                                 // Increment number of boundary points.
                                 nPoints++;
@@ -197,7 +196,7 @@ namespace lsm
                             mesh.elements[i].nBoundarySegments++;
 
                             // Add segment to vector.
-                            segments[nSegments] = segment;
+                            segments.push_back(segment);
                             nSegments++;
                         }
                     }
@@ -225,7 +224,7 @@ namespace lsm
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments[nSegments] = segment;
+                    segments.push_back(segment);
                     nSegments++;
                 }
 
@@ -276,7 +275,9 @@ namespace lsm
                                     mesh.nodes[node].nBoundaryPoints++;
 
                                     // Initialise boundary point.
-                                    initialisePoint(points[nPoints], coord);
+                                    BoundaryPoint point;
+                                    initialisePoint(point, coord);
+                                    points.push_back(point);
 
                                     // Increment number of boundary points.
                                     nPoints++;
@@ -296,7 +297,7 @@ namespace lsm
                                 mesh.elements[i].nBoundarySegments++;
 
                                 // Add segment to vector.
-                                segments[nSegments] = segment;
+                                segments.push_back(segment);
                                 nSegments++;
                             }
                         }
@@ -343,7 +344,7 @@ namespace lsm
                         mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
-                        segments[nSegments] = segment;
+                        segments.push_back(segment);
                         nSegments++;
 
                         segment.start = boundaryPoints[2];
@@ -361,7 +362,7 @@ namespace lsm
                         mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
-                        segments[nSegments] = segment;
+                        segments.push_back(segment);
                         nSegments++;
                     }
 
@@ -382,7 +383,7 @@ namespace lsm
                         mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
-                        segments[nSegments] = segment;
+                        segments.push_back(segment);
                         nSegments++;
 
                         segment.start = boundaryPoints[1];
@@ -400,7 +401,7 @@ namespace lsm
                         mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
-                        segments[nSegments] = segment;
+                        segments.push_back(segment);
                         nSegments++;
                     }
 
@@ -449,7 +450,9 @@ namespace lsm
                         mesh.nodes[node].nBoundaryPoints++;
 
                         // Initialise boundary point.
-                        initialisePoint(points[nPoints], coord);
+                        BoundaryPoint point;
+                        initialisePoint(point, coord);
+                        points.push_back(point);
 
                         // Increment number of boundary points.
                         nPoints++;
@@ -472,7 +475,9 @@ namespace lsm
                         mesh.nodes[node].nBoundaryPoints++;
 
                         // Initialise boundary point.
-                        initialisePoint(points[nPoints], coord);
+                        BoundaryPoint point;
+                        initialisePoint(point, coord);
+                        points.push_back(point);
 
                         // Increment number of boundary points.
                         nPoints++;
@@ -492,15 +497,11 @@ namespace lsm
                     mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
-                    segments[nSegments] = segment;
+                    segments.push_back(segment);
                     nSegments++;
                 }
             }
         }
-
-        // Resize points and segments vectors.
-        points.resize(nPoints);
-        segments.resize(nSegments);
 
         // Work out boundary integral length associated with each boundary point.
         computePointLengths();
