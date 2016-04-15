@@ -166,7 +166,7 @@ int main(int argc, char** argv)
         // Push current distance from constraint violation into vector.
         constraintDistances.push_back(maxPerimeter - boundary.length);
 
-        /* Initialise the optimisation object for perimeter minimisation.
+        /* Initialise the optimisation object.
 
            The Optimise class is a lightweight object so there is no cost for
            reinitialising at every iteration. A smart compiler will optimise

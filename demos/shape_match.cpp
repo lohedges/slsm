@@ -170,7 +170,7 @@ int main(int argc, char** argv)
         // vector can be left unassigned.
         std::vector<double> constraintDistances(1);
 
-        /* Initialise the optimisation object for material area maximisation.
+        /* Initialise the optimisation object.
 
            The Optimise class is a lightweight object so there is no cost for
            reinitialising at every iteration. A smart compiler will optimise

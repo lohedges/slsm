@@ -217,7 +217,7 @@ int main(int argc, char** argv)
         // Push current distance from constraint violation into vector.
         constraintDistances.push_back(meshArea*maxMismatch - mismatch);
 
-        /* Initialise the optimisation object for material area maximisation.
+        /* Initialise the optimisation object.
 
            The Optimise class is a lightweight object so there is no cost for
            reinitialising at every iteration. A smart compiler will optimise
