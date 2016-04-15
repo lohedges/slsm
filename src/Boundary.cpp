@@ -29,13 +29,14 @@ namespace lsm
 
     void Boundary::discretise(bool isTarget)
     {
-        // Allocate memory for boundary points and segments.
-        // 20% of node count is a reasonable estimate.
-        // Will need to check that this limit isn't exceeded.
+        /* Allocate memory for boundary points and segments.
 
-        // Make sure that memory is sufficient (for small test systems).
+           20% of the total node count is a reasonable estimate.
+           To avoid problems in small systems we add boundary nodes
+           of the level set domain.
+         */
         int size = 0.2*mesh.nNodes;
-        size = std::max(4, size);
+        size += 2*(1 + mesh.width) + 2*(1 + mesh.height);
 
         // Resize vectors.
         points.resize(size);
