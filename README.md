@@ -124,9 +124,11 @@ in the source file provide further details of the calculations.
 ## Completed
 
 ### Mesh
-Stores and initialises the two-dimensional finite element mesh. This
-creates the required elements and nodes and stores information regarding their
+Stores and initialises the two-dimensional fixed-grid mesh. This creates
+the required elements and nodes and stores information regarding their
 connectivity. Support is provided for periodic and non-periodic meshes.
+Note that this is not the finite-element mesh, which may be of a different
+geometry or resolution.
 
 ### LevelSet
 Holds information relating to the level set function. Methods are
@@ -145,7 +147,7 @@ calculating signed distances and extension velocities.
 An object for the discretised boundary. The `discretise` method solves for
 a set of boundary points and segments given the current mesh and level set.
 Following this, the `computeAreaFractions` method can determine the material
-area fraction in each of the finite element cells.
+area fraction in each of the elements of the level set mesh.
 
 ### InputOutput
 Provides functionality for reading and writing data structures. Currently
@@ -171,5 +173,5 @@ perimeter at constant area works.
 
 ## Limitations
 * Limited to two-dimensional systems.
-* Finite element mesh is assumed to be a fixed two-dimensional grid comprised
-of square elements of unit side.
+* Fixed-grid mesh is assumed to be two-dimensional and is comprised of square
+elements of unit side.
