@@ -98,7 +98,7 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -201,8 +201,8 @@ int main(int argc, char** argv)
             printf("%6.1f %8.1f\n", time, boundary.length);
 
             // Write level set and boundary segments to file.
-            io.saveLevelSetVTK(times.size(), mesh, levelSet);
-            io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
+            io.saveLevelSetVTK(times.size(), levelSet);
+            io.saveBoundarySegmentsTXT(times.size(), boundary);
         }
     }
 

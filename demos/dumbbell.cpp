@@ -81,19 +81,19 @@ int main(int argc, char** argv)
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 200;
+    double maxTime = 6000;
 
     // Set maximumum area mismatch.
     double maxMismatch = 0.2;
 
     // Set sensitivity reduction factor.
-    double reduce = 0.5;
+    double reduce = 0.67;
 
     // Set sampling interval.
-    double sampleInterval = 5;
+    double sampleInterval = 30;
 
     // Set time of the next sample.
-    double nextSample = 5;
+    double nextSample = 30;
 
     // Initialise a 100x100 non-periodic mesh.
     lsm::Mesh mesh(100, 100, false);
@@ -124,14 +124,14 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Initialise target area fraction vector.
     std::vector<double> targetArea(mesh.nElements);
 
     // Discretise the target structure.
     boundary.discretise(true);
-    io.saveBoundarySegmentsTXT(0, mesh, boundary);
+    io.saveBoundarySegmentsTXT(0, boundary);
 
     // Compute the element area fractions.
     boundary.computeAreaFractions();
@@ -285,8 +285,8 @@ int main(int argc, char** argv)
             printf("%6.1f %8.1f %10.4f\n", time, length, mismatch / meshArea);
 
             // Write level set and boundary segments to file.
-            io.saveLevelSetVTK(times.size(), mesh, levelSet);
-            io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
+            io.saveLevelSetVTK(times.size(), levelSet);
+            io.saveBoundarySegmentsTXT(times.size(), boundary);
         }
     }
 

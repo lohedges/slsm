@@ -32,7 +32,7 @@
  */
 
 // Sensitivity function prototype.
-double computeSensitivity(const lsm::Coord&, const lsm::Mesh&, const lsm::LevelSet&);
+double computeSensitivity(const lsm::Coord&, const lsm::LevelSet&);
 
 // Objective function prototype.
 double computeObjective(const lsm::Mesh&, const std::vector<double>&);
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Initialise target area fraction vector.
     std::vector<double> targetArea(mesh.nElements);
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
     {
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
-            boundary.points[i].sensitivities[0] = computeSensitivity(boundary.points[i].coord, mesh, levelSet);
+            boundary.points[i].sensitivities[0] = computeSensitivity(boundary.points[i].coord, levelSet);
 
         // Time step associated with the iteration.
         double timeStep;
@@ -235,8 +235,8 @@ int main(int argc, char** argv)
             printf("%6.1f %11.4f\n", time, mismatch);
 
             // Write level set and boundary segments to file.
-            io.saveLevelSetVTK(times.size(), mesh, levelSet);
-            io.saveBoundarySegmentsTXT(times.size(), mesh, boundary);
+            io.saveLevelSetVTK(times.size(), levelSet);
+            io.saveBoundarySegmentsTXT(times.size(), boundary);
         }
     }
 
@@ -259,8 +259,7 @@ int main(int argc, char** argv)
 }
 
 // Sensitivity function definition.
-double computeSensitivity(const lsm::Coord& coord,
-    const lsm::Mesh& mesh, const lsm::LevelSet& levelSet)
+double computeSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
 {
     /* Interpolate nodal signed distance mismatch to a boundary point
        using inverse squared distance weighting. We are only concerned with
@@ -272,7 +271,7 @@ double computeSensitivity(const lsm::Coord& coord,
     double mismatch = 0;
 
     // Find the node that is cloest to the boundary point.
-    unsigned int node = mesh.getClosestNode(coord);
+    unsigned int node = levelSet.mesh.getClosestNode(coord);
 
     // Loop over node and all of its neighbours.
     for (int i=-1;i<4;i++)
@@ -284,11 +283,11 @@ double computeSensitivity(const lsm::Coord& coord,
         if (i < 0) n = node;
 
         // Then its neighbours.
-        else n = mesh.nodes[node].neighbours[i];
+        else n = levelSet.mesh.nodes[node].neighbours[i];
 
         // Distance from the boundary point to the node in x & y direction.
-        double dx = mesh.nodes[n].coord.x - coord.x;
-        double dy = mesh.nodes[n].coord.y - coord.y;
+        double dx = levelSet.mesh.nodes[n].coord.x - coord.x;
+        double dy = levelSet.mesh.nodes[n].coord.y - coord.y;
 
         // Squared distance.
         double rSqd = dx*dx + dy*dy;
