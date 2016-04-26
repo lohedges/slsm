@@ -25,7 +25,6 @@
 namespace lsm
 {
     LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -39,10 +38,10 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -62,7 +61,6 @@ namespace lsm
 
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
         double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -76,10 +74,10 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -99,7 +97,6 @@ namespace lsm
 
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& points,
         double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -113,10 +110,10 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -136,7 +133,6 @@ namespace lsm
 
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& initialHoles,
         const std::vector<Hole>& targetHoles, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -150,11 +146,11 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        target.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        target.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -181,7 +177,6 @@ namespace lsm
 
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
         const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -195,11 +190,11 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        target.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        target.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -226,7 +221,6 @@ namespace lsm
 
     LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& initialPoints,
         const std::vector<Coord>& targetPoints, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
-        nNodes(mesh_.nNodes),
         moveLimit(moveLimit_),
         mesh(mesh_),
         bandWidth(bandWidth_),
@@ -240,11 +234,11 @@ namespace lsm
         lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
-        signedDistance.resize(nNodes);
-        velocity.resize(nNodes);
-        gradient.resize(nNodes);
-        target.resize(nNodes);
-        narrowBand.resize(nNodes);
+        signedDistance.resize(mesh.nNodes);
+        velocity.resize(mesh.nNodes);
+        gradient.resize(mesh.nNodes);
+        target.resize(mesh.nNodes);
+        narrowBand.resize(mesh.nNodes);
 
         // Make sure that memory is sufficient (for small test systems).
         size = std::max(25, size);
@@ -452,7 +446,7 @@ namespace lsm
          */
 
         // Loop over all nodes.
-        for (unsigned int i=0;i<nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             // Loop over all holes.
             for (unsigned int j=0;j<holes.size();j++)
@@ -491,7 +485,7 @@ namespace lsm
          */
 
         // Loop over all nodes.
-        for (unsigned int i=0;i<nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             // Loop over all interface segments.
             for (unsigned int j=0;j<points.size()-1;j++)
@@ -513,7 +507,7 @@ namespace lsm
     void LevelSet::closestDomainBoundary()
     {
         // Initial LSF is distance from closest domain boundary.
-        for (unsigned int i=0;i<nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             // Closest edge in x.
             unsigned int minX = std::min(mesh.nodes[i].coord.x, mesh.width - mesh.nodes[i].coord.x);
@@ -537,7 +531,7 @@ namespace lsm
         nMines = 0;
 
         // Loop over all nodes.
-        for (unsigned int i=0;i<nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             // Check that the node isn't on the domain boundary, and if it is
             // then check that the boundary isn't fixed.
@@ -590,13 +584,13 @@ namespace lsm
         // using inverse squared distance interpolation.
 
         // Whether the velocity at a node has been set.
-        bool isSet[nNodes];
+        bool isSet[mesh.nNodes];
 
         // Weighting factor for each node.
-        double weight[nNodes];
+        double weight[mesh.nNodes];
 
         // Initialise arrays.
-        for (unsigned int i=0;i<nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             isSet[i] = false;
             weight[i] = 0;

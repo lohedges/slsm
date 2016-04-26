@@ -18,7 +18,7 @@
 #include "Mesh.h"
 
 /*! \file Mesh.cpp
-    \brief A class for the fixed grid, finite-element mesh.
+    \brief A class for the level-set domain fixed-grid mesh.
  */
 
 namespace lsm
@@ -205,13 +205,6 @@ namespace lsm
             // Store coordinates of elemente centre.
             elements[i].coord.x = x + 0.5;
             elements[i].coord.y = y + 0.5;
-
-            // Store Guass point coordinates.
-            for (unsigned int j=0;j<4;j++)
-            {
-                elements[i].gaussPoints[j].x = elements[i].coord.x + (invSqrtThree * 0.5 * nodeCoords[j].x);
-                elements[i].gaussPoints[j].y = elements[i].coord.y + (invSqrtThree * 0.5 * nodeCoords[j].y);
-            }
 
             // Store connectivity (element --> node)
 

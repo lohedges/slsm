@@ -58,17 +58,13 @@ namespace lsm
         Functionality is also provided for tracking nodes that are part of the
         narrow band region around the zero contour, as well as mine nodes at
         the edge of the narrow band.
-
-        Note that the level set grid need not be the same resolution as the
-        finite-element mesh. However, for the simple two-dimensional problems
-        considered here we will use a grid of the same size.
      */
     class LevelSet
     {
     public:
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param moveLimit_
                 The CFL limit (in units of the mesh grid spacing).
@@ -83,7 +79,7 @@ namespace lsm
 
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param holes
                 A vector of holes.
@@ -102,7 +98,7 @@ namespace lsm
 
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param points
                 A vector of point coordinates (clockwise ordered and closed).
@@ -121,7 +117,7 @@ namespace lsm
 
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param initialHoles
                 A vector of holes for the initial interface.
@@ -143,7 +139,7 @@ namespace lsm
 
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param holes
                 A vector of holes for the initial interface.
@@ -165,7 +161,7 @@ namespace lsm
 
         //! Constructor.
         /*! \param mesh_
-                A reference to the fixed grid, finite-element mesh.
+                A reference to the fixed-grid mesh.
 
             \param initialPoints
                 A vector of point coordinates for the initial interface (clockwise ordered and closed).
@@ -230,13 +226,13 @@ namespace lsm
         std::vector<double> target;             //!< Signed distance target (for shape matching).
         std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
         std::vector<unsigned int> mines;        //!< Indices of nodes at the edge of the narrow band.
-        const unsigned int nNodes;              //!< The number of nodes in the finite element grid.
         unsigned int nNarrowBand;               //!< The number of nodes in narrow band.
         unsigned int nMines;                    //!< The number of mine nodes.
         const double moveLimit;                 //!< The boundary movement limit (CFL condition).
 
+        Mesh& mesh;                             //!< A reference to the fixed-grid mesh.
+
     private:
-        Mesh& mesh;                             //!< A reference to the finite element mesh.
         unsigned int bandWidth;                 //!< The width of the narrow band region.
         bool isFixed;                           //!< Whether the domain boundary is fixed.
         bool isTarget;                          //!< Whether a target interface is defined.

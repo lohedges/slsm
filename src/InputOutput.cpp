@@ -25,8 +25,8 @@ namespace lsm
 {
     InputOutput::InputOutput() {}
 
-    void InputOutput::saveLevelSetVTK(const unsigned int& datapoint, const Mesh& mesh,
-        const LevelSet& levelSet, bool isVelocity, bool isGradient, const std::string& outputDirectory) const
+    void InputOutput::saveLevelSetVTK(const unsigned int& datapoint, const LevelSet& levelSet,
+        bool isVelocity, bool isGradient, const std::string& outputDirectory) const
     {
         std::ostringstream fileName, num;
 
@@ -39,11 +39,11 @@ namespace lsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "level-set_" << num.str() << ".vtk";
 
-        saveLevelSetVTK(fileName, mesh, levelSet);
+        saveLevelSetVTK(fileName, levelSet);
     }
 
     void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName,
-        const Mesh& mesh, const LevelSet& levelSet, bool isVelocity, bool isGradient) const
+        const LevelSet& levelSet, bool isVelocity, bool isGradient) const
     {
         FILE *pFile;
 
@@ -57,18 +57,18 @@ namespace lsm
         fprintf(pFile, "Para0\n");
         fprintf(pFile, "ASCII\n");
         fprintf(pFile, "DATASET RECTILINEAR_GRID\n");
-        fprintf(pFile, "DIMENSIONS %d %d %d\n", 1 + mesh.width, 1 + mesh.height, 1);
-        fprintf(pFile, "X_COORDINATES %d int\n", 1 + mesh.width);
-        for (unsigned int i=0;i<=mesh.width;i++) {fprintf(pFile, "%d ", i);}
-        fprintf(pFile, "\nY_COORDINATES %d int\n", 1 + mesh.height);
-        for (unsigned int i=0;i<=mesh.height;i++) {fprintf(pFile, "%d ", i);}
+        fprintf(pFile, "DIMENSIONS %d %d %d\n", 1 + levelSet.mesh.width, 1 + levelSet.mesh.height, 1);
+        fprintf(pFile, "X_COORDINATES %d int\n", 1 + levelSet.mesh.width);
+        for (unsigned int i=0;i<=levelSet.mesh.width;i++) {fprintf(pFile, "%d ", i);}
+        fprintf(pFile, "\nY_COORDINATES %d int\n", 1 + levelSet.mesh.height);
+        for (unsigned int i=0;i<=levelSet.mesh.height;i++) {fprintf(pFile, "%d ", i);}
         fprintf(pFile, "\nZ_COORDINATES 1 int\n0\n\n");
-        fprintf(pFile, "POINT_DATA %d\n", mesh.nNodes);
+        fprintf(pFile, "POINT_DATA %d\n", levelSet.mesh.nNodes);
 
         // Write the nodal signed distance to file.
         fprintf(pFile, "SCALARS distance float 1\n");
         fprintf(pFile, "LOOKUP_TABLE default\n");
-        for (unsigned int i=0;i<mesh.nNodes;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
             fprintf(pFile, "%lf\n", levelSet.signedDistance[i]);
 
         // Write the nodal velocity to file.
@@ -76,7 +76,7 @@ namespace lsm
         {
             fprintf(pFile, "SCALARS velocity float 1\n");
             fprintf(pFile, "LOOKUP_TABLE default\n");
-            for (unsigned int i=0;i<mesh.nNodes;i++)
+            for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
                 fprintf(pFile, "%lf\n", levelSet.velocity[i]);
         }
 
@@ -85,7 +85,7 @@ namespace lsm
         {
             fprintf(pFile, "SCALARS gradient float 1\n");
             fprintf(pFile, "LOOKUP_TABLE default\n");
-            for (unsigned int i=0;i<mesh.nNodes;i++)
+            for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
                 fprintf(pFile, "%lf\n", levelSet.gradient[i]);
         }
 
@@ -97,7 +97,7 @@ namespace lsm
         exit(EXIT_FAILURE);
     }
 
-    void InputOutput::saveLevelSetTXT(const unsigned int& datapoint, const Mesh& mesh,
+    void InputOutput::saveLevelSetTXT(const unsigned int& datapoint,
         const LevelSet& levelSet, const std::string& outputDirectory, bool isXY) const
     {
         std::ostringstream fileName, num;
@@ -111,11 +111,11 @@ namespace lsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "level-set_" << num.str() << ".txt";
 
-        saveLevelSetTXT(fileName, mesh, levelSet, isXY);
+        saveLevelSetTXT(fileName, levelSet, isXY);
     }
 
     void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
-        const Mesh& mesh, const LevelSet& levelSet, bool isXY) const
+        const LevelSet& levelSet, bool isXY) const
     {
         FILE *pFile;
 
@@ -125,9 +125,9 @@ namespace lsm
             lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Write the nodal signed distance to file.
-        for (unsigned int i=0;i<mesh.nNodes;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
         {
-            if (isXY) fprintf(pFile, "%lf %lf ", mesh.nodes[i].coord.x, mesh.nodes[i].coord.y);
+            if (isXY) fprintf(pFile, "%lf %lf ", levelSet.mesh.nodes[i].coord.x, levelSet.mesh.nodes[i].coord.y);
             fprintf(pFile, "%lf %lf %lf\n", levelSet.signedDistance[i], levelSet.velocity[i], levelSet.gradient[i]);
         }
 
@@ -179,7 +179,7 @@ namespace lsm
     }
 
     void InputOutput::saveBoundarySegmentsTXT(const unsigned int& datapoint,
-        const Mesh& mesh, const Boundary& boundary, const std::string& outputDirectory) const
+        const Boundary& boundary, const std::string& outputDirectory) const
     {
         std::ostringstream fileName, num;
 
@@ -192,11 +192,10 @@ namespace lsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "boundary-segments_" << num.str() << ".txt";
 
-        saveBoundarySegmentsTXT(fileName, mesh, boundary);
+        saveBoundarySegmentsTXT(fileName, boundary);
     }
 
-    void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName,
-        const Mesh& mesh, const Boundary& boundary) const
+    void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName, const Boundary& boundary) const
     {
         FILE *pFile;
 

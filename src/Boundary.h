@@ -69,20 +69,17 @@ namespace lsm
         between the nodes on an element edge.
 
         The points vector holds coordinates for boundary points (both those lying
-        exactly on nodes of the finite element mesh, and the interpolated points).
+        exactly on nodes of the level set mesh, and the interpolated points).
         Boundary segment data is stored in the segments vector.
      */
     class Boundary
     {
     public:
         //! Constructor.
-        /*! \param mesh_
-                A reference to the finite element mesh.
-
-            \param levelSet_
+        /*! \param levelSet_
                 A reference to the level set object.
          */
-        Boundary(Mesh&, LevelSet&);
+        Boundary(LevelSet&);
 
         //! Use linear interpolation to compute the discretised boundary
         /*! \param isTarget
@@ -127,13 +124,10 @@ namespace lsm
         double area;
 
     private:
-        /// A reference to the finite element mesh.
-        Mesh& mesh;
-
         /// A reference to the level set object.
         LevelSet& levelSet;
 
-        //! Determine the status of the elements and nodes of the finite element grid.
+        //! Determine the status of the elements and nodes of the level set mesh.
         /*! \param signedDistance
                 A pointer to the signed distance function vector.
          */

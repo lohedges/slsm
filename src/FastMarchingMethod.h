@@ -66,7 +66,7 @@ namespace lsm
     public:
         //! Constructor.
         /*! \param mesh_
-                A reference to the finite element mesh.
+                A reference to the level set mesh.
 
             \param isTest_
                 Whether to test the heap following each update.
@@ -92,7 +92,7 @@ namespace lsm
         void march(std::vector<double>&, std::vector<double>&);
 
     private:
-        /// A const reference to the finite element mesh.
+        /// A const reference to the level set mesh.
         const Mesh& mesh;
 
         /// The ascending unsigned distance priority queue.

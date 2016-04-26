@@ -23,7 +23,7 @@
 
 namespace lsm
 {
-    Boundary::Boundary(Mesh& mesh_, LevelSet& levelSet_) : mesh(mesh_), levelSet(levelSet_)
+    Boundary::Boundary(LevelSet& levelSet_) : levelSet(levelSet_)
     {
     }
 
@@ -32,8 +32,8 @@ namespace lsm
         // Clear and reserve vector memory.
         points.clear();
         segments.clear();
-        points.reserve(mesh.nNodes);
-        segments.reserve(mesh.nNodes);
+        points.reserve(levelSet.mesh.nNodes);
+        segments.reserve(levelSet.mesh.nNodes);
 
         // Reset the number of points and segments.
         nPoints = nSegments = 0;
@@ -50,14 +50,14 @@ namespace lsm
         // Point to the current signed distance function.
         else signedDistance = &levelSet.signedDistance;
 
-        // Compute the status of nodes and elements in the finite element mesh.
+        // Compute the status of nodes and elements in level-set mesh.
         computeMeshStatus(signedDistance);
 
         // Loop over all elements.
-        for (unsigned int i=0;i<mesh.nElements;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
         {
             // The element isn't outside of the structure.
-            if (mesh.elements[i].status != ElementStatus::OUTSIDE)
+            if (levelSet.mesh.elements[i].status != ElementStatus::OUTSIDE)
             {
                 // Number of cut edges.
                 unsigned int nCut = 0;
@@ -70,20 +70,20 @@ namespace lsm
                 for (unsigned int j=0;j<4;j++)
                 {
                     // Index of first node on edge.
-                    unsigned int n1 = mesh.elements[i].nodes[j];
+                    unsigned int n1 = levelSet.mesh.elements[i].nodes[j];
 
                     // Index of second node (reconnecting to 0th node).
                     // Edge connectivity goes: 0 --> 1, 1 --> 2, 2 --> 3, 3 --> 0
                     unsigned int n2 = (j == 3) ? 0 : (j + 1);
 
                     // Convert to node index.
-                    n2 = mesh.elements[i].nodes[n2];
+                    n2 = levelSet.mesh.elements[i].nodes[n2];
 
                     // Check that both nodes are inside the narrow band region (only for non-target discretisation).
-                    if (isTarget || (mesh.nodes[n1].isActive && mesh.nodes[n2].isActive))
+                    if (isTarget || (levelSet.mesh.nodes[n1].isActive && levelSet.mesh.nodes[n2].isActive))
                     {
                         // One node is inside, the other is outside. The edge is cut.
-                        if ((mesh.nodes[n1].status|mesh.nodes[n2].status) == NodeStatus::CUT)
+                        if ((levelSet.mesh.nodes[n1].status|levelSet.mesh.nodes[n2].status) == NodeStatus::CUT)
                         {
                             // Compute the distance from node 1 to the intersection point (by interpolation).
                             double d = (*signedDistance)[n1]
@@ -98,10 +98,10 @@ namespace lsm
                             // Boundary point is new.
                             if (index < 0)
                             {
-                                mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
-                                mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
-                                mesh.nodes[n1].nBoundaryPoints++;
-                                mesh.nodes[n2].nBoundaryPoints++;
+                                levelSet.mesh.nodes[n1].boundaryPoints[levelSet.mesh.nodes[n1].nBoundaryPoints] = nPoints;
+                                levelSet.mesh.nodes[n2].boundaryPoints[levelSet.mesh.nodes[n2].nBoundaryPoints] = nPoints;
+                                levelSet.mesh.nodes[n1].nBoundaryPoints++;
+                                levelSet.mesh.nodes[n2].nBoundaryPoints++;
 
                                 // Store boundary point for cut edge.
                                 boundaryPoints[nCut] = nPoints;
@@ -125,8 +125,8 @@ namespace lsm
                         }
 
                         // Both nodes lie on the boundary.
-                        else if ((mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
-                            (mesh.nodes[n2].status & NodeStatus::BOUNDARY))
+                        else if ((levelSet.mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
+                            (levelSet.mesh.nodes[n2].status & NodeStatus::BOUNDARY))
                         {
                             // Initialise boundary point coordinate.
                             Coord coord;
@@ -146,8 +146,8 @@ namespace lsm
                                 // Set index equal to current number of points.
                                 index = nPoints;
 
-                                mesh.nodes[n1].boundaryPoints[mesh.nodes[n1].nBoundaryPoints] = nPoints;
-                                mesh.nodes[n1].nBoundaryPoints++;
+                                levelSet.mesh.nodes[n1].boundaryPoints[levelSet.mesh.nodes[n1].nBoundaryPoints] = nPoints;
+                                levelSet.mesh.nodes[n1].nBoundaryPoints++;
 
                                 // Initialise boundary point.
                                 BoundaryPoint point;
@@ -170,8 +170,8 @@ namespace lsm
                                 // Set index equal to current number of points.
                                 index = nPoints;
 
-                                mesh.nodes[n2].boundaryPoints[mesh.nodes[n2].nBoundaryPoints] = nPoints;
-                                mesh.nodes[n2].nBoundaryPoints++;
+                                levelSet.mesh.nodes[n2].boundaryPoints[levelSet.mesh.nodes[n2].nBoundaryPoints] = nPoints;
+                                levelSet.mesh.nodes[n2].nBoundaryPoints++;
 
                                 // Initialise boundary point.
                                 BoundaryPoint point;
@@ -192,8 +192,8 @@ namespace lsm
                             length += segment.length;
 
                             // Create element to segment lookup.
-                            mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                            mesh.elements[i].nBoundarySegments++;
+                            levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                            levelSet.mesh.elements[i].nBoundarySegments++;
 
                             // Add segment to vector.
                             segments.push_back(segment);
@@ -220,8 +220,8 @@ namespace lsm
                     length += segment.length;
 
                     // Create element to segment lookup.
-                    mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                    mesh.elements[i].nBoundarySegments++;
+                    levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                    levelSet.mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
                     segments.push_back(segment);
@@ -235,10 +235,10 @@ namespace lsm
                     for (unsigned int j=0;j<4;j++)
                     {
                         // Node index.
-                        unsigned int node = mesh.elements[i].nodes[j];
+                        unsigned int node = levelSet.mesh.elements[i].nodes[j];
 
                         // Node is on the boundary, check its neighbours.
-                        if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
+                        if (levelSet.mesh.nodes[node].status & NodeStatus::BOUNDARY)
                         {
                             // Index of next node.
                             unsigned int nAfter = (j == 3) ? 0 : (j + 1);
@@ -247,12 +247,12 @@ namespace lsm
                             unsigned int nBefore = (j == 0) ? 3 : (j - 1);
 
                             // Convert to node indices.
-                            nAfter = mesh.elements[i].nodes[nAfter];
-                            nBefore = mesh.elements[i].nodes[nBefore];
+                            nAfter = levelSet.mesh.elements[i].nodes[nAfter];
+                            nBefore = levelSet.mesh.elements[i].nodes[nBefore];
 
                             // If a neighbour is outside the boundary, then add a boundary segment.
-                            if ((mesh.nodes[nAfter].status & NodeStatus::OUTSIDE) ||
-                                (mesh.nodes[nBefore].status & NodeStatus::OUTSIDE))
+                            if ((levelSet.mesh.nodes[nAfter].status & NodeStatus::OUTSIDE) ||
+                                (levelSet.mesh.nodes[nBefore].status & NodeStatus::OUTSIDE))
                             {
                                 // Create boundary segment.
                                 BoundarySegment segment;
@@ -271,8 +271,8 @@ namespace lsm
                                     // Set index equal to current number of points.
                                     index = nPoints;
 
-                                    mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
-                                    mesh.nodes[node].nBoundaryPoints++;
+                                    levelSet.mesh.nodes[node].boundaryPoints[levelSet.mesh.nodes[node].nBoundaryPoints] = nPoints;
+                                    levelSet.mesh.nodes[node].nBoundaryPoints++;
 
                                     // Initialise boundary point.
                                     BoundaryPoint point;
@@ -293,8 +293,8 @@ namespace lsm
                                 length += segment.length;
 
                                 // Create element to segment lookup.
-                                mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                                mesh.elements[i].nBoundarySegments++;
+                                levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                                levelSet.mesh.elements[i].nBoundarySegments++;
 
                                 // Add segment to vector.
                                 segments.push_back(segment);
@@ -314,7 +314,7 @@ namespace lsm
                     for (unsigned int j=0;j<4;j++)
                     {
                         // Node index.
-                        unsigned int node = mesh.elements[i].nodes[j];
+                        unsigned int node = levelSet.mesh.elements[i].nodes[j];
 
                         lsfSum += (*signedDistance)[node];
                     }
@@ -323,8 +323,8 @@ namespace lsm
                     BoundarySegment segment;
 
                     // Store the status of the first node.
-                    unsigned int node = mesh.elements[i].nodes[0];
-                    NodeStatus::NodeStatus status = mesh.nodes[node].status;
+                    unsigned int node = levelSet.mesh.elements[i].nodes[0];
+                    NodeStatus::NodeStatus status = levelSet.mesh.nodes[node].status;
 
                     if (((status & NodeStatus::INSIDE) && (lsfSum > 0)) ||
                         ((status & NodeStatus::OUTSIDE) && (lsfSum < 0)))
@@ -340,8 +340,8 @@ namespace lsm
                         length += segment.length;
 
                         // Create element to segment lookup.
-                        mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                        mesh.elements[i].nBoundarySegments++;
+                        levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                        levelSet.mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
                         segments.push_back(segment);
@@ -358,8 +358,8 @@ namespace lsm
                         length += segment.length;
 
                         // Create element to segment lookup.
-                        mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                        mesh.elements[i].nBoundarySegments++;
+                        levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                        levelSet.mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
                         segments.push_back(segment);
@@ -379,8 +379,8 @@ namespace lsm
                         length += segment.length;
 
                         // Create element to segment lookup.
-                        mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                        mesh.elements[i].nBoundarySegments++;
+                        levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                        levelSet.mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
                         segments.push_back(segment);
@@ -397,8 +397,8 @@ namespace lsm
                         length += segment.length;
 
                         // Create element to segment lookup.
-                        mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                        mesh.elements[i].nBoundarySegments++;
+                        levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                        levelSet.mesh.elements[i].nBoundarySegments++;
 
                         // Add segment to vector.
                         segments.push_back(segment);
@@ -406,12 +406,12 @@ namespace lsm
                     }
 
                     // Update element status to indicate whether centre is in or out.
-                    mesh.elements[i].status = (lsfSum > 0) ? ElementStatus::CENTRE_INSIDE : ElementStatus::CENTRE_OUTSIDE;
+                    levelSet.mesh.elements[i].status = (lsfSum > 0) ? ElementStatus::CENTRE_INSIDE : ElementStatus::CENTRE_OUTSIDE;
                 }
 
                 // If no edges are cut and element is not inside structure
                 // then the boundary segment must cross the diagonal.
-                else if ((nCut == 0) && (mesh.elements[i].status != ElementStatus::INSIDE))
+                else if ((nCut == 0) && (levelSet.mesh.elements[i].status != ElementStatus::INSIDE))
                 {
                     // Node index.
                     unsigned int node;
@@ -420,9 +420,9 @@ namespace lsm
                     for (unsigned int j=0;j<4;j++)
                     {
                         // Node index.
-                        node = mesh.elements[i].nodes[j];
+                        node = levelSet.mesh.elements[i].nodes[j];
 
-                        if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
+                        if (levelSet.mesh.nodes[node].status & NodeStatus::BOUNDARY)
                         {
                             boundaryPoints[nCut] = node;
                             nCut++;
@@ -446,8 +446,8 @@ namespace lsm
                         // Set index equal to current number of points.
                         index = nPoints;
 
-                        mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
-                        mesh.nodes[node].nBoundaryPoints++;
+                        levelSet.mesh.nodes[node].boundaryPoints[levelSet.mesh.nodes[node].nBoundaryPoints] = nPoints;
+                        levelSet.mesh.nodes[node].nBoundaryPoints++;
 
                         // Initialise boundary point.
                         BoundaryPoint point;
@@ -471,8 +471,8 @@ namespace lsm
                         // Set index equal to current number of points.
                         index = nPoints;
 
-                        mesh.nodes[node].boundaryPoints[mesh.nodes[node].nBoundaryPoints] = nPoints;
-                        mesh.nodes[node].nBoundaryPoints++;
+                        levelSet.mesh.nodes[node].boundaryPoints[levelSet.mesh.nodes[node].nBoundaryPoints] = nPoints;
+                        levelSet.mesh.nodes[node].nBoundaryPoints++;
 
                         // Initialise boundary point.
                         BoundaryPoint point;
@@ -493,8 +493,8 @@ namespace lsm
                     length += segment.length;
 
                     // Create element to segment lookup.
-                    mesh.elements[i].boundarySegments[mesh.elements[i].nBoundarySegments] = nSegments;
-                    mesh.elements[i].nBoundarySegments++;
+                    levelSet.mesh.elements[i].boundarySegments[levelSet.mesh.elements[i].nBoundarySegments] = nSegments;
+                    levelSet.mesh.elements[i].nBoundarySegments++;
 
                     // Add segment to vector.
                     segments.push_back(segment);
@@ -512,21 +512,21 @@ namespace lsm
         // Zero the total area fraction.
         area = 0;
 
-        for (unsigned int i=0;i<mesh.nElements;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
         {
             // Element is inside structure.
-            if (mesh.elements[i].status & ElementStatus::INSIDE)
-                mesh.elements[i].area = 1.0;
+            if (levelSet.mesh.elements[i].status & ElementStatus::INSIDE)
+                levelSet.mesh.elements[i].area = 1.0;
 
             // Element is outside structure.
-            else if (mesh.elements[i].status & ElementStatus::OUTSIDE)
-                mesh.elements[i].area = 0.0;
+            else if (levelSet.mesh.elements[i].status & ElementStatus::OUTSIDE)
+                levelSet.mesh.elements[i].area = 0.0;
 
             // Element is cut by the boundary.
-            else mesh.elements[i].area = cutArea(mesh.elements[i]);
+            else levelSet.mesh.elements[i].area = cutArea(levelSet.mesh.elements[i]);
 
             // Add the area to the running total.
-            area += mesh.elements[i].area;
+            area += levelSet.mesh.elements[i].area;
         }
 
         return area;
@@ -556,21 +556,21 @@ namespace lsm
             unsigned int node = levelSet.narrowBand[i];
 
             // Node has a neighbouring boundary point and isn't on the domain boundary.
-            if ((mesh.nodes[node].nBoundaryPoints > 0) && !mesh.nodes[node].isDomain)
+            if ((levelSet.mesh.nodes[node].nBoundaryPoints > 0) && !levelSet.mesh.nodes[node].isDomain)
             {
                 // Nodal coordinates.
-                unsigned int x = mesh.nodes[node].coord.x;
-                unsigned int y = mesh.nodes[node].coord.y;
+                unsigned int x = levelSet.mesh.nodes[node].coord.x;
+                unsigned int y = levelSet.mesh.nodes[node].coord.y;
 
                 // Calculate the normal vector by central finite differences.
 
                 // Gradient in the x direction.
-                double gradX = 0.5*(levelSet.signedDistance[mesh.xyToIndex[x+1][y]]
-                             - levelSet.signedDistance[mesh.xyToIndex[x-1][y]]);
+                double gradX = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x+1][y]]
+                             - levelSet.signedDistance[levelSet.mesh.xyToIndex[x-1][y]]);
 
                 // Gradient in the y direction.
-                double gradY = 0.5*(levelSet.signedDistance[mesh.xyToIndex[x][y+1]]
-                             - levelSet.signedDistance[mesh.xyToIndex[x][y-1]]);
+                double gradY = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y+1]]
+                             - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y-1]]);
 
                 // Absolute gradient.
                 double grad = sqrt(gradX*gradX + gradY*gradY);
@@ -580,14 +580,14 @@ namespace lsm
                 double yNormal = gradY / grad;
 
                 // Loop over all boundary points.
-                for (unsigned int j=0;j<mesh.nodes[node].nBoundaryPoints;j++)
+                for (unsigned int j=0;j<levelSet.mesh.nodes[node].nBoundaryPoints;j++)
                 {
                     // Boundary point index.
-                    unsigned int point = mesh.nodes[node].boundaryPoints[j];
+                    unsigned int point = levelSet.mesh.nodes[node].boundaryPoints[j];
 
                     // Distance from the boundary point to the node.
-                    double dx = mesh.nodes[node].coord.x - points[point].coord.x;
-                    double dy = mesh.nodes[node].coord.y - points[point].coord.y;
+                    double dx = levelSet.mesh.nodes[node].coord.x - points[point].coord.x;
+                    double dy = levelSet.mesh.nodes[node].coord.y - points[point].coord.y;
 
                     // Squared distance.
                     double rSqd = dx*dx + dy*dy;
@@ -653,52 +653,52 @@ namespace lsm
     void Boundary::computeMeshStatus(const std::vector<double>* signedDistance) const
     {
         // Calculate node status.
-        for (unsigned int i=0;i<mesh.nNodes;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
         {
             // Reset the number of boundary points associated with the element.
-            mesh.nodes[i].nBoundaryPoints = 0;
+            levelSet.mesh.nodes[i].nBoundaryPoints = 0;
 
             // Flag node as being on the boundary if the signed distance is within
             // a small tolerance of the zero contour. This avoids problems with
             // rounding errors when generating the discretised boundary.
             if (std::abs((*signedDistance)[i]) < 1e-6)
             {
-                mesh.nodes[i].status = NodeStatus::BOUNDARY;
+                levelSet.mesh.nodes[i].status = NodeStatus::BOUNDARY;
             }
             else if ((*signedDistance)[i] < 0)
             {
-                mesh.nodes[i].status = NodeStatus::OUTSIDE;
+                levelSet.mesh.nodes[i].status = NodeStatus::OUTSIDE;
             }
-            else mesh.nodes[i].status = NodeStatus::INSIDE;
+            else levelSet.mesh.nodes[i].status = NodeStatus::INSIDE;
         }
 
         // Calculate element status.
-        for (unsigned int i=0;i<mesh.nElements;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
         {
             // Tally counters for the element's node statistics.
             unsigned int tallyInside = 0;
             unsigned int tallyOutside = 0;
 
             // Reset the number of boundary segments associated with the element.
-            mesh.elements[i].nBoundarySegments = 0;
+            levelSet.mesh.elements[i].nBoundarySegments = 0;
 
             // Loop over each node of the element.
             for (unsigned int j=0;j<4;j++)
             {
-                unsigned int node = mesh.elements[i].nodes[j];
+                unsigned int node = levelSet.mesh.elements[i].nodes[j];
 
-                if (mesh.nodes[node].status & NodeStatus::INSIDE) tallyInside++;
-                else if (mesh.nodes[node].status & NodeStatus::OUTSIDE) tallyOutside++;
+                if (levelSet.mesh.nodes[node].status & NodeStatus::INSIDE) tallyInside++;
+                else if (levelSet.mesh.nodes[node].status & NodeStatus::OUTSIDE) tallyOutside++;
             }
 
             // No nodes are outside: element is inside the structure.
-            if (tallyOutside == 0) mesh.elements[i].status = ElementStatus::INSIDE;
+            if (tallyOutside == 0) levelSet.mesh.elements[i].status = ElementStatus::INSIDE;
 
             // No nodes are inside: element is outside the structure.
-            else if (tallyInside == 0) mesh.elements[i].status = ElementStatus::OUTSIDE;
+            else if (tallyInside == 0) levelSet.mesh.elements[i].status = ElementStatus::OUTSIDE;
 
             // Otherwise no status.
-            else mesh.elements[i].status = ElementStatus::NONE;
+            else levelSet.mesh.elements[i].status = ElementStatus::NONE;
         }
     }
 
@@ -711,33 +711,33 @@ namespace lsm
         // Bottom edge.
         if (edge == 0)
         {
-            point.x = mesh.nodes[node].coord.x + distance;
-            point.y = mesh.nodes[node].coord.y;
+            point.x = levelSet.mesh.nodes[node].coord.x + distance;
+            point.y = levelSet.mesh.nodes[node].coord.y;
         }
         // Right edge.
         else if (edge == 1)
         {
-            point.x = mesh.nodes[node].coord.x;
-            point.y = mesh.nodes[node].coord.y + distance;
+            point.x = levelSet.mesh.nodes[node].coord.x;
+            point.y = levelSet.mesh.nodes[node].coord.y + distance;
         }
         // Top edge.
         else if (edge == 2)
         {
-            point.x = mesh.nodes[node].coord.x - distance;
-            point.y = mesh.nodes[node].coord.y;
+            point.x = levelSet.mesh.nodes[node].coord.x - distance;
+            point.y = levelSet.mesh.nodes[node].coord.y;
         }
         // Left edge.
         else
         {
-            point.x = mesh.nodes[node].coord.x;
-            point.y = mesh.nodes[node].coord.y - distance;
+            point.x = levelSet.mesh.nodes[node].coord.x;
+            point.y = levelSet.mesh.nodes[node].coord.y - distance;
         }
 
         // Check all points adjacent to the node.
-        for (unsigned int i=0;i<mesh.nodes[node].nBoundaryPoints;i++)
+        for (unsigned int i=0;i<levelSet.mesh.nodes[node].nBoundaryPoints;i++)
         {
             // Index of the ith boundary point connected to the node.
-            unsigned int index = mesh.nodes[node].boundaryPoints[i];
+            unsigned int index = levelSet.mesh.nodes[node].boundaryPoints[i];
 
             // Point already exists.
             if ((std::abs(point.x - points[index].coord.x) < 1e-6) &&
@@ -773,10 +773,10 @@ namespace lsm
         // the domain.
 
         // Closest distance to domain boundary in x.
-        double minX = std::min(coord.x, mesh.width - coord.x);
+        double minX = std::min(coord.x, levelSet.mesh.width - coord.x);
 
         // Closest distance to domain boundary in y.
-        double minY = std::min(coord.y, mesh.height - coord.y);
+        double minY = std::min(coord.y, levelSet.mesh.height - coord.y);
 
         // Closest distance to any domain boundary.
         double minBoundary = std::min(minX, minY);
@@ -813,18 +813,18 @@ namespace lsm
             unsigned int node = element.nodes[i];
 
             // Node matches status.
-            if (mesh.nodes[node].status & status)
+            if (levelSet.mesh.nodes[node].status & status)
             {
                 // Add coordinates to vertex array.
-                vertices[nVertices].x = mesh.nodes[node].coord.x;
-                vertices[nVertices].y = mesh.nodes[node].coord.y;
+                vertices[nVertices].x = levelSet.mesh.nodes[node].coord.x;
+                vertices[nVertices].y = levelSet.mesh.nodes[node].coord.y;
 
                 // Increment number of vertices.
                 nVertices++;
             }
 
             // Node is on the boundary.
-            else if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
+            else if (levelSet.mesh.nodes[node].status & NodeStatus::BOUNDARY)
             {
                 // Next node.
                 unsigned int n1 = (i == 3) ? 0 : (i + 1);
@@ -836,12 +836,12 @@ namespace lsm
 
                 // Check that node isn't part of a boundary segment, i.e. both of its
                 // neighbours are inside the structure.
-                if ((mesh.nodes[n1].status & NodeStatus::INSIDE) &&
-                    (mesh.nodes[n2].status & NodeStatus::INSIDE))
+                if ((levelSet.mesh.nodes[n1].status & NodeStatus::INSIDE) &&
+                    (levelSet.mesh.nodes[n2].status & NodeStatus::INSIDE))
                 {
                     // Add coordinates to vertex array.
-                    vertices[nVertices].x = mesh.nodes[node].coord.x;
-                    vertices[nVertices].y = mesh.nodes[node].coord.y;
+                    vertices[nVertices].x = levelSet.mesh.nodes[node].coord.x;
+                    vertices[nVertices].y = levelSet.mesh.nodes[node].coord.y;
 
                     // Increment number of vertices.
                     nVertices++;

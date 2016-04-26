@@ -24,7 +24,7 @@
 #include "Common.h"
 
 /*! \file Mesh.h
-    \brief A class for the fixed grid, finite-element mesh.
+    \brief A class for the level-set domain fixed-grid mesh.
  */
 
 namespace lsm
@@ -75,7 +75,6 @@ namespace lsm
     struct Element
     {
         Coord coord;                            //!< Element coordinate (centre).
-        Coord gaussPoints[4];                   //!< Gauss points.
         double area;                            //!< Material area fraction.
         unsigned int nodes[4];                  //!< Indices for nodes of the element.
         unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.
@@ -100,7 +99,7 @@ namespace lsm
 
     // MAIN CLASS
 
-    /*! \brief A class for the fixed grid, finite-element mesh.
+    /*! \brief A class for the level-set domain fixed-grid mesh.
 
         Stores connectivty information between grid elements and nodes.
         The grid is assumed to be two-dimensional and is comprised of
@@ -122,16 +121,21 @@ namespace lsm
         For non-periodic meshes, neighbours that are outside of the domain are
         given the value nNodes, i.e. one past the end of the node array, which
         runs from 0 to nNodes - 1.
+
+        Note that this mesh is store information related to the nodes and
+        elements of the level-set domain and is not related to the mesh used
+        in finite element calculations (which may be a different geometry or
+        resolution).
      */
     class Mesh
     {
     public:
         //! Constructor.
         /*! \param width_
-                The width of the finite element grid.
+                The width of the mesh.
 
             \param height_
-                The height of the finite element grid.
+                The height of the mesh.
 
             \param isPeriodic_
                 Whether the grid is periodic.
