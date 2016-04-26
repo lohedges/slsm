@@ -33,12 +33,12 @@ int testUpwindFiniteDifference()
     lsm::LevelSet levelSet(mesh, hole, 0.5, 3);
 
     // Place all nodes outside the structure.
-    for (unsigned int i=0;i<levelSet.nNodes;i++)
+    for (unsigned int i=0;i<mesh.nNodes;i++)
         levelSet.signedDistance[i] = -1;
 
     // Place nodes at bottom left and top right of mesh inside the structure.
     levelSet.signedDistance[0] = 1;
-    levelSet.signedDistance[levelSet.nNodes-1] = 1;
+    levelSet.signedDistance[mesh.nNodes-1] = 1;
 
     // Fill array with expected values.
     double expected[25] =
@@ -55,7 +55,7 @@ int testUpwindFiniteDifference()
     errno = 0;
 
     // Check signed distance against expected values.
-    for (unsigned int i=0;i<levelSet.nNodes;i++)
+    for (unsigned int i=0;i<mesh.nNodes;i++)
         lsm_check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
 
     return 0;

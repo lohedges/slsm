@@ -34,7 +34,7 @@ int testBoundaryPoints()
     lsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -181,7 +181,7 @@ int testBoundarySegments()
     lsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -301,7 +301,7 @@ int testBoundarySymmetry()
     lsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -389,7 +389,7 @@ int testConnectivity()
     lsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -453,7 +453,7 @@ int testAreaFraction()
     lsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(mesh, levelSet);
+    lsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
