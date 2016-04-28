@@ -190,11 +190,6 @@ namespace lsm
         // Number of nodes along width of mesh (number of elements plus one)
         unsigned int w = width + 1;
 
-        // Relative node coordinates of the element.
-        Coord nodeCoords[4] = {{-1, -1}, {1., -1}, {1, 1}, {-1, 1}};
-
-        double invSqrtThree = 1.0 / sqrt(3.0);
-
         // Loop over all elements.
         for (unsigned int i=0;i<nElements;i++)
         {
