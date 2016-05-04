@@ -36,9 +36,9 @@ namespace lsm
     struct BoundaryPoint
     {
         Coord coord;                        //!< Coordinate of the boundary point.
+        Coord normal;                       //!< Inward pointing normal vector.
         double length;                      //!< Integral length of the boundary point.
         double velocity;                    //!< Normal velocity (positive acts inwards).
-        double normal[2];                   //!< Inward pointing normal vector.
         double negativeLimit;               //!< Movement limit in negative direction (inwards).
         double positiveLimit;               //!< Movement limit in positive direction (outwards).
         bool isDomain;                      //!< Whether the point lies close to the domain boundary.

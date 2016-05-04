@@ -545,8 +545,8 @@ namespace lsm
         {
             isSet[i] = false;
             weight[i] = 0;
-            points[i].normal[0] = 0;
-            points[i].normal[1] = 0;
+            points[i].normal.x = 0;
+            points[i].normal.y = 0;
         }
 
         // Loop over all narrow band nodes.
@@ -596,8 +596,8 @@ namespace lsm
                     // vector to that of the node.
                     if (rSqd < 1e-6)
                     {
-                        points[point].normal[0] = xNormal;
-                        points[point].normal[1] = yNormal;
+                        points[point].normal.x = xNormal;
+                        points[point].normal.y = yNormal;
                         weight[point] = 1.0;
                         isSet[point] = true;
                     }
@@ -607,8 +607,8 @@ namespace lsm
                         // Update normal vector estimate if not already set.
                         if (!isSet[point])
                         {
-                            points[point].normal[0] += xNormal / rSqd;
-                            points[point].normal[1] += yNormal / rSqd;
+                            points[point].normal.x += xNormal / rSqd;
+                            points[point].normal.y += yNormal / rSqd;
                             weight[point] += 1.0 / rSqd;
                         }
                     }
@@ -621,15 +621,15 @@ namespace lsm
         {
             if (!points[i].isDomain)
             {
-                points[i].normal[0] /= weight[i];
-                points[i].normal[1] /= weight[i];
+                points[i].normal.x /= weight[i];
+                points[i].normal.y /= weight[i];
 
                 // Compute the new vector norm.
-                double norm = sqrt(points[i].normal[0]*points[i].normal[0]
-                            + points[i].normal[1]*points[i].normal[1]);
+                double norm = sqrt(points[i].normal.x*points[i].normal.x
+                            + points[i].normal.y*points[i].normal.y);
 
-                points[i].normal[0] /= norm;
-                points[i].normal[1] /= norm;
+                points[i].normal.x /= norm;
+                points[i].normal.y /= norm;
             }
         }
     }
