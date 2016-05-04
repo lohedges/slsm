@@ -33,15 +33,15 @@ namespace lsm
         Coord coord = point.coord;
 
         // Displace the boundary point in the positive normal direction.
-        point.coord.x = coord.x + delta*point.normal[0];
-        point.coord.y = coord.y + delta*point.normal[1];
+        point.coord.x = coord.x + delta*point.normal.x;
+        point.coord.y = coord.y + delta*point.normal.y;
 
         // Compute the new value of the function.
         double f1 = callback(point);
 
         // Displace the boundary point in the negative normal direction.
-        point.coord.x = coord.x - delta*point.normal[0];
-        point.coord.y = coord.y - delta*point.normal[1];
+        point.coord.x = coord.x - delta*point.normal.x;
+        point.coord.y = coord.y - delta*point.normal.y;
 
         // Compute the new value of the function.
         double f2 = callback(point);
