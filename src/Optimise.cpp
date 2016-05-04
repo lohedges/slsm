@@ -34,13 +34,17 @@ namespace lsm
                        std::vector<double>& lambdas_,
                        double& timeStep_,
                        double maxDisplacement_,
-                       bool isMax_) :
+                       bool isMax_,
+                       const std::vector<bool>& isEquality_,
+                       nlopt::algorithm algorithm_) :
                        boundaryPoints(boundaryPoints_),
                        constraintDistances(constraintDistances_),
                        lambdas(lambdas_),
                        timeStep(timeStep_),
                        maxDisplacement(maxDisplacement_),
-                       isMax(isMax_)
+                       isMax(isMax_),
+                       isEquality(isEquality_),
+                       algorithm(algorithm_)
     {
         errno = EINVAL;
         lsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
@@ -64,6 +68,9 @@ namespace lsm
 
         // Copy constraint distances.
         constraintDistancesScaled = constraintDistances;
+
+        // Set default as inequality constraints.
+        if (isEquality.size() == 0) isEquality.resize(nConstraints, false);
 
         return;
 
@@ -94,7 +101,8 @@ namespace lsm
         displacements.resize(nPoints);
         isSideLimit.resize(nPoints);
 
-        // Compute scaled constraint change distances and remove inactive constraints.
+        // Compute scaled constraint change distances and remove inactive
+        // inequality constraints.
         computeConstraintDistances();
 
         // Compute the scale factors for the objective end constraints.
@@ -121,7 +129,7 @@ namespace lsm
         }
 
         // Instantiate NLopt optimisation object.
-        nlopt::opt opt(nlopt::LD_SLSQP, 1 + nConstraints);
+        nlopt::opt opt(algorithm, 1 + nConstraints);
 
         // Set limits.
         opt.set_lower_bounds(negativeLambdaLimits);
@@ -137,9 +145,17 @@ namespace lsm
         if (isMax) opt.set_max_objective(callbackWrapper, &objectiveWrapper);
         else       opt.set_min_objective(callbackWrapper, &objectiveWrapper);
 
-        // Add the inequality constraints.
+        // Add the constraints.
         for (unsigned int i=0;i<nConstraints;i++)
-            opt.add_inequality_constraint(callbackWrapper, &constraintWrappers[i], 1e-8);
+        {
+            // Add equality constraint.
+            if (isEquality[i])
+                opt.add_equality_constraint(callbackWrapper, &constraintWrappers[i], 1e-8);
+
+            // Add inequality constraint.
+            else
+                opt.add_inequality_constraint(callbackWrapper, &constraintWrappers[i], 1e-8);
+        }
 
         // The optimum value of the objective function.
         double optObjective;
@@ -285,10 +301,11 @@ namespace lsm
            by simply moving in the correct direction, i.e. moving towards
            satisying the constraint.
 
-           If we are well within the region where the constraint is satisfied,
-           then the constraint can be removed from the optimisation problem.
-           Here we create a map between indices for the vector of active
-           constraints and the original constraints vector.
+           If we are well within the region where an inequality constraint
+           is satisfied, then the constraint can be removed from the optimisation
+           problem. Here we create a map between indices for the vector of active
+           constraints and the original constraints
+           vector.
          */
 
         // Initialise the index map.
@@ -347,9 +364,13 @@ namespace lsm
             // Constraint is satisfied.
             else
             {
-                // Flag constraint as inactive.
                 if (constraintDistances[i] > max)
-                    isActive = false;
+                {
+                    // Flag inequality constraint as inactive.
+                    if (!isEquality[i]) isActive = false;
+
+                    else constraintDistancesScaled[i] = max;
+                }
             }
 
             // Constraint is active.
@@ -360,6 +381,9 @@ namespace lsm
 
                 // Shift constraint distance.
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
+
+                // Shift equality flag.
+                isEquality[nActive] = isEquality[i];
 
                 // Map the constraint index: active --> original
                 indexMap.push_back(i+1);
@@ -377,6 +401,7 @@ namespace lsm
             positiveLambdaLimits.resize(nActive + 1);
             scaleFactors.resize(nActive + 1);
             constraintDistancesScaled.resize(nActive);
+            isEquality.resize(nActive);
 
             // Store the original number of constraints.
             nConstraintsInitial = nConstraints;

@@ -55,12 +55,27 @@ namespace lsm
     /*!\brief A class to solve for the optimum velocity vector.
 
         Find the velocity vector that minimises (or maximises) the change in the
-        objective function subject to an arbitrary number of inequality constraints.
+        objective function subject to an arbitrary number of equality and inequality
+        constraints.
 
-        Support for equality constraints will be added in a future version.
+        Optimisation makes use of the NLopt library:
+            http://ab-initio.mit.edu/wiki/index.php/NLopt
 
-        We make use of the NLopt SLSQP solver:
+        Note that the optimisation problem is only non-linear due to the presence
+        of side constraints on the movement of boundary points lying on, or close
+        to, the domain boundary. Points are not allowed to move outside the domain.
+
+        By default, the optmiser makes use of the SLSQP algorith, which provides
+        support for equality and inequality constraints.
+
             http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
+
+        Support for alternative algorithms is provided through an optional constructor
+        argument. Note that the chosen algorithm must support the type of constraints
+        that are imposed in the optimisation problem. Check the NLopt algorithms page
+        for details:
+
+            http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms
      */
     class Optimise
     {
@@ -70,8 +85,8 @@ namespace lsm
                 A reference to a vector of boundary points.
 
             \param constraintDistances_
-                Distance from each constraint (negative values indicate that
-                the constraint is satisfied).
+                Distance from each constraint (negative values indicate that the
+                constraint is satisfied).
 
             \param lambdas_
                 The optimum lambda values. This array is modified.
@@ -84,15 +99,22 @@ namespace lsm
                 value of the lambda value for the objective, i.e. abs(lambdas[0]).
 
             \param maxDisplacement_
-                The maximum displacement (default is 0.5).
+                (Optional) The maximum displacement (default = 0.5).
 
             \param isMax_
-                Whether to maximise the objective function (default is to minimise).
+                (Optional) Whether to maximise the objective function (default = minimise).
+
+            \param isEquality_
+                (Optional) Whether each constraint is an equality (default = inequality).
+
+            \param algorithm_
+                (Optional) The NLopt algorithm (default = LD_SLSQP).
          */
         Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&,
-            std::vector<double>&, double&, double maxDisplacement_ = 0.5, bool isMax_ = false);
+            std::vector<double>&, double&, double maxDisplacement_ = 0.5, bool isMax_ = false,
+            const std::vector<bool>& isEquality_ = {}, nlopt::algorithm algorithm_ = nlopt::LD_SLSQP);
 
-        //! Execute the NLopt SLSQP solver.
+        //! Execute the NLopt solver.
         /*! \return
                 The optimum value of the objective function.
          */
@@ -140,6 +162,12 @@ namespace lsm
 
         /// Whether to maximise the objective function.
         bool isMax;
+
+        /// Whether the constraints are equality constraints.
+        std::vector<bool> isEquality;
+
+        /// The NLopt algorithm.
+        nlopt::algorithm algorithm;
 
         /// A map between indices for active constraints.
         std::vector<unsigned int> indexMap;
