@@ -29,10 +29,11 @@
     a free energy barrier. The matched shape is a narrow-necked dumbbell
     constructed from two vertically offset, overlapping circles. The initial
     configuration is a circle centred in the upper lobe of the dumbbell.
-    We construct two minima by modifying the perimeter (objective)
-    sensitivities in the upper and lower half of the domain. Sensitivities
-    are reduced in the lower half, hence it's possible to form a circle with
-    a smaller perimeter at the same cost.
+    We construct two minima by making the perimeter (objective) sensitivities
+    a function of the y coordinate of each boundary point. Sensitivities
+    are linearly reduced between the centres of the upper and lower lobes,
+    hence within the lowesr lobe it's possible to form a circle with a smaller
+    perimeter at the same cost.
 
     To reach the global minimum in the lower lobe the shape must pass through
     the neck of the dumbbell. This transition requires a significant deformation
@@ -57,14 +58,22 @@
     "boundary-segments_*.txt".
  */
 
-// Sensitivity function prototype.
-double computeSensitivity(const lsm::Coord&, const lsm::LevelSet&);
+// FUNCTION PROTOTYPES
+
+// Constraint sensitivity function prototype.
+double computeConstraintSensitivity(const lsm::Coord&, const lsm::LevelSet&);
 
 // Mismatch function prototype.
 double computeMismatch(const lsm::Mesh&, const std::vector<double>&);
 
 // Perimeter function prototype.
-double computePerimeter(const std::vector<lsm::BoundaryPoint>&, double, double);
+double computePerimeter(const std::vector<lsm::BoundaryPoint>&);
+
+// Boundary point length function prototype.
+double computePointLength(const lsm::BoundaryPoint& point);
+
+// Perimeter weight function prototype.
+double computePerimeterWeight(double y);
 
 // Vertical centre of mass function prototype.
 double computeCentreOfMass(std::vector<lsm::BoundaryPoint>&);
@@ -74,6 +83,16 @@ double computeBiasPotential(double, double, double);
 
 // Acceptance function prototype.
 bool isAccepted(double, double, double, lsm::MersenneTwister&);
+
+// GLOBALS
+unsigned int nDiscrete = 10;                // Boundary integral discretisation factor.
+double upperLobeCentre;                     // The y coordinate of the upper dumbbell lobe.
+double lowerLobeCentre;                     // The y coordinate of the lower dumbbell lobe.
+double lobeSeparation;                      // The vertical separation between dumbbell lobes.
+double reduce;                              // Sensitivity reduction factor.
+std::vector<lsm::BoundaryPoint>* points;    // Pointer to the boundary points vector.
+
+// MAIN FUNCTION
 
 int main(int argc, char** argv)
 {
@@ -113,16 +132,17 @@ int main(int argc, char** argv)
     char restart[100];
 
 	// Read command-line arguments.
-    if (argc != 8                                       ||
+    if (argc != 9                                       ||
         sscanf(argv[1], "%lf", &temperature) != 1       ||
-        sscanf(argv[2], "%lf", &centre) != 1            ||
-        sscanf(argv[3], "%lf", &spring) != 1            ||
-        sscanf(argv[4], "%lf", &umbrellaInterval) != 1  ||
-        sscanf(argv[5], "%u",  &sampleInterval) != 1    ||
-        sscanf(argv[6], "%u",  &nSamples) != 1          ||
-        sscanf(argv[7], "%s",  restart) != 1)
+        sscanf(argv[2], "%lf", &reduce) != 1            ||
+        sscanf(argv[3], "%lf", &centre) != 1            ||
+        sscanf(argv[4], "%lf", &spring) != 1            ||
+        sscanf(argv[5], "%lf", &umbrellaInterval) != 1  ||
+        sscanf(argv[6], "%u",  &sampleInterval) != 1    ||
+        sscanf(argv[7], "%u",  &nSamples) != 1          ||
+        sscanf(argv[8], "%s",  restart) != 1)
     {
-        printf("usage: ./umbrella_sample temperature centre "
+        printf("usage: ./umbrella_sample temperature reduce centre "
             "spring umbrellaInterval sampleInterval nSamples restart\n");
         exit(EXIT_FAILURE);
     }
@@ -132,9 +152,6 @@ int main(int argc, char** argv)
 
     // Set maximumum area mismatch.
     double maxMismatch = 0.2;
-
-    // Set sensitivity reduction factor.
-    double reduce = 0.5;
 
     // Initialise a 100x100 non-periodic mesh.
     lsm::Mesh mesh(100, 100, false);
@@ -149,8 +166,13 @@ int main(int argc, char** argv)
     std::vector<lsm::Hole> targetHoles;
 
     // Create a dumbbell from two vertically offset holes.
-    targetHoles.push_back(lsm::Hole(50, 31, 20));
     targetHoles.push_back(lsm::Hole(50, 69, 20));
+    targetHoles.push_back(lsm::Hole(50, 31, 20));
+
+    // Store dumbbell data (needed for sensitivity callback).
+    upperLobeCentre = targetHoles[0].coord.y;
+    lowerLobeCentre = targetHoles[1].coord.y;
+    lobeSeparation = upperLobeCentre - lowerLobeCentre;
 
     // Initialise the system by matching the upper dumbbell lobe.
     initialHoles.push_back(lsm::Hole(50, 69, 15));
@@ -182,6 +204,9 @@ int main(int argc, char** argv)
 
     // Initialise the boundary object.
     lsm::Boundary boundary(levelSet);
+
+    // Initialise boundary points pointer.
+    points = &boundary.points;
 
     // Initialise target area fraction vector.
     std::vector<double> targetArea(mesh.nElements);
@@ -265,7 +290,7 @@ int main(int argc, char** argv)
 
                 // Initialise the sensitivity callback.
                 using namespace std::placeholders;
-                lsm::SensitivityCallback callback = std::bind(&lsm::Boundary::computePerimeter, boundary, _1);
+                lsm::SensitivityCallback callback = std::bind(&computePointLength, _1);
 
                 // Assign boundary point sensitivities.
                 for (unsigned int i=0;i<boundary.points.size();i++)
@@ -273,18 +298,13 @@ int main(int argc, char** argv)
                     boundary.points[i].sensitivities[0] =
                         sensitivity.computeSensitivity(boundary.points[i], callback);
                     boundary.points[i].sensitivities[1] =
-                        computeSensitivity(boundary.points[i].coord, levelSet);
-
-                    // Reduce perimeter sensitivities in the lower half.
-                    if (boundary.points[i].coord.y < 100)
-                        boundary.points[i].sensitivities[0] *= reduce;
+                        computeConstraintSensitivity(boundary.points[i].coord, levelSet);
                 }
 
                 // Time step associated with the iteration.
                 double timeStep;
 
-                // Constraint distance vector. Since there are no constraints the
-                // vector can be left unassigned.
+                // Constraint distance vector.
                 std::vector<double> constraintDistances;
 
                 // Current area mismatch.
@@ -292,6 +312,10 @@ int main(int argc, char** argv)
 
                 // Push current distance from constraint violation into vector.
                 constraintDistances.push_back(meshArea*maxMismatch - mismatch);
+
+                // Set constraint type.
+                std::vector<bool> isEquality;
+                isEquality.push_back(false);
 
                 /* Initialise the optimisation object.
 
@@ -392,7 +416,7 @@ int main(int argc, char** argv)
         double mismatch = computeMismatch(mesh, targetArea);
 
         // Current weighted perimeter.
-        double length = computePerimeter(boundary.points, halfHeight, reduce);
+        double length = computePerimeter(boundary.points);
 
         // Print sample to stdout.
         printf("%6.2e %10.4f %10.4f %10.4f %10.4f\n",
@@ -415,8 +439,10 @@ int main(int argc, char** argv)
     return (EXIT_SUCCESS);
 }
 
-// Sensitivity function definition.
-double computeSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
+// FUNCTION DEFINITIONS
+
+// Constraint sensitivity function definition.
+double computeConstraintSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
 {
     /* Interpolate nodal signed distance mismatch to a boundary point
        using inverse squared distance weighting. We are only concerned with
@@ -483,20 +509,66 @@ double computeMismatch(const lsm::Mesh& mesh, const std::vector<double>& targetA
 }
 
 // Perimeter function definition.
-double computePerimeter(const std::vector<lsm::BoundaryPoint>& points,
-    double halfHeight, double reduce)
+double computePerimeter(const std::vector<lsm::BoundaryPoint>& points)
 {
     double length = 0;
 
-    // Compute the total boundary perimeter.
+    // Compute the total weighted boundary length.
     for (unsigned int i=0;i<points.size();i++)
+        length += 0.5*computePointLength(points[i]);
+
+    return length;
+}
+
+// Boundary point length function definition.
+double computePointLength(const lsm::BoundaryPoint& point)
+{
+    double length = 0;
+
+    // Store coordinates of the point.
+    double x1 = point.coord.x;
+    double y1 = point.coord.y;
+
+    // Sum the distance to each neighbour.
+    for (unsigned int i=0;i<point.nNeighbours;i++)
     {
-        // Reduce the perimeter contribution in the lower half.
-        if (points[i].coord.y < halfHeight) length += reduce*points[i].length;
-        else length += points[i].length;
+        // Store coordinates of the neighbouring point.
+        double x2 = (*points)[point.neighbours[i]].coord.x;
+        double y2 = (*points)[point.neighbours[i]].coord.y;
+
+        // Compute separation components.
+        double dx = x2 - x1;
+        double dy = y2 - y1;
+
+        // Compute segment length.
+        double len = sqrt(dx*dx + dy*dy) / nDiscrete;
+
+        // Perform discrete boundary (line) integral.
+        for (unsigned int j=0;j<nDiscrete;j++)
+        {
+            // Compute y position along segment.
+            double y = y1 + (j+0.5)*dy/nDiscrete;
+
+            // Add weighted segment length.
+            length += computePerimeterWeight(y)*len;
+        }
     }
 
     return length;
+}
+
+// Perimeter weight function definition.
+double computePerimeterWeight(double y)
+{
+    if      (y > upperLobeCentre) return 1.0;
+    else if (y < lowerLobeCentre) return reduce;
+    else
+    {
+        // Fractional distance from the centre of the upper dumbbell lobe.
+        double dy = (upperLobeCentre - y) / lobeSeparation;
+
+        return (1.0 - dy*(1.0 - reduce));
+    }
 }
 
 // Vertical centre of mass function definition.
