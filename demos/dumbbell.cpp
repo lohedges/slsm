@@ -141,6 +141,26 @@ int main(int argc, char** argv)
     // Initialise the level set object.
     lsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
 
+    // Read starting configuration from file.
+    if (argc > 3)
+    {
+        // Open the starting configuration.
+        std::ifstream inputFile(argv[3]);
+
+        // Read signed distance from file.
+        if (inputFile.good())
+        {
+            unsigned int i=0;
+            while (inputFile >> levelSet.signedDistance[i])
+                i++;
+        }
+        else
+        {
+            std::cout << "Invalid configuration file!\n";
+            exit(EXIT_FAILURE);
+        }
+    }
+
     // Initialise io object.
     lsm::InputOutput io;
 
