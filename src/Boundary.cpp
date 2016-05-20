@@ -895,7 +895,7 @@ namespace lsm
 
         // Compute the cross product of the vectors (centre --> point1) x (centre --> point2).
         double det = (point1.x - centre.x) * (point2.y - centre.y)
-                - (point2.x - centre.x) * (point1.y - centre.y);
+                   - (point2.x - centre.x) * (point1.y - centre.y);
 
         if (det < 0) return false;
         else return true;
