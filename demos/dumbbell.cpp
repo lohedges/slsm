@@ -359,14 +359,18 @@ int main(int argc, char** argv)
 // Constraint sensitivity function definition.
 double computeConstraintSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
 {
-    /* Interpolate nodal signed distance mismatch to a boundary point
-       using inverse squared distance weighting. We are only concerned with
-       the sign of the mismatch, i.e. the direction that the boundary should
-       move (out or in) in order to reduce the mismatch.
+    /* Interpolate nodal signed distance mismatch to a boundary point using
+       inverse squared distance weighting. On length scales larger than a
+       grid spacing we are only concerned with the sign of the mismatch,
+       i.e. the direction that the boundary should move (out or in) in order
+       to reduce the mismatch.
      */
 
     // Zero the mismatch.
     double mismatch = 0;
+
+    // Zero the weighting factor.
+    double weight = 0;
 
     // Find the node that is cloest to the boundary point.
     unsigned int node = levelSet.mesh.getClosestNode(coord);
@@ -394,17 +398,30 @@ double computeConstraintSensitivity(const lsm::Coord& coord, const lsm::LevelSet
         // the mismatch at that node.
         if (rSqd < 1e-6)
         {
-            if (levelSet.target[n] < levelSet.signedDistance[n]) return -1.0;
+            // Calculate nodal mismatch.
+            double m = levelSet.target[n] - levelSet.signedDistance[n];
+
+            // Smooth mismatch over a grid spacing.
+            if (std::abs(m) < 1.0) return m;
+
+            // Return the sign of the mismatch.
+            if (m < 0) return -1.0;
             else return 1.0;
         }
 
-        // Otherwise update the interpolation estimate.
+        // Otherwise, update the interpolation estimate.
         else
         {
-            if (levelSet.target[n] < levelSet.signedDistance[n]) mismatch -= 1.0 / rSqd;
-            else mismatch += 1.0 / rSqd;
+            mismatch += (levelSet.target[n] - levelSet.signedDistance[n]) / rSqd;
+            weight   += 1.0 / rSqd;
         }
     }
+
+    // Compute weighted mismatch.
+    mismatch /= weight;
+
+    // Smooth mismatch over a grid spacing.
+    if (std::abs(mismatch) < 1.0) return mismatch;
 
     // Return the sign of the interpolated mismatch.
     if (mismatch < 0) return -1.0;
