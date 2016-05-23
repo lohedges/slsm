@@ -762,6 +762,7 @@ namespace lsm
             // Stencil values for the WENO approximation.
             double v1, v2, v3, v4, v5;
 
+            // Upwind direction.
             int sign = velocity[node] < 0 ? -1 : 1;
 
             // Derivatives to right.
@@ -794,7 +795,7 @@ namespace lsm
             else if (x == mesh.width)
             {
                 v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
 
                 // Approximate derivatives outside of domain.
                 v3 = v4;
@@ -806,7 +807,7 @@ namespace lsm
             else if (x == (mesh.width - 1))
             {
                 v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
                 v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
 
                 // Approximate derivatives outside of domain.
@@ -818,7 +819,7 @@ namespace lsm
             else if (x == (mesh.width - 2))
             {
                 v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
                 v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
                 v2 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
 
@@ -832,7 +833,7 @@ namespace lsm
                 v1 = signedDistance[mesh.xyToIndex[x+3][y]] - signedDistance[mesh.xyToIndex[x+2][y]];
                 v2 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
                 v3 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
                 v5 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
             }
 
@@ -845,7 +846,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
                 v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
 
                 // Approximate derivatives outside of domain.
                 v4 = v3;
@@ -857,7 +858,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
                 v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
                 v4 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
 
                 // Approximate derivatives outside of domain.
@@ -905,7 +906,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x-2][y]] - signedDistance[mesh.xyToIndex[x-3][y]];
                 v2 = signedDistance[mesh.xyToIndex[x-1][y]] - signedDistance[mesh.xyToIndex[x-2][y]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x-1][y]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x-1][y]];
                 v4 = signedDistance[mesh.xyToIndex[x+1][y]] - signedDistance[mesh.xyToIndex[x][y]];
                 v5 = signedDistance[mesh.xyToIndex[x+2][y]] - signedDistance[mesh.xyToIndex[x+1][y]];
             }
@@ -942,7 +943,7 @@ namespace lsm
             else if (y == mesh.height)
             {
                 v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
 
                 // Approximate derivatives outside of domain.
                 v3 = v4;
@@ -954,7 +955,7 @@ namespace lsm
             else if (y == (mesh.height - 1))
             {
                 v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
                 v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
 
                 // Approximate derivatives outside of domain.
@@ -966,7 +967,7 @@ namespace lsm
             else if (y == (mesh.height - 2))
             {
                 v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
                 v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
                 v2 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
 
@@ -980,7 +981,7 @@ namespace lsm
                 v1 = signedDistance[mesh.xyToIndex[x][y+3]] - signedDistance[mesh.xyToIndex[x][y+2]];
                 v2 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
                 v3 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
-                v4 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v4 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
                 v5 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
             }
 
@@ -993,7 +994,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
                 v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
 
                 // Approximate derivatives outside of domain.
                 v4 = v3;
@@ -1005,7 +1006,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
                 v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
                 v4 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
 
                 // Approximate derivatives outside of domain.
@@ -1053,7 +1054,7 @@ namespace lsm
             {
                 v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
                 v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
-                v3 = signedDistance[mesh.xyToIndex[x][y]] - signedDistance[mesh.xyToIndex[x][y-1]];
+                v3 = signedDistance[mesh.xyToIndex[x][y]]   - signedDistance[mesh.xyToIndex[x][y-1]];
                 v4 = signedDistance[mesh.xyToIndex[x][y+1]] - signedDistance[mesh.xyToIndex[x][y]];
                 v5 = signedDistance[mesh.xyToIndex[x][y+2]] - signedDistance[mesh.xyToIndex[x][y+1]];
             }
