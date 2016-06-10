@@ -562,15 +562,60 @@ namespace lsm
                 unsigned int x = levelSet.mesh.nodes[node].coord.x;
                 unsigned int y = levelSet.mesh.nodes[node].coord.y;
 
-                // Calculate the normal vector by central finite differences.
+                // The x & y gradient components.
+                double gradX, gradY;
 
-                // Gradient in the x direction.
-                double gradX = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x+1][y]]
-                             - levelSet.signedDistance[levelSet.mesh.xyToIndex[x-1][y]]);
+                // x direction
 
-                // Gradient in the y direction.
-                double gradY = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y+1]]
-                             - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y-1]]);
+                // Left edge of mesh.
+                if (x == 0)
+                {
+                    // Forward difference.
+                    gradX = levelSet.signedDistance[levelSet.mesh.xyToIndex[x+1][y]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y]];
+                }
+
+                // Right edge of mesh.
+                else if (x == levelSet.mesh.width)
+                {
+                    // Backward difference.
+                    gradX = levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x-1][y]];
+                }
+
+                // Bulk of mesh.
+                else
+                {
+                    // Central difference.
+                    gradX = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x+1][y]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x-1][y]]);
+                }
+
+                // y direction
+
+                // Bottom edge of mesh.
+                if (y == 0)
+                {
+                    // Forward difference.
+                    gradY = levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y+1]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y]];
+                }
+
+                // Top edge of mesh.
+                else if (y == 0)
+                {
+                    // Backward difference.
+                    gradY = levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y-1]];
+                }
+
+                // Bulk of mesh.
+                else
+                {
+                    // Central difference.
+                    gradY = 0.5*(levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y+1]]
+                          - levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y-1]]);
+                }
 
                 // Absolute gradient.
                 double grad = sqrt(gradX*gradX + gradY*gradY);
