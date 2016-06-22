@@ -813,7 +813,7 @@ namespace lsm
         point.negativeLimit = -levelSet.moveLimit;
         point.positiveLimit = levelSet.moveLimit;
 
-        // Check whether point lies within half a grid spacing of the domain boundary.
+        // Check whether point lies within the move limit of the domain boundary.
         // If so, modify the lower movement limit so that point can't move outside of
         // the domain.
 
@@ -827,7 +827,7 @@ namespace lsm
         double minBoundary = std::min(minX, minY);
 
         // Modify lower move limit.
-        if (minBoundary < 0.5)
+        if (minBoundary < levelSet.moveLimit)
         {
             point.negativeLimit = -minBoundary;
 
