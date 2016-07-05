@@ -989,8 +989,8 @@ namespace lsm
 
             // Downward derivative.
 
-            // Node on right edge.
-            if (y == mesh.width)
+            // Node on top edge.
+            if (y == mesh.height)
             {
                 v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
                 v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
@@ -1001,8 +1001,8 @@ namespace lsm
                 v5 = v3;
             }
 
-            // One node left of right edge.
-            else if (y == (mesh.width - 1))
+            // One node below top edge.
+            else if (y == (mesh.height - 1))
             {
                 v1 = signedDistance[mesh.xyToIndex[x][y-2]] - signedDistance[mesh.xyToIndex[x][y-3]];
                 v2 = signedDistance[mesh.xyToIndex[x][y-1]] - signedDistance[mesh.xyToIndex[x][y-2]];
