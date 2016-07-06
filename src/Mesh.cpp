@@ -229,14 +229,15 @@ namespace lsm
     {
         // Number of nodes along width of mesh (number of elements plus one)
         unsigned int w = width + 1;
+        unsigned int h = height + 1;
 
         // Neighbours to left and right.
         nodes[node].neighbours[0] = (x - 1 + w) % w + (y * w);
         nodes[node].neighbours[1] = (x + 1 + w) % w + (y * w);
 
         // Neighbours below and above.
-        nodes[node].neighbours[2] = x + (w * ((y - 1 + w) % w));
-        nodes[node].neighbours[3] = x + (w * ((y + 1 + w) % w));
+        nodes[node].neighbours[2] = x + (w * ((y - 1 + h) % h));
+        nodes[node].neighbours[3] = x + (w * ((y + 1 + h) % h));
 
         // The mesh isn't periodic, flag out of bounds neighbours.
         if (!isPeriodic)
