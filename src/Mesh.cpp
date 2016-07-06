@@ -24,14 +24,14 @@
 namespace lsm
 {
     Mesh::Mesh(unsigned int width_,
-            unsigned int height_,
-            bool isPeriodic_) :
+               unsigned int height_,
+               bool isPeriodic_) :
 
-            width(width_),
-            height(height_),
-            nElements(width*height),
-            nNodes((1+width)*(1+height)),
-            isPeriodic(isPeriodic_)
+               width(width_),
+               height(height_),
+               nElements(width*height),
+               nNodes((1+width)*(1+height)),
+               isPeriodic(isPeriodic_)
     {
         // Resize element and node data structures.
         elements.resize(nElements);
