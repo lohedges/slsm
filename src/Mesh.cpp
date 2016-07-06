@@ -238,7 +238,7 @@ namespace lsm
         nodes[node].neighbours[2] = x + (w * ((y - 1 + w) % w));
         nodes[node].neighbours[3] = x + (w * ((y + 1 + w) % w));
 
-        // The mesh isn't periodic, flag out of bounds neigbours.
+        // The mesh isn't periodic, flag out of bounds neighbours.
         if (!isPeriodic)
         {
             // Node is on first or last row.

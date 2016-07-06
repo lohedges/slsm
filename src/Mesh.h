@@ -112,7 +112,7 @@ namespace lsm
         Diagonal neighbours can be accessed by looking at neighbours of neighbours,
         e.g. for the lower left diagonal of node i
 
-        node = nodes[nodes[i].neighbours[0]].neigbours[2];
+        node = nodes[nodes[i].neighbours[0]].neighbours[2];
 
         Note that diagonal nodes can be accessed in multiple ways, e.g.
         for the lower left diagonal of node i we could go left then down,
