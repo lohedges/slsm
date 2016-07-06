@@ -602,7 +602,7 @@ namespace lsm
                 }
 
                 // Top edge of mesh.
-                else if (y == 0)
+                else if (y == levelSet.mesh.height)
                 {
                     // Backward difference.
                     gradY = levelSet.signedDistance[levelSet.mesh.xyToIndex[x][y]]
