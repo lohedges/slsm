@@ -164,7 +164,7 @@ namespace lsm
         bool isAttempted = false;
 
         // Keep trying optmisation until a solution is found.
-        while ((returnCode < 0) || !isAttempted)
+        while (!isAttempted || (returnCode < 0))
         {
             isAttempted = true;
 
