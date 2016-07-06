@@ -1015,11 +1015,11 @@ namespace lsm
             points[segments[i].end].segments[points[segments[i].end].nSegments] = i;
             points[segments[i].end].nSegments++;
 
-            // Update nearest neigbours for the start point.
+            // Update nearest neighbours for the start point.
             points[segments[i].start].neighbours[points[segments[i].start].nNeighbours] = segments[i].end;
             points[segments[i].start].nNeighbours++;
 
-            // Update nearest neigbours for the end point.
+            // Update nearest neighbours for the end point.
             points[segments[i].end].neighbours[points[segments[i].end].nNeighbours] = segments[i].start;
             points[segments[i].end].nNeighbours++;
         }
