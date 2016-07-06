@@ -120,9 +120,6 @@ int main(int argc, char** argv)
     // Store the mesh area.
     double meshArea = mesh.width * mesh.height;
 
-    // Half mesh height.
-    double halfHeight = 0.5 * mesh.height;
-
     std::vector<lsm::Hole> initialHoles;
     std::vector<lsm::Hole> targetHoles;
 
