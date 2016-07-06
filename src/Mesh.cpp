@@ -187,7 +187,7 @@ namespace lsm
         // Coordinates of the element.
         unsigned int x, y;
 
-        // Number of nodes along width of mesh (number of elements plus one)
+        // Number of nodes along width of mesh (number of elements plus one).
         unsigned int w = width + 1;
 
         // Loop over all elements.
@@ -227,7 +227,7 @@ namespace lsm
 
     void Mesh::initialiseNeighbours(unsigned int node, unsigned int x, unsigned int y)
     {
-        // Number of nodes along width of mesh (number of elements plus one)
+        // Number of nodes along width and height of mesh (number of elements plus one).
         unsigned int w = width + 1;
         unsigned int h = height + 1;
 
