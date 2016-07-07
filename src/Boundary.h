@@ -28,7 +28,7 @@
     \brief A class for the discretised boundary.
  */
 
-namespace lsm
+namespace slsm
 {
     // ASSOCIATED DATA TYPES
 

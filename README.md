@@ -1,21 +1,21 @@
-# LibLSM
+# LibSLSM
 
 <p>Copyright &copy; 2015-2016 <a href="http://lesterhedges.net">Lester Hedges</a>
 <a href="http://www.gnu.org/licenses/gpl-3.0.html">
 <img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png"></a></p>
 
 ## About
-A simple C++ library to implement the Level Set Method (LSM) for peforming
-structural topology optimisation. Based on code written by
+A simple C++ library to implement the Stochastic Level-Set Method (SLSM) for
+performing structural topology optimisation. Based on code written by
 [Peter Dunning](http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning).
 
 The aim is to provide a robust and exstensible, object-oriented topology
 optimisation framework.
 
 ## Installation
-A `Makefile` is included for building and installing LibLSM.
+A `Makefile` is included for building and installing LibSLSM.
 
-To compile LibLSM, then install the library, documentation, and demos:
+To compile LibSLSM, then install the library, documentation, and demos:
 
 ```bash
 $ make build
@@ -42,25 +42,25 @@ always build locally then link against the library in the `lib` directory
 inside of the repository.
 
 ## Compiling and linking
-To use LibLSM with a C/C++ code first include the LibLSM header file somewhere
+To use LibSLSM with a C/C++ code first include the LibSLSM header file somewhere
 in the code.
 
 ```cpp
 //example.cpp
-#include <lsm/lsm.h>
+#include <slsm/slsm.h>
 ```
 
 Then to compile, we can use something like the following:
 
 ```bash
-$ g++ -std=c++11 example.cpp -llsm -lnlopt
+$ g++ -std=c++11 example.cpp -lslsm -lnlopt
 ```
 
 This assumes that we have used the default install location `/usr/local`. If
 we specify an install location, we would use a command more like the following:
 
 ```bash
-$ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -llsm -lnlopt
+$ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
 ```
 
 Note that the `-std=c++11` compiler flag is needed for `std::function` and
@@ -73,7 +73,7 @@ so you will require a working doxygen installation. If you do not require
 documentation then simply remove `doc` from the `install` dependency list in
 the Makefile.
 
-LibLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
+LibSLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
 psuedorandom number generator. A C++11 implementation using `std::random` is
 included as a bundled header file, `MersenneTwister.h`. See the source code or
 generate Doxygen documentation with `make doc` for details on how to use it.

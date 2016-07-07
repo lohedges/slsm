@@ -23,7 +23,7 @@
     \brief An implementation of a heap data structure (binary tree).
  */
 
-namespace lsm
+namespace slsm
 {
     Heap::Heap(unsigned int maxLength_, bool isTest_) :
         maxLength(maxLength_),

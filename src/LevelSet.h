@@ -31,7 +31,7 @@
     \brief A class for the level set function.
  */
 
-namespace lsm
+namespace slsm
 {
     //! Forward declaration of BoundaryPoint data structure.
     //! Might want to move all non-class types to Common.h, i.e. affiliated types.

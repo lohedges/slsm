@@ -69,7 +69,7 @@ SHELL := bash
 .DEFAULT_GOAL := help
 
 # Project name.
-project := lsm
+project := slsm
 
 # Upper case project name (for use in library header file).
 project_upper := `echo $(project) | tr a-z A-Z`

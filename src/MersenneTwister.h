@@ -25,7 +25,7 @@
     random number generator class.
  */
 
-namespace lsm
+namespace slsm
 {
     //! Mersenne-Twister class.
     class MersenneTwister

@@ -15,17 +15,17 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lsm.h"
+#include "slsm.h"
 
 int testSignedDistance()
 {
     // A test for correct initialisation of the signed distance function.
 
     // Initialise a 10x10 non-periodic mesh.
-    lsm::Mesh mesh(10, 10, false);
+    slsm::Mesh mesh(10, 10, false);
 
     // Initialise a hole.
-    lsm::Hole hole;
+    slsm::Hole hole;
 
     // Place hole in the centre of the mesh.
     hole.coord.x = 5;
@@ -33,11 +33,11 @@ int testSignedDistance()
     hole.r = 3;
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
+    std::vector<slsm::Hole> holes;
     holes.push_back(hole);
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Diagonal of reduced 3x3 box.
     double diag = sqrt(18);

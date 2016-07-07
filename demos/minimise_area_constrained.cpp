@@ -19,7 +19,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "lsm.h"
+#include "slsm.h"
 
 /*! \file minimise_perimeter.cpp
 
@@ -67,13 +67,13 @@ int main(int argc, char** argv)
     double nextSample = 10;
 
     // Initialise a 200x200 non-periodic mesh.
-    lsm::Mesh mesh(200, 200, false);
+    slsm::Mesh mesh(200, 200, false);
 
     // Calculate the area of the mesh.
     double meshArea = mesh.width * mesh.height;
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, moveLimit, 6, true);
+    slsm::LevelSet levelSet(mesh, moveLimit, 6, true);
 
     // Create a solid slab of material with a small square in the middle.
     for (unsigned int i=0;i<mesh.nNodes;i++)
@@ -90,13 +90,13 @@ int main(int argc, char** argv)
     }
 
     // Initialise io object.
-    lsm::InputOutput io;
+    slsm::InputOutput io;
 
     // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
     boundary.computeNormalVectors();
 
     // Initialise random number generator.
-    lsm::MersenneTwister rng;
+    slsm::MersenneTwister rng;
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -143,11 +143,11 @@ int main(int argc, char** argv)
     while (time < maxTime)
     {
         // Initialise the sensitivity object.
-        lsm::Sensitivity sensitivity;
+        slsm::Sensitivity sensitivity;
 
         // Initialise the sensitivity callback.
         using namespace std::placeholders;
-        lsm::SensitivityCallback callback = std::bind(&lsm::Boundary::computePerimeter, boundary, _1);
+        slsm::SensitivityCallback callback = std::bind(&slsm::Boundary::computePerimeter, boundary, _1);
 
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
@@ -174,7 +174,7 @@ int main(int argc, char** argv)
            to place objects in the correct scope in order to aid readability
            and to avoid unintended name clashes, etc.
          */
-        lsm::Optimise optimise(boundary.points, constraintDistances,
+        slsm::Optimise optimise(boundary.points, constraintDistances,
             lambdas, timeStep, levelSet.moveLimit, true);
 
         // Perform the optimisation.

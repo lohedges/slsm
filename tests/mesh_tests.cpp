@@ -15,12 +15,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lsm.h"
+#include "slsm.h"
 
 int testMeshSize()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Set error number.
     errno = 0;
@@ -39,7 +39,7 @@ error:
 int testNodeCoordinates()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Set error number.
     errno = 0;
@@ -65,10 +65,10 @@ error:
 int testNodeConnectivity()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Initialise a 3x3 non-periodic mesh.
-    lsm::Mesh npMesh(3, 3, false);
+    slsm::Mesh npMesh(3, 3, false);
 
     // Set error number.
     errno = 0;
@@ -122,7 +122,7 @@ error:
 int testReverseNodeConnectivity()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Set error number.
     errno = 0;
@@ -147,7 +147,7 @@ error:
 int testElementNodeConnectivity()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Set error number.
     errno = 0;
@@ -167,7 +167,7 @@ error:
 int testNodeElementConnectivity()
 {
     // Initialise a 3x3 periodic mesh.
-    lsm::Mesh mesh(3, 3, true);
+    slsm::Mesh mesh(3, 3, true);
 
     // Set error number.
     errno = 0;
@@ -197,7 +197,7 @@ error:
 int testCoordinateMapping()
 {
     // Initialise a 2x2 non-periodic mesh.
-    lsm::Mesh mesh(2, 2, false);
+    slsm::Mesh mesh(2, 2, false);
 
     // Set error number.
     errno = 0;

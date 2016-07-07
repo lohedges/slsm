@@ -23,7 +23,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "lsm.h"
+#include "slsm.h"
 
 /*! \file minimise_area.cpp
 
@@ -82,23 +82,23 @@ int main(int argc, char** argv)
     double nextSample = 1;
 
     // Initialise a 200x200 non-periodic mesh.
-    lsm::Mesh mesh(200, 200, false);
+    slsm::Mesh mesh(200, 200, false);
 
     // Create a hole in the centre with a radius of 80 grid units.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(100, 100, 80));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(100, 100, 80));
 
     // Initialise the level set object (from the hole vector).
-    lsm::LevelSet levelSet(mesh, holes, moveLimit, 6, true);
+    slsm::LevelSet levelSet(mesh, holes, moveLimit, 6, true);
 
     // Initialise io object.
-    lsm::InputOutput io;
+    slsm::InputOutput io;
 
     // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
            to place objects in the correct scope in order to aid readability
            and to avoid unintended name clashes, etc.
          */
-        lsm::Optimise optimise(boundary.points, constraintDistances,
+        slsm::Optimise optimise(boundary.points, constraintDistances,
             lambdas, timeStep, levelSet.moveLimit, false);
 
         // Perform the optimisation.

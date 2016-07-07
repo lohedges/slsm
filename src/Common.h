@@ -22,7 +22,7 @@
     \brief Common data types.
  */
 
-namespace lsm
+namespace slsm
 {
     //! Two-dimensional coordinate information.
     struct Coord

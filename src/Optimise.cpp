@@ -21,7 +21,7 @@
     \brief A class for finding the solution for the optimum velocity vector.
  */
 
-namespace lsm
+namespace slsm
 {
     double callbackWrapper(const std::vector<double>& lambda, std::vector<double>& gradient, void* data)
     {

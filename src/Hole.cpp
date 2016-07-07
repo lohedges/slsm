@@ -21,7 +21,7 @@
     \brief A simple circular hole data type.
  */
 
-namespace lsm
+namespace slsm
 {
     Hole::Hole() {}
 

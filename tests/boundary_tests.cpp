@@ -15,7 +15,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lsm.h"
+#include "slsm.h"
 
 int testBoundaryPoints()
 {
@@ -24,17 +24,17 @@ int testBoundaryPoints()
     //  2) Check that boundary point coordinates are correct.
 
     // Initialise a 1x1 non-periodic mesh.
-    lsm::Mesh mesh(1, 1, false);
+    slsm::Mesh mesh(1, 1, false);
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(1, 1, 1));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(1, 1, 1));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -171,17 +171,17 @@ int testBoundarySegments()
     //  2) Check that segments are assigned to the correct element.
 
     // Initialise a 1x1 non-periodic mesh.
-    lsm::Mesh mesh(1, 1, false);
+    slsm::Mesh mesh(1, 1, false);
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(1, 1, 1));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(1, 1, 1));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -291,17 +291,17 @@ error:
 int testBoundarySymmetry()
 {
     // Initialise a 1x1 non-periodic mesh.
-    lsm::Mesh mesh(1, 1, false);
+    slsm::Mesh mesh(1, 1, false);
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(1, 1, 1));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(1, 1, 1));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -379,17 +379,17 @@ error:
 int testConnectivity()
 {
     // Initialise a 1x1 non-periodic mesh.
-    lsm::Mesh mesh(1, 1, false);
+    slsm::Mesh mesh(1, 1, false);
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(1, 1, 1));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(1, 1, 1));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;
@@ -443,17 +443,17 @@ error:
 int testAreaFraction()
 {
     // Initialise a 1x1 non-periodic mesh.
-    lsm::Mesh mesh(1, 1, false);
+    slsm::Mesh mesh(1, 1, false);
 
     // Push hole into a vector container.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(1, 1, 1));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(1, 1, 1));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes);
+    slsm::LevelSet levelSet(mesh, holes);
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Set error number.
     errno = 0;

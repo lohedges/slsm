@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "lsm.h"
+#include "slsm.h"
 
 /*! \file umbrella_sample.cpp
 
@@ -61,28 +61,28 @@
 // FUNCTION PROTOTYPES
 
 // Constraint sensitivity function prototype.
-double computeConstraintSensitivity(const lsm::Coord&, const lsm::LevelSet&);
+double computeConstraintSensitivity(const slsm::Coord&, const slsm::LevelSet&);
 
 // Mismatch function prototype.
-double computeMismatch(const lsm::Mesh&, const std::vector<double>&);
+double computeMismatch(const slsm::Mesh&, const std::vector<double>&);
 
 // Perimeter function prototype.
-double computePerimeter(const std::vector<lsm::BoundaryPoint>&);
+double computePerimeter(const std::vector<slsm::BoundaryPoint>&);
 
 // Boundary point length function prototype.
-double computePointLength(const lsm::BoundaryPoint& point);
+double computePointLength(const slsm::BoundaryPoint& point);
 
 // Perimeter weight function prototype.
 double computePerimeterWeight(double y);
 
 // Vertical centre of mass function prototype.
-double computeCentreOfMass(std::vector<lsm::BoundaryPoint>&);
+double computeCentreOfMass(std::vector<slsm::BoundaryPoint>&);
 
 // Bias potential function prototype.
 double computeBiasPotential(double, double, double);
 
 // Acceptance function prototype.
-bool isAccepted(double, double, double, lsm::MersenneTwister&);
+bool isAccepted(double, double, double, slsm::MersenneTwister&);
 
 // GLOBALS
 unsigned int nDiscrete = 10;                // Boundary integral discretisation factor.
@@ -90,7 +90,7 @@ double upperLobeCentre;                     // The y coordinate of the upper dum
 double lowerLobeCentre;                     // The y coordinate of the lower dumbbell lobe.
 double lobeSeparation;                      // The vertical separation between dumbbell lobes.
 double reduce;                              // Sensitivity reduction factor.
-std::vector<lsm::BoundaryPoint>* points;    // Pointer to the boundary points vector.
+std::vector<slsm::BoundaryPoint>* points;    // Pointer to the boundary points vector.
 
 // MAIN FUNCTION
 
@@ -154,17 +154,17 @@ int main(int argc, char** argv)
     double maxMismatch = 0.2;
 
     // Initialise a 100x100 non-periodic mesh.
-    lsm::Mesh mesh(100, 100, false);
+    slsm::Mesh mesh(100, 100, false);
 
     // Store the mesh area.
     double meshArea = mesh.width * mesh.height;
 
-    std::vector<lsm::Hole> initialHoles;
-    std::vector<lsm::Hole> targetHoles;
+    std::vector<slsm::Hole> initialHoles;
+    std::vector<slsm::Hole> targetHoles;
 
     // Create a dumbbell from two vertically offset holes.
-    targetHoles.push_back(lsm::Hole(50, 69, 20));
-    targetHoles.push_back(lsm::Hole(50, 31, 20));
+    targetHoles.push_back(slsm::Hole(50, 69, 20));
+    targetHoles.push_back(slsm::Hole(50, 31, 20));
 
     // Store dumbbell data (needed for sensitivity callback).
     upperLobeCentre = targetHoles[0].coord.y;
@@ -172,10 +172,10 @@ int main(int argc, char** argv)
     lobeSeparation = upperLobeCentre - lowerLobeCentre;
 
     // Initialise the system by matching the upper dumbbell lobe.
-    initialHoles.push_back(lsm::Hole(50, 69, 15));
+    initialHoles.push_back(slsm::Hole(50, 69, 15));
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
+    slsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
 
     // Open the starting configuration.
     std::ifstream inputFile(restart);
@@ -194,13 +194,13 @@ int main(int argc, char** argv)
     }
 
     // Initialise io object.
-    lsm::InputOutput io;
+    slsm::InputOutput io;
 
     // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Initialise boundary points pointer.
     points = &boundary.points;
@@ -228,7 +228,7 @@ int main(int argc, char** argv)
     boundary.computeNormalVectors();
 
     // Initialise random number generator.
-    lsm::MersenneTwister rng;
+    slsm::MersenneTwister rng;
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -283,11 +283,11 @@ int main(int argc, char** argv)
             while (sampleTime < umbrellaInterval)
             {
                 // Initialise the sensitivity object.
-                lsm::Sensitivity sensitivity;
+                slsm::Sensitivity sensitivity;
 
                 // Initialise the sensitivity callback.
                 using namespace std::placeholders;
-                lsm::SensitivityCallback callback = std::bind(&computePointLength, _1);
+                slsm::SensitivityCallback callback = std::bind(&computePointLength, _1);
 
                 // Assign boundary point sensitivities.
                 for (unsigned int i=0;i<boundary.points.size();i++)
@@ -322,7 +322,7 @@ int main(int argc, char** argv)
                 to place objects in the correct scope in order to aid readability
                 and to avoid unintended name clashes, etc.
                 */
-                lsm::Optimise optimise(boundary.points, constraintDistances,
+                slsm::Optimise optimise(boundary.points, constraintDistances,
                     lambdas, timeStep, levelSet.moveLimit, false);
 
                 // Perform the optimisation.
@@ -439,7 +439,7 @@ int main(int argc, char** argv)
 // FUNCTION DEFINITIONS
 
 // Constraint sensitivity function definition.
-double computeConstraintSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
+double computeConstraintSensitivity(const slsm::Coord& coord, const slsm::LevelSet& levelSet)
 {
     /* Interpolate nodal signed distance mismatch to a boundary point using
        inverse squared distance weighting. On length scales larger than a
@@ -511,7 +511,7 @@ double computeConstraintSensitivity(const lsm::Coord& coord, const lsm::LevelSet
 }
 
 // Mismatch function definition.
-double computeMismatch(const lsm::Mesh& mesh, const std::vector<double>& targetArea)
+double computeMismatch(const slsm::Mesh& mesh, const std::vector<double>& targetArea)
 {
     double areaMismatch = 0;
 
@@ -523,7 +523,7 @@ double computeMismatch(const lsm::Mesh& mesh, const std::vector<double>& targetA
 }
 
 // Perimeter function definition.
-double computePerimeter(const std::vector<lsm::BoundaryPoint>& points)
+double computePerimeter(const std::vector<slsm::BoundaryPoint>& points)
 {
     double length = 0;
 
@@ -535,7 +535,7 @@ double computePerimeter(const std::vector<lsm::BoundaryPoint>& points)
 }
 
 // Boundary point length function definition.
-double computePointLength(const lsm::BoundaryPoint& point)
+double computePointLength(const slsm::BoundaryPoint& point)
 {
     double length = 0;
 
@@ -586,7 +586,7 @@ double computePerimeterWeight(double y)
 }
 
 // Vertical centre of mass function definition.
-double computeCentreOfMass(std::vector<lsm::BoundaryPoint>& points)
+double computeCentreOfMass(std::vector<slsm::BoundaryPoint>& points)
 {
     double y = 0;
 
@@ -603,7 +603,7 @@ double computeBiasPotential(double value, double centre, double spring)
 }
 
 // Acceptance function definition.
-bool isAccepted(double currentbias, double previousBias, double beta, lsm::MersenneTwister& rng)
+bool isAccepted(double currentbias, double previousBias, double beta, slsm::MersenneTwister& rng)
 {
     if (rng() < exp(-beta*(currentbias - previousBias))) return true;
     else return false;

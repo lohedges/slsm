@@ -19,7 +19,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "lsm.h"
+#include "slsm.h"
 
 /*! \file shape_match.cpp
 
@@ -32,10 +32,10 @@
  */
 
 // Sensitivity function prototype.
-double computeSensitivity(const lsm::Coord&, const lsm::LevelSet&);
+double computeSensitivity(const slsm::Coord&, const slsm::LevelSet&);
 
 // Objective function prototype.
-double computeObjective(const lsm::Mesh&, const std::vector<double>&);
+double computeObjective(const slsm::Mesh&, const std::vector<double>&);
 
 int main(int argc, char** argv)
 {
@@ -69,14 +69,14 @@ int main(int argc, char** argv)
     double nextSample = 1;
 
     // Initialise a 400x400 non-periodic mesh.
-    lsm::Mesh mesh(400, 400, false);
+    slsm::Mesh mesh(400, 400, false);
 
     // Create a hole in the centre with a radius of 100 grid units.
-    std::vector<lsm::Hole> holes;
-    holes.push_back(lsm::Hole(200, 200, 100));
+    std::vector<slsm::Hole> holes;
+    holes.push_back(slsm::Hole(200, 200, 100));
 
     // Initialise the points vector.
-    std::vector<lsm::Coord> points;
+    std::vector<slsm::Coord> points;
 
     // Read the shape file.
     std::ifstream shapeFile;
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 
         // Push coordinates into points vector.
         while (shapeFile >> x >> y)
-            points.push_back(lsm::Coord({x, y}));
+            points.push_back(slsm::Coord({x, y}));
     }
     else
     {
@@ -100,16 +100,16 @@ int main(int argc, char** argv)
     shapeFile.close();
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, holes, points, moveLimit, 6, true);
+    slsm::LevelSet levelSet(mesh, holes, points, moveLimit, 6, true);
 
     // Initialise io object.
-    lsm::InputOutput io;
+    slsm::InputOutput io;
 
     // Reinitialise the level set to a signed distance function.
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    lsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary(levelSet);
 
     // Initialise target area fraction vector.
     std::vector<double> targetArea(mesh.nElements);
@@ -128,7 +128,7 @@ int main(int argc, char** argv)
     boundary.discretise();
 
     // Initialise random number generator.
-    lsm::MersenneTwister rng;
+    slsm::MersenneTwister rng;
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
            to place objects in the correct scope in order to aid readability
            and to avoid unintended name clashes, etc.
          */
-        lsm::Optimise optimise(boundary.points, constraintDistances,
+        slsm::Optimise optimise(boundary.points, constraintDistances,
             lambdas, timeStep, levelSet.moveLimit, false);
 
         // Perform the optimisation.
@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 }
 
 // Sensitivity function definition.
-double computeSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet)
+double computeSensitivity(const slsm::Coord& coord, const slsm::LevelSet& levelSet)
 {
     /* Interpolate nodal signed distance mismatch to a boundary point using
        inverse squared distance weighting. On length scales larger than a
@@ -331,7 +331,7 @@ double computeSensitivity(const lsm::Coord& coord, const lsm::LevelSet& levelSet
 }
 
 // Objective function definition.
-double computeObjective(const lsm::Mesh& mesh, const std::vector<double>& targetArea)
+double computeObjective(const slsm::Mesh& mesh, const std::vector<double>& targetArea)
 {
     double areaMismatch = 0;
 

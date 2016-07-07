@@ -21,7 +21,7 @@
     \brief A class for calculating finite-difference boundary point sensitivities.
  */
 
-namespace lsm
+namespace slsm
 {
     Sensitivity::Sensitivity(double delta_) : delta(delta_)
     {

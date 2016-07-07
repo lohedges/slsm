@@ -29,7 +29,7 @@
     \brief An implementation of a heap data structure (binary tree).
  */
 
-namespace lsm
+namespace slsm
 {
     /*! \brief An implementation of a heap data structure (binary tree).
 

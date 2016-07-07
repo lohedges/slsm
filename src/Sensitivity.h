@@ -26,7 +26,7 @@
     \brief A class for calculating finite-difference boundary point sensitivities.
  */
 
-namespace lsm
+namespace slsm
 {
     //! Calculate the value of a function for a small displacement of a boundary point.
     /*! \param point

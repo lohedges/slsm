@@ -23,7 +23,7 @@
     \brief An implementation of the Fast Marching Method.
  */
 
-namespace lsm
+namespace slsm
 {
     FastMarchingMethod::FastMarchingMethod(const Mesh& mesh_, bool isTest_) :
         mesh(mesh_),

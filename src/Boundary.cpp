@@ -21,7 +21,7 @@
     \brief A class for the discretised boundary.
  */
 
-namespace lsm
+namespace slsm
 {
     Boundary::Boundary(LevelSet& levelSet_) : levelSet(levelSet_)
     {

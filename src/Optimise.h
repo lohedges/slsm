@@ -29,7 +29,7 @@
 #include "Boundary.h"
 #include "Debug.h"
 
-namespace lsm
+namespace slsm
 {
     // ASSOCIATED DATA TYPES
 

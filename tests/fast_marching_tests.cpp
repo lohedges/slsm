@@ -15,7 +15,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lsm.h"
+#include "slsm.h"
 
 int testUpwindFiniteDifference()
 {
@@ -24,13 +24,13 @@ int testUpwindFiniteDifference()
     // in scikit-fmm.
 
     // Initialise a 4x4 non-periodic mesh.
-    lsm::Mesh mesh(4, 4, false);
+    slsm::Mesh mesh(4, 4, false);
 
     // Create a single hole (just to pass to constructor).
-    std::vector<lsm::Hole> hole;
+    std::vector<slsm::Hole> hole;
 
     // Initialise the level set object.
-    lsm::LevelSet levelSet(mesh, hole, 0.5, 3);
+    slsm::LevelSet levelSet(mesh, hole, 0.5, 3);
 
     // Place all nodes outside the structure.
     for (unsigned int i=0;i<mesh.nNodes;i++)

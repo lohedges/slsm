@@ -28,7 +28,7 @@
     \brief A class for reading and writing data.
  */
 
-namespace lsm
+namespace slsm
 {
     //! A class for reading and writing data.
     class InputOutput

@@ -15,7 +15,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "lsm.h"
+#include "slsm.h"
 
 /* N.B.
     The Heap class can perform self testing when passed isTest = true
@@ -23,12 +23,12 @@
     of the heap beyond what is performed within the class itself.
  */
 
-#include "lsm.h"
+#include "slsm.h"
 
 int testPush()
 {
     // Initialise heap.
-    lsm::Heap heap(10, true);
+    slsm::Heap heap(10, true);
 
     // Set error number.
     errno = 0;
@@ -57,7 +57,7 @@ error:
 int testPop()
 {
     // Initialise random number generator.
-    lsm::MersenneTwister rng;
+    slsm::MersenneTwister rng;
 
     // Initialise vector of doubles.
     std::vector<double> vec(10);
@@ -73,7 +73,7 @@ int testPop()
     std::sort(sorted.begin(), sorted.end());
 
     // Initialise heap.
-    lsm::Heap heap(vec.size(), true);
+    slsm::Heap heap(vec.size(), true);
 
     // Initialise back pointer array.
     std::vector<unsigned int> heapPtr(vec.size());
@@ -106,7 +106,7 @@ error:
 int testSet()
 {
     // Initialise random number generator.
-    lsm::MersenneTwister rng;
+    slsm::MersenneTwister rng;
 
     // Initialise vector of doubles.
     std::vector<double> vec(10);
@@ -122,7 +122,7 @@ int testSet()
     std::sort(sorted.begin(), sorted.end());
 
     // Initialise heap.
-    lsm::Heap heap(vec.size(), true);
+    slsm::Heap heap(vec.size(), true);
 
     // Initialise back pointer array.
     std::vector<unsigned int> heapPtr(vec.size());

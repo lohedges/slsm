@@ -21,7 +21,7 @@
     \brief A class for the level-set domain fixed-grid mesh.
  */
 
-namespace lsm
+namespace slsm
 {
     Mesh::Mesh(unsigned int width_,
                unsigned int height_,

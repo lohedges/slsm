@@ -31,7 +31,7 @@
     \brief An implementation of the Fast Marching Method.
  */
 
-namespace lsm
+namespace slsm
 {
     // ASSOCIATED DATA TYPES
 

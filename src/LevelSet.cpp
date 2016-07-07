@@ -22,7 +22,7 @@
     \brief A class for the level set function.
  */
 
-namespace lsm
+namespace slsm
 {
     LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),

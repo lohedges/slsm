@@ -27,7 +27,7 @@
     \brief A class for the level-set domain fixed-grid mesh.
  */
 
-namespace lsm
+namespace slsm
 {
     // ASSOCIATED DATA TYPES
 

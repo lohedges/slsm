@@ -24,7 +24,7 @@
     \brief A simple circular hole data type.
  */
 
-namespace lsm
+namespace slsm
 {
     //! Class for handling circular holes.
     class Hole
