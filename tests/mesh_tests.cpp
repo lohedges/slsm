@@ -25,10 +25,10 @@ int testMeshSize()
     // Set error number.
     errno = 0;
 
-    lsm_check(mesh.width == 3, "Mesh width is incorrect!");
-    lsm_check(mesh.height == 3, "Mesh height is incorrect!");
-    lsm_check(mesh.nElements == 9, "Number of elements is incorrect!");
-    lsm_check(mesh.nNodes == 16, "Number of nodes is incorrect!");
+    slsm_check(mesh.width == 3, "Mesh width is incorrect!");
+    slsm_check(mesh.height == 3, "Mesh height is incorrect!");
+    slsm_check(mesh.nElements == 9, "Number of elements is incorrect!");
+    slsm_check(mesh.nNodes == 16, "Number of nodes is incorrect!");
 
     return 0;
 
@@ -45,16 +45,16 @@ int testNodeCoordinates()
     errno = 0;
 
     // Check coordinates of 1st node (bottom left).
-    lsm_check(mesh.nodes[0].coord.x == 0, "x coordinate of node 0 is incorrect!");
-    lsm_check(mesh.nodes[0].coord.y == 0, "y coordinate of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].coord.x == 0, "x coordinate of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].coord.y == 0, "y coordinate of node 0 is incorrect!");
 
     // Check coordinates of 5th node (bulk).
-    lsm_check(mesh.nodes[5].coord.x == 1, "x coordinate of node 5 is incorrect!");
-    lsm_check(mesh.nodes[5].coord.y == 1, "y coordinate of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].coord.x == 1, "x coordinate of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].coord.y == 1, "y coordinate of node 5 is incorrect!");
 
     // Check coordinates of 15th node (top right).
-    lsm_check(mesh.nodes[15].coord.x == 3, "x coordinate of node 5 is incorrect!");
-    lsm_check(mesh.nodes[15].coord.y == 3, "y coordinate of node 5 is incorrect!");
+    slsm_check(mesh.nodes[15].coord.x == 3, "x coordinate of node 5 is incorrect!");
+    slsm_check(mesh.nodes[15].coord.y == 3, "y coordinate of node 5 is incorrect!");
 
     return 0;
 
@@ -76,42 +76,42 @@ int testNodeConnectivity()
     /********** Periodic Mesh Test **********/
 
     // Check nearest neighbours of 1st node (bottom left).
-    lsm_check(mesh.nodes[0].neighbours[0] == 3, "Periodic mesh: Neighbour 0 of node 0 is incorrect!");
-    lsm_check(mesh.nodes[0].neighbours[1] == 1, "Periodic mesh: Neighbour 1 of node 0 is incorrect!");
-    lsm_check(mesh.nodes[0].neighbours[2] == 12, "Periodic mesh: Neighbour 2 of node 0 is incorrect!");
-    lsm_check(mesh.nodes[0].neighbours[3] == 4, "Periodic mesh: Neighbour 3 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[0] == 3, "Periodic mesh: Neighbour 0 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[1] == 1, "Periodic mesh: Neighbour 1 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[2] == 12, "Periodic mesh: Neighbour 2 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[3] == 4, "Periodic mesh: Neighbour 3 of node 0 is incorrect!");
 
     // Check nearest neighbours of 5th node (bulk).
-    lsm_check(mesh.nodes[5].neighbours[0] == 4, "Periodic mesh: Neighbour 0 of node 5 is incorrect!");
-    lsm_check(mesh.nodes[5].neighbours[1] == 6, "Periodic mesh: Neighbour 1 of node 5 is incorrect!");
-    lsm_check(mesh.nodes[5].neighbours[2] == 1, "Periodic mesh: Neighbour 2 of node 5 is incorrect!");
-    lsm_check(mesh.nodes[5].neighbours[3] == 9, "Periodic mesh: Neighbour 3 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[0] == 4, "Periodic mesh: Neighbour 0 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[1] == 6, "Periodic mesh: Neighbour 1 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[2] == 1, "Periodic mesh: Neighbour 2 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[3] == 9, "Periodic mesh: Neighbour 3 of node 5 is incorrect!");
 
     // Check nearest neighbours of 15th node (top right).
-    lsm_check(mesh.nodes[15].neighbours[0] == 14, "Periodic mesh: Neighbour 0 of node 15 is incorrect!");
-    lsm_check(mesh.nodes[15].neighbours[1] == 12, "Periodic mesh: Neighbour 1 of node 15 is incorrect!");
-    lsm_check(mesh.nodes[15].neighbours[2] == 11, "Periodic mesh: Neighbour 2 of node 15 is incorrect!");
-    lsm_check(mesh.nodes[15].neighbours[3] == 3, "Periodic mesh: Neighbour 3 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[0] == 14, "Periodic mesh: Neighbour 0 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[1] == 12, "Periodic mesh: Neighbour 1 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[2] == 11, "Periodic mesh: Neighbour 2 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[3] == 3, "Periodic mesh: Neighbour 3 of node 15 is incorrect!");
 
     /********** Non-periodic Mesh Test **********/
 
     // Check nearest neighbours of 1st node (bottom left).
-    lsm_check(npMesh.nodes[0].neighbours[0] == mesh.nNodes, "Non-periodic mesh: Neighbour 0 of node 0 is incorrect!");
-    lsm_check(npMesh.nodes[0].neighbours[1] == 1, "Non-periodic mesh: Neighbour 1 of node 0 is incorrect!");
-    lsm_check(npMesh.nodes[0].neighbours[2] == mesh.nNodes, "Non-periodic mesh: Neighbour 2 of node 0 is incorrect!");
-    lsm_check(npMesh.nodes[0].neighbours[3] == 4, "Non-periodic mesh: Neighbour 3 of node 0 is incorrect!");
+    slsm_check(npMesh.nodes[0].neighbours[0] == mesh.nNodes, "Non-periodic mesh: Neighbour 0 of node 0 is incorrect!");
+    slsm_check(npMesh.nodes[0].neighbours[1] == 1, "Non-periodic mesh: Neighbour 1 of node 0 is incorrect!");
+    slsm_check(npMesh.nodes[0].neighbours[2] == mesh.nNodes, "Non-periodic mesh: Neighbour 2 of node 0 is incorrect!");
+    slsm_check(npMesh.nodes[0].neighbours[3] == 4, "Non-periodic mesh: Neighbour 3 of node 0 is incorrect!");
 
     // Check nearest neighbours of 5th node (bulk).
-    lsm_check(npMesh.nodes[5].neighbours[0] == 4, "Non-periodic mesh: Neighbour 0 of node 5 is incorrect!");
-    lsm_check(npMesh.nodes[5].neighbours[1] == 6, "Non-periodic mesh: Neighbour 1 of node 5 is incorrect!");
-    lsm_check(npMesh.nodes[5].neighbours[2] == 1, "Non-periodic mesh: Neighbour 2 of node 5 is incorrect!");
-    lsm_check(npMesh.nodes[5].neighbours[3] == 9, "Non-periodic mesh: Neighbour 3 of node 5 is incorrect!");
+    slsm_check(npMesh.nodes[5].neighbours[0] == 4, "Non-periodic mesh: Neighbour 0 of node 5 is incorrect!");
+    slsm_check(npMesh.nodes[5].neighbours[1] == 6, "Non-periodic mesh: Neighbour 1 of node 5 is incorrect!");
+    slsm_check(npMesh.nodes[5].neighbours[2] == 1, "Non-periodic mesh: Neighbour 2 of node 5 is incorrect!");
+    slsm_check(npMesh.nodes[5].neighbours[3] == 9, "Non-periodic mesh: Neighbour 3 of node 5 is incorrect!");
 
     // Check nearest neighbours of 15th node (top right).
-    lsm_check(npMesh.nodes[15].neighbours[0] == 14, "Non-periodic mesh: Neighbour 0 of node 15 is incorrect!");
-    lsm_check(npMesh.nodes[15].neighbours[1] == mesh.nNodes, "Non-periodic mesh: Neighbour 1 of node 15 is incorrect!");
-    lsm_check(npMesh.nodes[15].neighbours[2] == 11, "Non-periodic mesh: Neighbour 2 of node 15 is incorrect!");
-    lsm_check(npMesh.nodes[15].neighbours[3] == mesh.nNodes, "Non-periodic mesh: Neighbour 3 of node 15 is incorrect!");
+    slsm_check(npMesh.nodes[15].neighbours[0] == 14, "Non-periodic mesh: Neighbour 0 of node 15 is incorrect!");
+    slsm_check(npMesh.nodes[15].neighbours[1] == mesh.nNodes, "Non-periodic mesh: Neighbour 1 of node 15 is incorrect!");
+    slsm_check(npMesh.nodes[15].neighbours[2] == 11, "Non-periodic mesh: Neighbour 2 of node 15 is incorrect!");
+    slsm_check(npMesh.nodes[15].neighbours[3] == mesh.nNodes, "Non-periodic mesh: Neighbour 3 of node 15 is incorrect!");
 
     return 0;
 
@@ -129,13 +129,13 @@ int testReverseNodeConnectivity()
 
     // Make sure opposite neighbour of each neighbour map back to node, e.g. the
     // right-hand neighbour of a node's left-hand neighbour should point to the node.
-    lsm_check(mesh.nodes[mesh.nodes[5].neighbours[0]].neighbours[1] == 5,
+    slsm_check(mesh.nodes[mesh.nodes[5].neighbours[0]].neighbours[1] == 5,
         "Reverse connectivity: Mapping between neighours 0 and 1 incorrect!");
-    lsm_check(mesh.nodes[mesh.nodes[5].neighbours[1]].neighbours[0] == 5,
+    slsm_check(mesh.nodes[mesh.nodes[5].neighbours[1]].neighbours[0] == 5,
         "Reverse connectivity: Mapping between neighours 1 and 0 incorrect!");
-    lsm_check(mesh.nodes[mesh.nodes[5].neighbours[2]].neighbours[3] == 5,
+    slsm_check(mesh.nodes[mesh.nodes[5].neighbours[2]].neighbours[3] == 5,
         "Reverse connectivity: Mapping between neighours 2 and 3 incorrect!");
-    lsm_check(mesh.nodes[mesh.nodes[5].neighbours[3]].neighbours[2] == 5,
+    slsm_check(mesh.nodes[mesh.nodes[5].neighbours[3]].neighbours[2] == 5,
         "Reverse connectivity: Mapping between neighours 3 and 2 incorrect!");
 
     return 0;
@@ -153,10 +153,10 @@ int testElementNodeConnectivity()
     errno = 0;
 
     // Check the four nodes of the 1st element.
-    lsm_check(mesh.elements[0].nodes[0] == 0, "Node 0 of element 0 is incorrect!");
-    lsm_check(mesh.elements[0].nodes[1] == 1, "Node 1 of element 0 is incorrect!");
-    lsm_check(mesh.elements[0].nodes[2] == 5, "Node 2 of element 0 is incorrect!");
-    lsm_check(mesh.elements[0].nodes[3] == 4, "Node 3 of element 0 is incorrect!");
+    slsm_check(mesh.elements[0].nodes[0] == 0, "Node 0 of element 0 is incorrect!");
+    slsm_check(mesh.elements[0].nodes[1] == 1, "Node 1 of element 0 is incorrect!");
+    slsm_check(mesh.elements[0].nodes[2] == 5, "Node 2 of element 0 is incorrect!");
+    slsm_check(mesh.elements[0].nodes[3] == 4, "Node 3 of element 0 is incorrect!");
 
     return 0;
 
@@ -173,20 +173,20 @@ int testNodeElementConnectivity()
     errno = 0;
 
     // Check the elements connected to the 1st node (one element connected).
-    lsm_check(mesh.nodes[0].nElements == 1, "Number of elements connected to node 0 is incorrect!");
-    lsm_check(mesh.nodes[0].elements[0] == 0, "Index of element 0 connected to node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].nElements == 1, "Number of elements connected to node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].elements[0] == 0, "Index of element 0 connected to node 0 is incorrect!");
 
     // Check the elements connected to the 7th node (two elements connected).
-    lsm_check(mesh.nodes[7].nElements == 2, "Number of elements connected to node 0 is incorrect!");
-    lsm_check(mesh.nodes[7].elements[0] == 2, "Index of element 0 connected to node 7 is incorrect!");
-    lsm_check(mesh.nodes[7].elements[1] == 5, "Index of element 0 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[7].nElements == 2, "Number of elements connected to node 0 is incorrect!");
+    slsm_check(mesh.nodes[7].elements[0] == 2, "Index of element 0 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[7].elements[1] == 5, "Index of element 0 connected to node 7 is incorrect!");
 
     // Check the elements connected to the 10th node (four elements connected).
-    lsm_check(mesh.nodes[10].nElements == 4, "Number of elements connected to node 0 is incorrect!");
-    lsm_check(mesh.nodes[10].elements[0] == 4, "Index of element 0 connected to node 7 is incorrect!");
-    lsm_check(mesh.nodes[10].elements[1] == 5, "Index of element 1 connected to node 7 is incorrect!");
-    lsm_check(mesh.nodes[10].elements[2] == 7, "Index of element 2 connected to node 7 is incorrect!");
-    lsm_check(mesh.nodes[10].elements[3] == 8, "Index of element 3 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[10].nElements == 4, "Number of elements connected to node 0 is incorrect!");
+    slsm_check(mesh.nodes[10].elements[0] == 4, "Index of element 0 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[10].elements[1] == 5, "Index of element 1 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[10].elements[2] == 7, "Index of element 2 connected to node 7 is incorrect!");
+    slsm_check(mesh.nodes[10].elements[3] == 8, "Index of element 3 connected to node 7 is incorrect!");
 
     return 0;
 
@@ -203,28 +203,28 @@ int testCoordinateMapping()
     errno = 0;
 
     // Check that point (0.5, 0.5) lies in bottom left (zeroth) element.
-    lsm_check(mesh.getElement(0.5, 0.5) == 0, "Point lies in incorrect element!");
+    slsm_check(mesh.getElement(0.5, 0.5) == 0, "Point lies in incorrect element!");
 
     // Check that point (1.5, 0.5) lies in bottom right (first) element.
-    lsm_check(mesh.getElement(1.5, 0.5) == 1, "Point lies in incorrect element!");
+    slsm_check(mesh.getElement(1.5, 0.5) == 1, "Point lies in incorrect element!");
 
     // Check that point (0.5, 1.5) lies in upper left (second) element.
-    lsm_check(mesh.getElement(0.5, 1.5) == 2, "Point lies in incorrect element!");
+    slsm_check(mesh.getElement(0.5, 1.5) == 2, "Point lies in incorrect element!");
 
     // Check that point (1.5, 1.5) lies in upper right (third) element.
-    lsm_check(mesh.getElement(1.5, 1.5) == 3, "Point lies in incorrect element!");
+    slsm_check(mesh.getElement(1.5, 1.5) == 3, "Point lies in incorrect element!");
 
     // Check that point (0.2, 0.2) lies closest to the bottom left (zeroth) node.
-    lsm_check(mesh.getClosestNode(0.2, 0.2) == 0, "Point lies closest to incorrect node!");
+    slsm_check(mesh.getClosestNode(0.2, 0.2) == 0, "Point lies closest to incorrect node!");
 
     // Check that point (0.6, 0.2) lies closest to the first node.
-    lsm_check(mesh.getClosestNode(0.6, 0.2) == 1, "Point lies closest to incorrect node!");
+    slsm_check(mesh.getClosestNode(0.6, 0.2) == 1, "Point lies closest to incorrect node!");
 
     // Check that point (0.2, 0.6) lies closest to the width + 1 node.
-    lsm_check(mesh.getClosestNode(0.2, 0.6) == (mesh.width + 1), "Point lies closest to incorrect node!");
+    slsm_check(mesh.getClosestNode(0.2, 0.6) == (mesh.width + 1), "Point lies closest to incorrect node!");
 
     // Check that point (0.6, 0.6) lies closest to the width + 2 node.
-    lsm_check(mesh.getClosestNode(0.6, 0.6) == (mesh.width + 2), "Point lies closest to incorrect node!");
+    slsm_check(mesh.getClosestNode(0.6, 0.6) == (mesh.width + 2), "Point lies closest to incorrect node!");
 
     return 0;
 

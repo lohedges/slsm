@@ -50,7 +50,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -122,7 +122,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Write the nodal signed distance to file.
         for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
@@ -163,7 +163,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nPoints;i++)
@@ -202,7 +202,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nSegments;i++)
@@ -261,7 +261,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -314,7 +314,7 @@ namespace slsm
         pFile = fopen(fileName.str().c_str(), "w");
 
         if (pFile == NULL)
-            lsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
 
         // Write the element area fractions to file.
         for (unsigned int i=0;i<mesh.nElements;i++)

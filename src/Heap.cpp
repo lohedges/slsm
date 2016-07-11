@@ -44,7 +44,7 @@ namespace slsm
     {
         // Make sure the heap isn't full.
         errno = 0;
-        lsm_check(heapLength < maxLength, "push: Heap is full!");
+        slsm_check(heapLength < maxLength, "push: Heap is full!");
 
         // Add entry to the heap.
         heap[heapLength]        = listLength;
@@ -74,7 +74,7 @@ namespace slsm
     {
         // Make sure the heap isn't empty.
         errno = 0;
-        lsm_check(heapLength != 0, "pop: Heap is empty!");
+        slsm_check(heapLength != 0, "pop: Heap is empty!");
 
         // Remove entry from heap.
         address_                = address[heap[0]];
@@ -208,7 +208,7 @@ namespace slsm
     {
         // Make sure the heap isn't empty.
         errno = 0;
-        lsm_check(heapLength != 0, "peek: Heap is empty!");
+        slsm_check(heapLength != 0, "peek: Heap is empty!");
 
         return distance[heap[0]];
 
@@ -239,7 +239,7 @@ namespace slsm
                     double childDistance = distance[heap[children[j]]];
 
                     errno = 0;
-                    lsm_check(parentDistance <= childDistance, "Heap invariant violation.");
+                    slsm_check(parentDistance <= childDistance, "Heap invariant violation.");
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace slsm
         // Test for backpointer consistency.
         for (unsigned int i=0;i<heapLength;i++)
         {
-            lsm_check(backPointer[heap[i]] == i, "Heap backpointer inconsistency.");
+            slsm_check(backPointer[heap[i]] == i, "Heap backpointer inconsistency.");
         }
 
         return;

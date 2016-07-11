@@ -42,10 +42,10 @@ int testPush()
         heap.push(i, value);
 
         // Check that heap size is correct.
-        lsm_check(heap.size() == unsigned(i + 1), "Heap push: incorrect heap size!");
+        slsm_check(heap.size() == unsigned(i + 1), "Heap push: incorrect heap size!");
 
         // Check that new value has sifted to the top of the heap.
-        lsm_check(heap.peek() == value, "Heap push: incorrect value at top of heap!");
+        slsm_check(heap.peek() == value, "Heap push: incorrect value at top of heap!");
     }
 
     return 0;
@@ -94,7 +94,7 @@ int testPop()
         heap.pop(addr, value);
 
         // Make sure that values are in ascending order.
-        lsm_check(value == sorted[i], "Heap pop: incorrect value!");
+        slsm_check(value == sorted[i], "Heap pop: incorrect value!");
     }
 
     return 0;
@@ -138,7 +138,7 @@ int testSet()
     errno = 0;
 
     // Check that top entry is correct.
-    lsm_check(heap.peek() == -100, "Heap set: incorrect value!");
+    slsm_check(heap.peek() == -100, "Heap set: incorrect value!");
 
     return 0;
 

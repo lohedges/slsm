@@ -54,18 +54,18 @@ int testBoundaryPoints()
     boundary.discretise();
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Check the positions of the boundary points.
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 2:
     // Vertical boundary cutting through the middle of the element.
@@ -82,18 +82,18 @@ int testBoundaryPoints()
     boundary.discretise();
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Check the positions of the boundary points.
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 3:
     // Two boundary segements cutting through upper and lower triangles.
@@ -110,26 +110,26 @@ int testBoundaryPoints()
     boundary.discretise();
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
 
     // Check the positions of the boundary points.
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    lsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    lsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Sub test 4:
     // An element with a single segment formed from the diagonal between
@@ -151,12 +151,12 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     return 0;
 
@@ -201,19 +201,19 @@ int testBoundarySegments()
     boundary.discretise();
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Check the boundary segment.
 
     // Start point.
-    lsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    lsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
-    lsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
 
     // Sub test 2:
     // Boundary segment running from zero contour at lower left node to a boundary
@@ -233,8 +233,8 @@ int testBoundarySegments()
     boundary.discretise();
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Check the boundary segment.
     // The start point will be the boundary point lying between nodes 1 and 2 on
@@ -242,13 +242,13 @@ int testBoundarySegments()
     // the lower left node of the grid.
 
     // Start point.
-    lsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    lsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
-    lsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
 
     // Sub test 2:
     // An element with a single segment formed from the diagonal between
@@ -270,17 +270,17 @@ int testBoundarySegments()
     // Check the boundary segment. The single boundary segment should lie
     // along the diagonal between nodes 0 and 3 (which lie on the zero contour).
 
-    lsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 1), "The number of boundary segments is incorrect!");
 
     // Start point.
-    lsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].start == 0), "Start point of segment 0 is incorrect!");
 
     // End point.
-    lsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].end == 1), "End point of segment 0 is incorrect!");
 
     // Element.
-    lsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
+    slsm_check((boundary.segments[0].element == 0), "Element of segment 0 is incorrect!");
 
     return 0;
 
@@ -320,26 +320,26 @@ int testBoundarySymmetry()
     // Boundary should cut diagonally through the upper and lower triangles of the element.
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
 
     // Check the positions of the boundary points.
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    lsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    lsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Invert the signed distance function.
     for (unsigned int i=0;i<4;i++)
@@ -351,24 +351,24 @@ int testBoundarySymmetry()
     // Boundary points should be unchanged.
 
     // Check the number of points and segments.
-    lsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
-    lsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
+    slsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
+    slsm_check((boundary.nSegments == 2), "The number of boundary segments is incorrect!");
 
     // First point.
-    lsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    lsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     // Third point.
-    lsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.x - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[2].coord.y - 1) < 1e-6), "Position of boundary point is incorrect!");
 
     // Fourth point.
-    lsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    lsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[3].coord.y - 0.5) < 1e-6), "Position of boundary point is incorrect!");
 
     return 0;
 
@@ -410,29 +410,29 @@ int testConnectivity()
     // Check connectivity between nodes and boundary points.
 
     // First node.
-    lsm_check((mesh.nodes[0].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 0!");
-    lsm_check((mesh.nodes[0].boundaryPoints[0] == 0), "Boundary point 0 of node 0 is incorrect!");
-    lsm_check((mesh.nodes[0].boundaryPoints[1] == 3), "Boundary point 1 of node 0 is incorrect!");
+    slsm_check((mesh.nodes[0].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 0!");
+    slsm_check((mesh.nodes[0].boundaryPoints[0] == 0), "Boundary point 0 of node 0 is incorrect!");
+    slsm_check((mesh.nodes[0].boundaryPoints[1] == 3), "Boundary point 1 of node 0 is incorrect!");
 
     // Second node.
-    lsm_check((mesh.nodes[1].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 1!");
-    lsm_check((mesh.nodes[1].boundaryPoints[0] == 0), "Boundary point 0 of node 1 is incorrect!");
-    lsm_check((mesh.nodes[1].boundaryPoints[1] == 1), "Boundary point 1 of node 1 is incorrect!");
+    slsm_check((mesh.nodes[1].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 1!");
+    slsm_check((mesh.nodes[1].boundaryPoints[0] == 0), "Boundary point 0 of node 1 is incorrect!");
+    slsm_check((mesh.nodes[1].boundaryPoints[1] == 1), "Boundary point 1 of node 1 is incorrect!");
 
     // Third node.
-    lsm_check((mesh.nodes[2].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 2!");
-    lsm_check((mesh.nodes[2].boundaryPoints[0] == 2), "Boundary point 0 of node 2 is incorrect!");
-    lsm_check((mesh.nodes[2].boundaryPoints[1] == 3), "Boundary point 1 of node 2 is incorrect!");
+    slsm_check((mesh.nodes[2].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 2!");
+    slsm_check((mesh.nodes[2].boundaryPoints[0] == 2), "Boundary point 0 of node 2 is incorrect!");
+    slsm_check((mesh.nodes[2].boundaryPoints[1] == 3), "Boundary point 1 of node 2 is incorrect!");
 
     // Fourth node.
-    lsm_check((mesh.nodes[3].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 3!");
-    lsm_check((mesh.nodes[3].boundaryPoints[0] == 1), "Boundary point 0 of node 3 is incorrect!");
-    lsm_check((mesh.nodes[3].boundaryPoints[1] == 2), "Boundary point 1 of node 3 is incorrect!");
+    slsm_check((mesh.nodes[3].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 3!");
+    slsm_check((mesh.nodes[3].boundaryPoints[0] == 1), "Boundary point 0 of node 3 is incorrect!");
+    slsm_check((mesh.nodes[3].boundaryPoints[1] == 2), "Boundary point 1 of node 3 is incorrect!");
 
     // Check boundary segment connectivity.
-    lsm_check((mesh.elements[0].nBoundarySegments == 2), "Incorrect number of boundary segments for node 0!");
-    lsm_check((mesh.elements[0].boundarySegments[0] == 0), "Boundary segment 0 of element 0 is incorrect!");
-    lsm_check((mesh.elements[0].boundarySegments[1] == 1), "Boundary segment 1 of element 0 is incorrect!");
+    slsm_check((mesh.elements[0].nBoundarySegments == 2), "Incorrect number of boundary segments for node 0!");
+    slsm_check((mesh.elements[0].boundarySegments[0] == 0), "Boundary segment 0 of element 0 is incorrect!");
+    slsm_check((mesh.elements[0].boundarySegments[1] == 1), "Boundary segment 1 of element 0 is incorrect!");
 
     return 0;
 
@@ -476,7 +476,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    lsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 2:
     // Vertical boundary cutting through the middle of the element.
@@ -496,7 +496,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    lsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 3:
     // Zero contour along diagonal.
@@ -516,7 +516,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    lsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 4:
     // Zero contour along diagonal in top right quadrant.
@@ -537,7 +537,7 @@ int testAreaFraction()
 
     // Check the element area.
     // Full element minus half a quarter element, i.e. 1.0 - 1/8 = 0.875.
-    lsm_check((mesh.elements[0].area == 0.875), "Element area fraction is incorrect!");
+    slsm_check((mesh.elements[0].area == 0.875), "Element area fraction is incorrect!");
 
     // Sub test 4:
     // Invert the level set variables from sub-test 3.
@@ -558,7 +558,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check the element area.
-    lsm_check((mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");
+    slsm_check((mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");
 
     return 0;
 

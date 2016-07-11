@@ -34,8 +34,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -70,8 +70,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -106,8 +106,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -142,8 +142,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -186,8 +186,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -230,8 +230,8 @@ namespace slsm
         int size = 0.2*mesh.nNodes;
 
         errno = EINVAL;
-        lsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
-        lsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(bandWidth > 2, "Width of the narrow band must be greater than 2.");
+        slsm_check(((moveLimit > 0) && (moveLimit < 1)), "Move limit must be between 0 and 1.");
 
         // Resize data structures.
         signedDistance.resize(mesh.nNodes);
@@ -393,7 +393,7 @@ namespace slsm
         double dx, dy;
 
         // Check that mesh is large enough.
-        lsm_check(((nx > 2) && (ny > 2)), "Mesh is too small for Swiss cheese initialisation.");
+        slsm_check(((nx > 2) && (ny > 2)), "Mesh is too small for Swiss cheese initialisation.");
 
         // Initialise hole separations.
         dx = ((double) mesh.width / (2 * nx));

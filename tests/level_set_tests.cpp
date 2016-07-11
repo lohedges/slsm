@@ -51,39 +51,39 @@ int testSignedDistance()
     errno = 0;
 
     // Check that corner nodes lie on outer domain boundary.
-    lsm_check((levelSet.signedDistance[0] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[10] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[110] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[120] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[0] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[10] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[110] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[120] == 0), "Signed distance mismatch!");
 
     // Check points on hole surface.
-    lsm_check((levelSet.signedDistance[57] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[63] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[27] == 0), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[93] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[57] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[63] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[27] == 0), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[93] == 0), "Signed distance mismatch!");
 
     // Check points between hole surface and outer domain (inside structure).
-    lsm_check((levelSet.signedDistance[56] == 1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[64] == 1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[16] == 1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[104] == 1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[56] == 1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[64] == 1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[16] == 1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[104] == 1), "Signed distance mismatch!");
 
     // Check points inside hole (outside structure).
-    lsm_check((levelSet.signedDistance[58] == -1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[62] == -1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[38] == -1), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[82] == -1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[58] == -1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[62] == -1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[38] == -1), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[82] == -1), "Signed distance mismatch!");
 
     // Check points two nodes diagonally inside the mesh corners.
     // These should lie inside the structure by a distance equal to d.
-    lsm_check((levelSet.signedDistance[24] == d), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[30] == d), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[90] == d), "Signed distance mismatch!");
-    lsm_check((levelSet.signedDistance[96] == d), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[24] == d), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[30] == d), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[90] == d), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[96] == d), "Signed distance mismatch!");
 
     // Check central node. This should be have signed distance
     // of minus the hole radius.
-    lsm_check((levelSet.signedDistance[60] == -hole.r), "Signed distance mismatch!");
+    slsm_check((levelSet.signedDistance[60] == -hole.r), "Signed distance mismatch!");
 
     return 0;
 

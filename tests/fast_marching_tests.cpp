@@ -56,7 +56,7 @@ int testUpwindFiniteDifference()
 
     // Check signed distance against expected values.
     for (unsigned int i=0;i<mesh.nNodes;i++)
-        lsm_check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
+        slsm_check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
 
     return 0;
 

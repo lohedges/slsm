@@ -185,7 +185,7 @@ namespace slsm
         }
 
         errno = 0;
-        lsm_check(nFrozen > 0, "There are no frozen nodes!");
+        slsm_check(nFrozen > 0, "There are no frozen nodes!");
 
         return;
 
@@ -568,7 +568,7 @@ namespace slsm
         }
 
         errno = 0;
-        lsm_check(denominator != 0, "Divide by zero error.");
+        slsm_check(denominator != 0, "Divide by zero error.");
 
         (*velocity)[node] = numerator / denominator;
 

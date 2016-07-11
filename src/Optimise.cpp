@@ -47,7 +47,7 @@ namespace slsm
                        algorithm(algorithm_)
     {
         errno = EINVAL;
-        lsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
 
         // Store the initial number of constraints.
         nConstraints = lambdas.size() - 1;
@@ -57,7 +57,7 @@ namespace slsm
         if (constraintDistances.empty())
         {
             errno = 0;
-            lsm_log_warn("Empty constraint distances vector. Assuming unconstrained optimisation.");
+            slsm_log_warn("Empty constraint distances vector. Assuming unconstrained optimisation.");
             nConstraints = 0;
         }
 
@@ -186,7 +186,7 @@ namespace slsm
             catch (std::invalid_argument)
             {
                 errno = EINVAL;
-                lsm_log_err("Invalid arguments!");
+                slsm_log_err("Invalid arguments!");
             }
         }
 
