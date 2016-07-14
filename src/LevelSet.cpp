@@ -299,6 +299,73 @@ namespace slsm
         return false;
     }
 
+    void LevelSet::mask(const std::vector<Hole>& holes)
+    {
+        // Loop over all nodes.
+        for (unsigned int i=0;i<mesh.nNodes;i++)
+        {
+            // Loop over all holes.
+            for (unsigned int j=0;j<holes.size();j++)
+            {
+                // Work out x and y distance of the node from the hole centre.
+                double dx = holes[j].coord.x - mesh.nodes[i].coord.x;
+                double dy = holes[j].coord.y - mesh.nodes[i].coord.y;
+
+                // Work out distance (Pythag).
+                double dist = sqrt(dx*dx + dy*dy);
+
+                // Point is inside the hole.
+                if (dist < signedDistance[i])
+                {
+                    signedDistance[i] = -1e-6;
+                    mesh.nodes[i].isMasked = true;
+                }
+            }
+        }
+
+        // Reinitialise to a signed distance function.
+        reinitialise();
+    }
+
+    void LevelSet::mask(const std::vector<Coord>& points)
+    {
+        // Mask off a rectangular region.
+        if (points.size() == 2)
+        {
+            // Loop over all nodes.
+            for (unsigned int i=0;i<mesh.nNodes;i++)
+            {
+                // Point is inside the rectangle.
+                if (mesh.nodes[i].coord.x > points[0].x &&
+                    mesh.nodes[i].coord.y > points[0].y &&
+                    mesh.nodes[i].coord.x < points[1].x &&
+                    mesh.nodes[i].coord.y < points[1].y)
+                {
+                    signedDistance[i] = -1e-6;
+                    mesh.nodes[i].isMasked = true;
+                }
+            }
+        }
+
+        // Mask off a piece-wise linear shape.
+        else
+        {
+            // Loop over all nodes.
+            for (unsigned int i=0;i<mesh.nNodes;i++)
+            {
+                // Point is inside the polygon.
+                if (isInsidePolygon(mesh.nodes[i].coord, points))
+                {
+                    signedDistance[i] = -1e-6;
+                    mesh.nodes[i].isMasked = true;
+                }
+            }
+        }
+
+        // Reinitialise to a signed distance function.
+        reinitialise();
+    }
+
     void LevelSet::computeVelocities(const std::vector<BoundaryPoint>& boundaryPoints)
     {
         // Initialise velocity (map boundary points to boundary nodes).
@@ -533,9 +600,14 @@ namespace slsm
         // Loop over all nodes.
         for (unsigned int i=0;i<mesh.nNodes;i++)
         {
-            // Check that the node isn't on the domain boundary, and if it is
-            // then check that the boundary isn't fixed.
-            if (!mesh.nodes[i].isDomain || !isFixed)
+            // Flag node as inactive.
+            mesh.nodes[i].isActive = false;
+
+            /* Check that the node isn't in a masked region. If it's not, then check
+               whether it lies on the domain boundary, and if it does then check that
+               the boundary isn't fixed.
+             */
+            if (!mesh.nodes[i].isMasked && (!mesh.nodes[i].isDomain || !isFixed))
             {
                 // Absolute value of the signed distance function.
                 double absoluteSignedDistance = std::abs(signedDistance[i]);
@@ -567,12 +639,6 @@ namespace slsm
                         // TODO:
                         // Check when number of mines exceeds array size!
                     }
-                }
-                // Node is outside band.
-                else
-                {
-                    // Flag node as inactive.
-                    mesh.nodes[i].isActive = false;
                 }
             }
         }

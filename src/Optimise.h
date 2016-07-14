@@ -23,7 +23,6 @@
  */
 
 #include <iostream>
-#include <limits>
 #include <nlopt.hpp>
 
 #include "Boundary.h"

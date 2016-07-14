@@ -156,6 +156,9 @@ namespace slsm
             // Mark node as in bulk.
             nodes[i].isDomain = false;
 
+            // Mark node as unmasked.
+            nodes[i].isMasked = false;
+
             // Zero number of connected elements.
             nodes[i].nElements = 0;
 

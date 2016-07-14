@@ -190,6 +190,18 @@ namespace slsm
          */
         bool update(double);
 
+        //! Mask off a region of the domain.
+        /*! param holes
+                A reference to a vector of holes.
+         */
+        void mask(const std::vector<Hole>&);
+
+        //! Mask off a region of the domain.
+        /*! param points
+                A reference to a vector of points.
+         */
+        void mask(const std::vector<Coord>&);
+
         //! Reinitialise the level set to a signed distance function.
         void reinitialise();
 

@@ -52,7 +52,6 @@ namespace slsm
             INSIDE          = (1 << 0),         //!< Node lies inside the boundary.
             OUTSIDE         = (1 << 1),         //!< Node lies outside the boundary.
             BOUNDARY        = (1 << 2),         //!< Node lies on the boundary.
-            MASKED          = (1 << 3),         //!< Node is masked (for inserting obstacles, etc.)
             CUT             = (INSIDE|OUTSIDE), //!< Node pair is cut by the boundary.
         };
     }
@@ -93,6 +92,7 @@ namespace slsm
         unsigned int nBoundaryPoints;           //!< The number of boundary points associated with the node.
         bool isActive;                          //!< Whether the node is active (part of narrow band, and not fixed).
         bool isDomain;                          //!< Whether the node lies on the domain boundary.
+        bool isMasked;                          //!< Whether the node lies in a masked region.
         bool isMine;                            //!< Whether the node lies on the edge of the narrow band.
         NodeStatus::NodeStatus status;          //!< Whether node is outside, inside, or on the boundary.
     };

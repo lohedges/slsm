@@ -267,9 +267,13 @@ namespace slsm
             // Loop over all boundary points.
             for (unsigned int j=0;j<nPoints;j++)
             {
-                // Test whether sensitivity magnitude is current maximum.
-                double sens = std::abs(boundaryPoints[j].sensitivities[i]);
-                if (sens > maxSens) maxSens = sens;
+                // Don't consider fixed points.
+                if (!boundaryPoints[j].isFixed)
+                {
+                    // Test whether sensitivity magnitude is current maximum.
+                    double sens = std::abs(boundaryPoints[j].sensitivities[i]);
+                    if (sens > maxSens) maxSens = sens;
+                }
             }
 
             // Store scale factor.
@@ -328,25 +332,29 @@ namespace slsm
             // Integrate over boundary points.
             for (unsigned int j=0;j<nPoints;j++)
             {
-                if (boundaryPoints[j].sensitivities[i+1] > 0)
+                // Don't consider fixed points.
+                if (!boundaryPoints[j].isFixed)
                 {
-                    min += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].negativeLimit;
+                    if (boundaryPoints[j].sensitivities[i+1] > 0)
+                    {
+                        min += boundaryPoints[j].sensitivities[i+1]
+                            * boundaryPoints[j].length
+                            * boundaryPoints[j].negativeLimit;
 
-                    max += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].positiveLimit;
-                }
-                else
-                {
-                    min += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].positiveLimit;
+                        max += boundaryPoints[j].sensitivities[i+1]
+                            * boundaryPoints[j].length
+                            * boundaryPoints[j].positiveLimit;
+                    }
+                    else
+                    {
+                        min += boundaryPoints[j].sensitivities[i+1]
+                            * boundaryPoints[j].length
+                            * boundaryPoints[j].positiveLimit;
 
-                    max += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].negativeLimit;
+                        max += boundaryPoints[j].sensitivities[i+1]
+                            * boundaryPoints[j].length
+                            * boundaryPoints[j].negativeLimit;
+                    }
                 }
             }
 
@@ -414,17 +422,17 @@ namespace slsm
     void Optimise::computeLambdaLimits()
     {
         /* The lambda limits are set by computing the minimum displacement
-           that violates the CFL condition independently for each function, i.e.
-           when setting other lambda values equal to zero.
+        that violates the CFL condition independently for each function, i.e.
+        when setting other lambda values equal to zero.
 
-           In this case the displacement for a given function is simply
+        In this case the displacement for a given function is simply
 
-             z = lambda x sensitivity
+            z = lambda x sensitivity
 
-           and the largest lambda that doesn't trigger the CFL limit is
+        and the largest lambda that doesn't trigger the CFL limit is
 
-             lambda = CFL / max(abs(sensitivity))
-         */
+            lambda = CFL / max(abs(sensitivity))
+        */
 
         // Loop over objective and constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
@@ -432,22 +440,42 @@ namespace slsm
             // Remap the sensitivity index: active --> original
             unsigned int k = indexMap[i];
 
-            // Initialise max sensitivity.
-            double maxSens = std::numeric_limits<double>::min();
+            // Initialise limits.
+            negativeLambdaLimits[i] = positiveLambdaLimits[i] = 0;
 
             // Loop over all boundary points.
             for (unsigned int j=0;j<boundaryPoints.size();j++)
             {
-                // Take absolute sensitivity.
-                double sens = std::abs(boundaryPoints[j].sensitivities[k]);
+                // Don't consider fixed points.
+                if (!boundaryPoints[j].isFixed)
+                {
+                    // Store sensitivity.
+                    double sens = boundaryPoints[j].sensitivities[k];
 
-                // Check max sensitivity.
-                if (sens > maxSens) maxSens = sens;
+                    // Initialise min and max displacements.
+                    double minDisp, maxDisp;
+
+                    // Set limits depending on sign of the sensitivity.
+                    if (sens > 0)
+                    {
+                        minDisp = boundaryPoints[j].negativeLimit / sens;
+                        maxDisp = boundaryPoints[j].positiveLimit / sens;
+                    }
+                    else
+                    {
+                        maxDisp = boundaryPoints[j].negativeLimit / sens;
+                        minDisp = boundaryPoints[j].positiveLimit / sens;
+                    }
+
+                    // Update limits.
+
+                    if (maxDisp > positiveLambdaLimits[i])
+                        positiveLambdaLimits[i] = maxDisp;
+
+                    if (minDisp < negativeLambdaLimits[i])
+                        negativeLambdaLimits[i] = minDisp;
+                }
             }
-
-            // Store limits.
-            negativeLambdaLimits[i] = -maxDisplacement / maxSens;
-            positiveLambdaLimits[i] =  maxDisplacement / maxSens;
 
             // Scale limits.
             negativeLambdaLimits[i] /= scaleFactors[i];
@@ -470,30 +498,34 @@ namespace slsm
         // Loop over all boundary points.
         for (unsigned int i=0;i<nPoints;i++)
         {
-            // Reset side limit flag.
-            isSideLimit[i] = false;
-
-            // Initialise component for objective.
-            displacements[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
-
-            // Add components for active constraints.
-            for (unsigned int j=1;j<nConstraints+1;j++)
+            // Don't consider fixed points.
+            if (!boundaryPoints[i].isFixed)
             {
-                // Remap the sensitivity index: active --> original
-                unsigned int k = indexMap[j];
+                // Reset side limit flag.
+                isSideLimit[i] = false;
 
-                // Update displacement vector.
-                displacements[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[k];
-            }
+                // Initialise component for objective.
+                displacements[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
 
-            // Check side limits if point lies close to domain boundary.
-            if (boundaryPoints[i].isDomain)
-            {
-                // Apply side limit.
-                if (displacements[i] < boundaryPoints[i].negativeLimit)
+                // Add components for active constraints.
+                for (unsigned int j=1;j<nConstraints+1;j++)
                 {
-                    displacements[i] = boundaryPoints[i].negativeLimit;
-                    isSideLimit[i] = true;
+                    // Remap the sensitivity index: active --> original
+                    unsigned int k = indexMap[j];
+
+                    // Update displacement vector.
+                    displacements[i] += scaleFactors[j] * lambda[j] * boundaryPoints[i].sensitivities[k];
+                }
+
+                // Check side limits if point lies close to domain boundary.
+                if (boundaryPoints[i].isDomain)
+                {
+                    // Apply side limit.
+                    if (displacements[i] < boundaryPoints[i].negativeLimit)
+                    {
+                        displacements[i] = boundaryPoints[i].negativeLimit;
+                        isSideLimit[i] = true;
+                    }
                 }
             }
         }
@@ -511,7 +543,11 @@ namespace slsm
 
         // Integrate function over boundary points.
         for (unsigned int i=0;i<nPoints;i++)
-            func += (scaleFactors[index] * displacements[i] * boundaryPoints[i].sensitivities[j] * boundaryPoints[i].length);
+        {
+            // Don't consider fixed points.
+            if (!boundaryPoints[i].isFixed)
+                func += (scaleFactors[index] * displacements[i] * boundaryPoints[i].sensitivities[j] * boundaryPoints[i].length);
+        }
 
         if (index == 0) return func;
         else return (func - (scaleFactors[index] * constraintDistancesScaled[index - 1]));
@@ -556,28 +592,32 @@ namespace slsm
         // Loop over all points.
         for (unsigned int i=0;i<nPoints;i++)
         {
-            // Loop over all functions (objective, then constraints).
-            for (unsigned int j=0;j<nConstraints+1;j++)
+            // Don't consider fixed points.
+            if (!boundaryPoints[i].isFixed)
             {
-                // Remap the sensitivity index: active --> original
-                unsigned int k = indexMap[j];
-
-                // Scale factor.
-                double scaleFactor = scaleFactors[index] * scaleFactors[k];
-
-                if (!isSideLimit[i])
+                // Loop over all functions (objective, then constraints).
+                for (unsigned int j=0;j<nConstraints+1;j++)
                 {
-                    gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                * boundaryPoints[i].sensitivities[k]
-                                * boundaryPoints[i].length
-                                * scaleFactor);
-                }
-                else if (isOrigin)
-                {
-                    gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                * boundaryPoints[i].sensitivities[k]
-                                * boundaryPoints[i].length
-                                * 0.5 * scaleFactor);
+                    // Remap the sensitivity index: active --> original
+                    unsigned int k = indexMap[j];
+
+                    // Scale factor.
+                    double scaleFactor = scaleFactors[index] * scaleFactors[k];
+
+                    if (!isSideLimit[i])
+                    {
+                        gradient[k] += (boundaryPoints[i].sensitivities[index]
+                                    * boundaryPoints[i].sensitivities[k]
+                                    * boundaryPoints[i].length
+                                    * scaleFactor);
+                    }
+                    else if (isOrigin)
+                    {
+                        gradient[k] += (boundaryPoints[i].sensitivities[index]
+                                    * boundaryPoints[i].sensitivities[k]
+                                    * boundaryPoints[i].length
+                                    * 0.5 * scaleFactor);
+                    }
                 }
             }
         }
@@ -597,18 +637,22 @@ namespace slsm
         // Loop over all boundary points.
         for (unsigned int i=0;i<nPoints;i++)
         {
-            // Absolute displacement.
-            double disp = std::abs(displacements[i]);
-
-            // Displacement exceeds the CFL limit.
-            if (disp > maxDisplacement)
+            // Don't consider fixed points.
+            if (!boundaryPoints[i].isFixed)
             {
-                // Check if current maximum is exceeded.
-                if (disp > maxDisp)
+                // Absolute displacement.
+                double disp = std::abs(displacements[i]);
+
+                // Displacement exceeds the CFL limit.
+                if (disp > maxDisplacement)
                 {
-                    // Store maximum displacement and scaling factor.
-                    maxDisp = disp;
-                    scale = maxDisplacement / maxDisp;
+                    // Check if current maximum is exceeded.
+                    if (disp > maxDisp)
+                    {
+                        // Store maximum displacement and scaling factor.
+                        maxDisp = disp;
+                        scale = maxDisplacement / maxDisp;
+                    }
                 }
             }
         }

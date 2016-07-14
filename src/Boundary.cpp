@@ -79,8 +79,11 @@ namespace slsm
                     // Convert to node index.
                     n2 = levelSet.mesh.elements[i].nodes[n2];
 
-                    // Check that both nodes are inside the narrow band region (only for non-target discretisation).
-                    if (isTarget || (levelSet.mesh.nodes[n1].isActive && levelSet.mesh.nodes[n2].isActive))
+                    // If not performing discretisation of a target structure check that at least
+                    // one node lies in the narrow band region, or is masked.
+                    if (isTarget ||
+                    (levelSet.mesh.nodes[n1].isActive | levelSet.mesh.nodes[n1].isMasked) ||
+                    (levelSet.mesh.nodes[n2].isActive | levelSet.mesh.nodes[n2].isMasked))
                     {
                         // One node is inside, the other is outside. The edge is cut.
                         if ((levelSet.mesh.nodes[n1].status|levelSet.mesh.nodes[n2].status) == NodeStatus::CUT)
@@ -805,6 +808,7 @@ namespace slsm
         point.nSegments = 0;
         point.nNeighbours = 0;
         point.isDomain = false;
+        point.isFixed = false;
 
         // Assume two sensitivities to start with (objective and a single constraint).
         point.sensitivities.resize(2);
@@ -834,6 +838,31 @@ namespace slsm
             // Point is exactly on domain boundary.
             if (minBoundary < 1e-6)
                 point.isDomain = true;
+        }
+
+        // Index of nearest node on the mesh.
+        unsigned int node = levelSet.mesh.getClosestNode(coord);
+
+        // Check to see if point lies on, or near, a masked region.
+        if (levelSet.mesh.nodes[node].isMasked)
+        {
+            // Distance to masked node.
+            double dx = levelSet.mesh.nodes[node].coord.x - coord.x;
+            double dy = levelSet.mesh.nodes[node].coord.y - coord.y;
+
+            // Lies on the masked node.
+            if ((std::abs(dx) < 1e-6) && (std::abs(dy) < 1e-6))
+                point.isFixed = true;
+
+            // Update negative move limit.
+            else
+            {
+                // Work out distance to the node.
+                double d = sqrt(dx*dy + dy*dy);
+
+                // Update negative move limit.
+                if (-d > point.negativeLimit) point.negativeLimit = -d;
+            }
         }
     }
 

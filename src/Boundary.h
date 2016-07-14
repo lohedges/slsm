@@ -42,6 +42,7 @@ namespace slsm
         double negativeLimit;               //!< Movement limit in negative direction (inwards).
         double positiveLimit;               //!< Movement limit in positive direction (outwards).
         bool isDomain;                      //!< Whether the point lies close to the domain boundary.
+        bool isFixed;                       //!< Whether the point fixed.
         unsigned int nSegments;             //!< The number of boundary segments that a point belongs to.
         unsigned int segments[2];           //!< The indices of the two segments to which a point belongs.
         unsigned int neighbours[2];         //!< The indices of the neighbouring points.
