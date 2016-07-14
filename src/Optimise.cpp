@@ -491,6 +491,12 @@ namespace slsm
             while (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] *= 0.9;
             while (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] *= 0.9;
         }
+
+        /* Check for a zero negative lambda limit for the objective function.
+           This can occur for compliance minimisation when the initial domain
+           is completely filled.
+         */
+        if (negativeLambdaLimits[0] == 0) negativeLambdaLimits[0] = -1e-2;
     }
 
     void Optimise::computeDisplacements(const std::vector<double>& lambda)
