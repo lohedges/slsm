@@ -73,7 +73,7 @@ double upperLobeCentre;                     // The y coordinate of the upper dum
 double lowerLobeCentre;                     // The y coordinate of the lower dumbbell lobe.
 double lobeSeparation;                      // The vertical separation between dumbbell lobes.
 double reduce = 0.7;                        // Sensitivity reduction factor.
-std::vector<slsm::BoundaryPoint>* points;    // Pointer to the boundary points vector.
+std::vector<slsm::BoundaryPoint>* points;   // Pointer to the boundary points vector.
 
 // MAIN FUNCTION
 

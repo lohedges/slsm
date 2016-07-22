@@ -298,7 +298,7 @@ namespace slsm
         }
     }
 
-    void Optimise::computeConstraintDistances()
+	void Optimise::computeConstraintDistances()
     {
         /* If we are far from satisfying the constraint then we need
            to scale the constraint distance so that it can be "satisfied"
@@ -310,6 +310,14 @@ namespace slsm
            problem. Here we create a map between indices for the vector of active
            constraints and the original constraints
            vector.
+
+           Note that the constraint change estimates are computed by assuming
+           that all boundary points are displaced to their maximum displacement
+           limits. In reality this isn't the case: each point moves a distance
+           that is proportional to its sensitivity, hence the overall constraint
+           change will be lower. As such, this estimate can be used as an upper
+           bound. In practice, 20% of the limits has been found to be effective
+           in a wide range of problems.
          */
 
         // Initialise the index map.
@@ -332,29 +340,25 @@ namespace slsm
             // Integrate over boundary points.
             for (unsigned int j=0;j<nPoints;j++)
             {
-                // Don't consider fixed points.
-                if (!boundaryPoints[j].isFixed)
+                if (boundaryPoints[j].sensitivities[i+1] > 0)
                 {
-                    if (boundaryPoints[j].sensitivities[i+1] > 0)
-                    {
-                        min += boundaryPoints[j].sensitivities[i+1]
-                            * boundaryPoints[j].length
-                            * boundaryPoints[j].negativeLimit;
+                    min += boundaryPoints[j].sensitivities[i+1]
+                        * boundaryPoints[j].length
+                        * boundaryPoints[j].negativeLimit;
 
-                        max += boundaryPoints[j].sensitivities[i+1]
-                            * boundaryPoints[j].length
-                            * boundaryPoints[j].positiveLimit;
-                    }
-                    else
-                    {
-                        min += boundaryPoints[j].sensitivities[i+1]
-                            * boundaryPoints[j].length
-                            * boundaryPoints[j].positiveLimit;
+                    max += boundaryPoints[j].sensitivities[i+1]
+                        * boundaryPoints[j].length
+                        * boundaryPoints[j].positiveLimit;
+                }
+                else
+                {
+                    min += boundaryPoints[j].sensitivities[i+1]
+                        * boundaryPoints[j].length
+                        * boundaryPoints[j].positiveLimit;
 
-                        max += boundaryPoints[j].sensitivities[i+1]
-                            * boundaryPoints[j].length
-                            * boundaryPoints[j].negativeLimit;
-                    }
+                    max += boundaryPoints[j].sensitivities[i+1]
+                        * boundaryPoints[j].length
+                        * boundaryPoints[j].negativeLimit;
                 }
             }
 
@@ -422,17 +426,17 @@ namespace slsm
     void Optimise::computeLambdaLimits()
     {
         /* The lambda limits are set by computing the minimum displacement
-        that violates the CFL condition independently for each function, i.e.
-        when setting other lambda values equal to zero.
+           that violates the CFL condition independently for each function, i.e.
+           when setting other lambda values equal to zero.
 
-        In this case the displacement for a given function is simply
+           In this case the displacement for a given function is simply
 
-            z = lambda x sensitivity
+             z = lambda x sensitivity
 
-        and the largest lambda that doesn't trigger the CFL limit is
+           and the largest lambda that doesn't trigger the CFL limit is
 
-            lambda = CFL / max(abs(sensitivity))
-        */
+             lambda = CFL / max(abs(sensitivity))
+         */
 
         // Loop over objective and constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
@@ -440,42 +444,22 @@ namespace slsm
             // Remap the sensitivity index: active --> original
             unsigned int k = indexMap[i];
 
-            // Initialise limits.
-            negativeLambdaLimits[i] = positiveLambdaLimits[i] = 0;
+            // Initialise max sensitivity.
+            double maxSens = std::numeric_limits<double>::min();
 
             // Loop over all boundary points.
             for (unsigned int j=0;j<boundaryPoints.size();j++)
             {
-                // Don't consider fixed points.
-                if (!boundaryPoints[j].isFixed)
-                {
-                    // Store sensitivity.
-                    double sens = boundaryPoints[j].sensitivities[k];
+                // Take absolute sensitivity.
+                double sens = std::abs(boundaryPoints[j].sensitivities[k]);
 
-                    // Initialise min and max displacements.
-                    double minDisp, maxDisp;
-
-                    // Set limits depending on sign of the sensitivity.
-                    if (sens > 0)
-                    {
-                        minDisp = boundaryPoints[j].negativeLimit / sens;
-                        maxDisp = boundaryPoints[j].positiveLimit / sens;
-                    }
-                    else
-                    {
-                        maxDisp = boundaryPoints[j].negativeLimit / sens;
-                        minDisp = boundaryPoints[j].positiveLimit / sens;
-                    }
-
-                    // Update limits.
-
-                    if (maxDisp > positiveLambdaLimits[i])
-                        positiveLambdaLimits[i] = maxDisp;
-
-                    if (minDisp < negativeLambdaLimits[i])
-                        negativeLambdaLimits[i] = minDisp;
-                }
+                // Check max sensitivity.
+                if (sens > maxSens) maxSens = sens;
             }
+
+            // Store limits.
+            negativeLambdaLimits[i] = -maxDisplacement / maxSens;
+            positiveLambdaLimits[i] =  maxDisplacement / maxSens;
 
             // Scale limits.
             negativeLambdaLimits[i] /= scaleFactors[i];
@@ -491,12 +475,6 @@ namespace slsm
             while (lambdas[i] < negativeLambdaLimits[i]) lambdas[i] *= 0.9;
             while (lambdas[i] > positiveLambdaLimits[i]) lambdas[i] *= 0.9;
         }
-
-        /* Check for a zero negative lambda limit for the objective function.
-           This can occur for compliance minimisation when the initial domain
-           is completely filled.
-         */
-        if (negativeLambdaLimits[0] == 0) negativeLambdaLimits[0] = -1e-2;
     }
 
     void Optimise::computeDisplacements(const std::vector<double>& lambda)
@@ -691,7 +669,7 @@ namespace slsm
          */
 
         // Success.
-        if (returnCode == 1) std::cout << "[INFO] Success: Generic success return value.\n";
+        if (returnCode == 1)      std::cout << "[INFO] Success: Generic success return value.\n";
         else if (returnCode == 2) std::cout << "[INFO] Success: stopval was reached.\n";
         else if (returnCode == 3) std::cout << "[INFO] Success: ftol_rel or ftol_abs was reached.\n";
         else if (returnCode == 4) std::cout << "[INFO] Success: xtol_rel or xtol_abs was reached.\n";
