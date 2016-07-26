@@ -48,6 +48,7 @@ namespace slsm
     {
         errno = EINVAL;
         slsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(boundaryPoints.size() > 0, "There are no boundary points.");
 
         // Store the initial number of constraints.
         nConstraints = lambdas.size() - 1;
