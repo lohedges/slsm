@@ -74,13 +74,13 @@ int main(int argc, char** argv)
     double moveLimit = 0.05;
 
     // Set maximum running time.
-    double maxTime = 5000;
+    double maxTime = 3000;
 
     // Set sampling interval.
-    double sampleInterval = 50;
+    double sampleInterval = 30;
 
     // Set time of the next sample.
-    double nextSample = 50;
+    double nextSample = 30;
 
     // Initialise a 200x200 non-periodic mesh.
     slsm::Mesh mesh(200, 200, false);
