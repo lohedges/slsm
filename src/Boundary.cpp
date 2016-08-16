@@ -815,7 +815,7 @@ namespace slsm
 
         // Initialise movement limit (CFL condition).
         point.negativeLimit = -levelSet.moveLimit;
-        point.positiveLimit = levelSet.moveLimit;
+        point.positiveLimit =  levelSet.moveLimit;
 
         // Check whether point lies within the move limit of the domain boundary.
         // If so, modify the lower movement limit so that point can't move outside of
