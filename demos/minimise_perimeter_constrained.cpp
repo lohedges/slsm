@@ -55,16 +55,16 @@ int main(int argc, char** argv)
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 500;
+    double maxTime = 1000;
 
     // Set minimum material area.
     double minArea = 0.6;
 
     // Set sampling interval.
-    double sampleInterval = 5;
+    double sampleInterval = 10;
 
     // Set time of the next sample.
-    double nextSample = 5;
+    double nextSample = 10;
 
     // Initialise a 200x200 non-periodic mesh.
     slsm::Mesh mesh(200, 200, false);
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         unsigned int y = int(mesh.nodes[i].coord.y);
 
         // Cut out square hole.
-        if (x >= 80 && x <= 120 && y >= 80 && y <= 120)
+        if (x >= 60 && x <= 140 && y >= 60 && y <= 140)
             levelSet.signedDistance[i] = -1;
 
         // Fill with material.
