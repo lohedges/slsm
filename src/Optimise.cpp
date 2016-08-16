@@ -47,7 +47,7 @@ namespace slsm
                        algorithm(algorithm_)
     {
         errno = EINVAL;
-        slsm_check(((maxDisplacement_ > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(((maxDisplacement > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
         slsm_check(boundaryPoints.size() > 0, "There are no boundary points.");
 
         // Store the initial number of constraints.
@@ -102,9 +102,9 @@ namespace slsm
         displacements.resize(nPoints);
         isSideLimit.resize(nPoints);
 
-        // Compute scaled constraint change distances and remove inactive
-        // inequality constraints.
-        computeConstraintDistances();
+        // Initialise the index map.
+        indexMap.resize(nConstraints + 1);
+        std::iota(indexMap.begin(), indexMap.end(), 0);
 
         // Compute the scale factors for the objective end constraints.
         computeScaleFactors();
@@ -115,6 +115,10 @@ namespace slsm
 
         // Compute the lambda limits.
         computeLambdaLimits();
+
+        // Compute scaled constraint change distances and remove inactive
+        // inequality constraints (only if there are constraints).
+        if (nConstraints > 0) computeConstraintDistances();
 
         // Create wrapper for objective.
         NLoptWrapper objectiveWrapper;
@@ -301,77 +305,146 @@ namespace slsm
 
 	void Optimise::computeConstraintDistances()
     {
-        /* If we are far from satisfying the constraint then we need
-           to scale the constraint distance so that it can be "satisfied"
-           by simply moving in the correct direction, i.e. moving towards
-           satisying the constraint.
+        /* If we are far from satisfying the constraint then we need to scale
+           the constraint distance so that it can be "satisfied" by simply
+           moving in the correct direction, i.e. moving towards satisying
+           the constraint.
 
-           If we are well within the region where an inequality constraint
-           is satisfied, then the constraint can be removed from the optimisation
+           If we are well within the region where an inequality constraint is
+           satisfied, then the constraint can be removed from the optimisation
            problem. Here we create a map between indices for the vector of active
-           constraints and the original constraints
-           vector.
+           constraints and the original constraints vector.
 
-           Note that the constraint change estimates are computed by assuming
-           that all boundary points are displaced to their maximum displacement
-           limits. In reality this isn't the case: each point moves a distance
-           that is proportional to its sensitivity, hence the overall constraint
-           change will be lower. As such, this estimate can be used as an upper
-           bound. In practice, 20% of the limits has been found to be effective
-           in a wide range of problems.
+           Constraint change estimates are computed by evaluating boundary point
+           displacements at the vertices of the lambda search hypercube. For each
+           variable, the constraint changes are computed at each vertex, then
+           sorted into ascending order (from which the min and max change can be
+           extracted). Here we must make the assumption that all of the constraints
+           are active. There is no way to self-consistently solve for the constraint
+           change targets and remove inactive constraints, i.e. when a constraint is
+           removed it reduces the dimensionality of the optimisation problem, hence
+           the constraint change limits for all other variables are immediately
+           affected. As such, this scheme will likely work poorly for optimisation
+           problems with many constraints. The method has been shown to work well
+           for simple problems with a single constraint.
          */
-
-        // Initialise the index map.
-        indexMap.clear();
-        indexMap.push_back(0);
 
         // Number of active contraints.
         unsigned int nActive = 0;
+
+        // Whether each constraint is active.
+        std::vector<bool> isActive(nConstraints);
+
+        /*******************************************************************
+         * Generate a vector of vertex coordinates for the lambda hypercube.
+         *******************************************************************/
+
+        // The dimensionality of the hypercube.
+        unsigned int nDim = nConstraints + 1;
+
+        // The number of vertices.
+        unsigned int nVertices = std::pow(2, nDim);
+
+        // Initialise data structures.
+        std::vector<unsigned int> temp(nVertices);
+        std::vector<std::vector <bool> > vertices(nVertices);
+
+        for (unsigned int i=0;i<nVertices;i++)
+        {
+            temp[i] = i;
+            vertices[i].resize(nDim);
+        }
+
+        // Compute the vertices.
+        for (unsigned int i=0;i<nVertices;i++)
+        {
+            // Loop over all lambda dimensions.
+            for (int j=nDim-1;j>=0;j--)
+            {
+                unsigned int k = temp[i] >> j;
+
+                if (k & 1) vertices[i][j] = true;   // Positive lambda limit.
+                else       vertices[i][j] = false;  // Negative lambda limit.
+            }
+        }
+
+        /*****************************************************************
+         * Evaluate the constraint change at each vertex to deduce limits.
+         *****************************************************************/
 
         // Loop over all constraints.
         for (unsigned int i=0;i<nConstraints;i++)
         {
             // Flag constraint as active.
-            bool isActive = true;
+            isActive[i] = true;
 
-            // Min and max constraint changes.
-            double min = 0;
-            double max = 0;
+            // Vector to hold all possible constraint changes.
+            std::vector<double> constraintChanges(nVertices);
 
-            // Integrate over boundary points.
-            for (unsigned int j=0;j<nPoints;j++)
+            // Loop over all vertices.
+            for (unsigned int j=0;j<nVertices;j++)
             {
-                if (boundaryPoints[j].sensitivities[i+1] > 0)
-                {
-                    min += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].negativeLimit;
+                // Lambda vector.
+                std::vector<double> lambda(nDim);
 
-                    max += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].positiveLimit;
-                }
-                else
+                // Populate the lambda vector.
+                for (unsigned int k=0;k<nDim;k++)
                 {
-                    min += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].positiveLimit;
-
-                    max += boundaryPoints[j].sensitivities[i+1]
-                        * boundaryPoints[j].length
-                        * boundaryPoints[j].negativeLimit;
+                    if (vertices[j][k]) lambda[k] = positiveLambdaLimits[k];
+                    else                lambda[k] = negativeLambdaLimits[k];
                 }
+
+                // Compute displacement vector.
+                computeDisplacements(lambda);
+
+                double constraintChange = 0;
+
+                // Compute the constraint change.
+                for (unsigned int k=0;k<nPoints;k++)
+                {
+                    // Don't consider fixed points.
+                    if(!boundaryPoints[k].isFixed)
+                    {
+                        constraintChange += displacements[k]
+                                         * boundaryPoints[k].sensitivities[i+1]
+                                         * boundaryPoints[k].length;
+                    }
+                }
+
+                // Store the constraint change.
+                constraintChanges[j] = constraintChange;
             }
 
-            // Scale (20% is arbitrary, but seems to work well).
-            min *= 0.2;
-            max *= 0.2;
+            // Sort the constraint changes.
+            std::sort(constraintChanges.begin(), constraintChanges.end());
+
+            // Extract the min and max changes.
+            double min = constraintChanges[0];
+            double max = constraintChanges.back();
+
+            /* We reduce the limits slightly to ensure that the optimiser
+               can find a solution, i.e. the change in the constraint function
+               must be less than zero. If we take the full limit then it's possible
+               (on rare occasions) that the constraint can't be met (due to rounding,
+               and the step size of the optimiser).
+             */
+            min *= 0.99;
+            max *= 0.99;
 
             // Constraint is violated.
             if (constraintDistances[i] < 0)
             {
                 if (constraintDistances[i] < min)
-                    constraintDistancesScaled[i] = min;
+                {
+                    /* Here we reduce the constraint change target to produce a smoother
+                       approach to the constraint manifold, i.e. this allows the objective
+                       to be minimised on approach, helping to reduce unwanted artefacts,
+                       such as peeling away from domain boundaries in minimisation problems
+                       with volume constraints. The factor of 50% is arbitrary, but seems
+                       to work well.
+                     */
+                    constraintDistancesScaled[i] = 0.5*min;
+                }
             }
 
             // Constraint is satisfied.
@@ -380,14 +453,22 @@ namespace slsm
                 if (constraintDistances[i] > max)
                 {
                     // Flag inequality constraint as inactive.
-                    if (!isEquality[i]) isActive = false;
+                    if (!isEquality[i]) isActive[i] = false;
 
                     else constraintDistancesScaled[i] = max;
                 }
             }
+        }
 
+        /***********************************
+         * Remove any inactive constraints.
+         ***********************************/
+
+        // Loop over all constraints.
+        for (unsigned int i=0;i<nConstraints;i++)
+        {
             // Constraint is active.
-            if (isActive)
+            if (isActive[i])
             {
                 // Shift initial lambda estimate.
                 lambdas[nActive+1] = lambdas[i+1];
@@ -395,11 +476,17 @@ namespace slsm
                 // Shift constraint distance.
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
 
+                // Shift negative lambda limit.
+                negativeLambdaLimits[nActive] = negativeLambdaLimits[i];
+
+                // Shift positive lambda limit.
+                positiveLambdaLimits[nActive] = positiveLambdaLimits[i];
+
                 // Shift equality flag.
                 isEquality[nActive] = isEquality[i];
 
                 // Map the constraint index: active --> original
-                indexMap.push_back(i+1);
+                indexMap[nActive+1] = i + 1;
 
                 // Incremement the number of active constraints.
                 nActive++;
@@ -415,6 +502,7 @@ namespace slsm
             scaleFactors.resize(nActive + 1);
             constraintDistancesScaled.resize(nActive);
             isEquality.resize(nActive);
+            indexMap.resize(nActive);
 
             // Store the original number of constraints.
             nConstraintsInitial = nConstraints;
