@@ -455,7 +455,8 @@ namespace slsm
                     // Flag inequality constraint as inactive.
                     if (!isEquality[i]) isActive[i] = false;
 
-                    else constraintDistancesScaled[i] = max;
+                    // Reduce target for a smoother approach (see above).
+                    else constraintDistancesScaled[i] = 0.5*max;
                 }
             }
         }
