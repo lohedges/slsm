@@ -407,11 +407,11 @@ namespace slsm
 
         /* Add random noise to velocity of each boundary point.
 
-           N.B. The Ito correction scales the noise is scaled by one over the
-           square root of the boundary point length. When the length is small,
-           i.e. << 1, it's possible that the velocity will become very large,
-           leading to CFL violation. In practice, this hasn't appeared to cause
-           significant issues in a range of test systems.
+           N.B. The non-deterministic part of the Ito correction scales the noise
+           by one over the square root of the boundary point length. When the length
+           is small, i.e. << 1, it's possible that the velocity will become very large,
+           potentially leading to CFL violation. In practice, this hasn't appeared to
+           cause significant issues for a range of test systems.
          */
         for (unsigned int i=0;i<boundaryPoints.size();i++)
             boundaryPoints[i].velocity += (noise / sqrt(boundaryPoints[i].length)) * rng.normal(0, 1);
