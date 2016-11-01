@@ -157,6 +157,9 @@ int main(int argc, char** argv)
             boundary.points[i].sensitivities[1] = -1.0;
         }
 
+        // Apply deterministic Ito correction.
+        sensitivity.itoCorrection(boundary, temperature);
+
         // Time step associated with the iteration.
         double timeStep;
 

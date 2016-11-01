@@ -163,6 +163,12 @@ int main(int argc, char** argv)
         for (unsigned int i=0;i<boundary.points.size();i++)
             boundary.points[i].sensitivities[0] = computeSensitivity(boundary.points[i].coord, levelSet);
 
+        // Initialise the sensitivity object.
+        slsm::Sensitivity sensitivity;
+
+        // Apply deterministic Ito correction.
+        sensitivity.itoCorrection(boundary, temperature);
+
         // Time step associated with the iteration.
         double timeStep;
 

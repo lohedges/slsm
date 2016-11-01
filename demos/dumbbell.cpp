@@ -244,6 +244,9 @@ int main(int argc, char** argv)
                 computeConstraintSensitivity(boundary.points[i].coord, levelSet);
         }
 
+        // Apply deterministic Ito correction.
+        sensitivity.itoCorrection(boundary, temperature);
+
         // Time step associated with the iteration.
         double timeStep;
 
