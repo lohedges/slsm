@@ -60,6 +60,16 @@ namespace slsm
          */
         double computeSensitivity(BoundaryPoint&, SensitivityCallback&);
 
+        //! Apply deterministic Ito correction to objective sensitivity.
+        /*! \param boundary
+                A reference to the boundary object.
+
+            \param temperature
+                The temperature of the thermal bath.
+
+         */
+        void itoCorrection(Boundary&, double);
+
     private:
         /// The finite-difference derivative length (in units of the grid spacing).
         double delta;
