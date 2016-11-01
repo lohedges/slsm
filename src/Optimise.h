@@ -22,11 +22,9 @@
     \brief A class for finding the solution for the optimum velocity vector.
  */
 
-#include <iostream>
 #include <nlopt.hpp>
 
 #include "Boundary.h"
-#include "Debug.h"
 
 namespace slsm
 {

@@ -15,6 +15,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
+#include <iostream>
+
+#include "Debug.h"
 #include "Optimise.h"
 
 /*! \file Optimise.cpp

@@ -23,6 +23,8 @@
 #include <string>
 
 #include "Boundary.h"
+#include "LevelSet.h"
+#include "Mesh.h"
 
 /*! \file InputOutput.h
     \brief A class for reading and writing data.

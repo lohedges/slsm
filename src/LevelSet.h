@@ -18,11 +18,7 @@
 #ifndef _LEVELSET_H
 #define _LEVELSET_H
 
-#include <cmath>
-#include <cstdlib>
-
 #include "Common.h"
-#include "FastMarchingMethod.h"
 #include "Hole.h"
 #include "MersenneTwister.h"
 #include "Mesh.h"
@@ -33,8 +29,7 @@
 
 namespace slsm
 {
-    //! Forward declaration of BoundaryPoint data structure.
-    //! Might want to move all non-class types to Common.h, i.e. affiliated types.
+    //! Forward declaration of the BoundaryPoint data structure.
     struct BoundaryPoint;
 
     /*! \brief A class for the level set function.

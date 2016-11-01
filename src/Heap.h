@@ -23,8 +23,6 @@
 #include <stdlib.h>
 #include <vector>
 
-#include "Debug.h"
-
 /*! \file Heap.h
     \brief An implementation of a heap data structure (binary tree).
  */

@@ -18,9 +18,6 @@
 #ifndef _BOUNDARY_H
 #define _BOUNDARY_H
 
-#include <algorithm>
-#include <functional>
-
 #include "Common.h"
 #include "LevelSet.h"
 

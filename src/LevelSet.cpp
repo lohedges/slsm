@@ -15,8 +15,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Boundary.h"
+#include <cmath>
+#include <cstdlib>
+
+#include "Debug.h"
+#include "FastMarchingMethod.h"
 #include "LevelSet.h"
+#include "Sensitivity.h"
 
 /*! \file LevelSet.cpp
     \brief A class for the level set function.
@@ -400,9 +405,16 @@ namespace slsm
         // Calculate noise prefactor.
         double noise = sqrt2T / sqrt(timeStep);
 
-        // Add random noise to velocity of each boundary point.
+        /* Add random noise to velocity of each boundary point.
+
+           N.B. The Ito correction scales the noise is scaled by one over the
+           square root of the boundary point length. When the length is small,
+           i.e. << 1, it's possible that the velocity will become very large,
+           leading to CFL violation. In practice, this hasn't appeared to cause
+           significant issues in a range of test systems.
+         */
         for (unsigned int i=0;i<boundaryPoints.size();i++)
-            boundaryPoints[i].velocity += noise * rng.normal(0, 1);
+            boundaryPoints[i].velocity += (noise / sqrt(boundaryPoints[i].length)) * rng.normal(0, 1);
 
         // Perform velocity extension.
         computeVelocities(boundaryPoints);

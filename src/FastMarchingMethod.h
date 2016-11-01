@@ -22,9 +22,7 @@
 
 #include <limits>
 
-#include "Debug.h"
 #include "Heap.h"
-#include "LevelSet.h"
 #include "Mesh.h"
 
 /*! \file FastMarchingMethod.h

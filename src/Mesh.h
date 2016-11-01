@@ -18,7 +18,6 @@
 #ifndef _MESH_H
 #define _MESH_H
 
-#include <cmath>
 #include <vector>
 
 #include "Common.h"

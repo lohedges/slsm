@@ -17,6 +17,9 @@
 
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
 
+#include <cmath>
+
+#include "Debug.h"
 #include "FastMarchingMethod.h"
 
 /*! \file FastMarchingMethod.cpp
