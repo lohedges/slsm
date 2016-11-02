@@ -861,7 +861,7 @@ namespace slsm
             else
             {
                 // Work out distance to the node.
-                double d = sqrt(dx*dy + dy*dy);
+                double d = sqrt(dx*dx + dy*dy);
 
                 // Update negative move limit.
                 if (-d > point.negativeLimit) point.negativeLimit = -d;
