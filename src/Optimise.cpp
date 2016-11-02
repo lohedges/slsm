@@ -410,8 +410,8 @@ namespace slsm
                     if(!boundaryPoints[k].isFixed)
                     {
                         constraintChange += displacements[k]
-                                         * boundaryPoints[k].sensitivities[i+1]
-                                         * boundaryPoints[k].length;
+                                          * boundaryPoints[k].sensitivities[i+1]
+                                          * boundaryPoints[k].length;
                     }
                 }
 
@@ -685,16 +685,16 @@ namespace slsm
                     if (!isSideLimit[i])
                     {
                         gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                    * boundaryPoints[i].sensitivities[k]
-                                    * boundaryPoints[i].length
-                                    * scaleFactor);
+                                     *  boundaryPoints[i].sensitivities[k]
+                                     *  boundaryPoints[i].length
+                                     *  scaleFactor);
                     }
                     else if (isOrigin)
                     {
                         gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                    * boundaryPoints[i].sensitivities[k]
-                                    * boundaryPoints[i].length
-                                    * 0.5 * scaleFactor);
+                                     *  boundaryPoints[i].sensitivities[k]
+                                     *  boundaryPoints[i].length
+                                     *  0.5 * scaleFactor);
                     }
                 }
             }
@@ -763,7 +763,7 @@ namespace slsm
          */
 
         // Success.
-        if (returnCode == 1)      std::cout << "[INFO] Success: Generic success return value.\n";
+        if      (returnCode == 1) std::cout << "[INFO] Success: Generic success return value.\n";
         else if (returnCode == 2) std::cout << "[INFO] Success: stopval was reached.\n";
         else if (returnCode == 3) std::cout << "[INFO] Success: ftol_rel or ftol_abs was reached.\n";
         else if (returnCode == 4) std::cout << "[INFO] Success: xtol_rel or xtol_abs was reached.\n";
