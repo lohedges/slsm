@@ -49,22 +49,22 @@ int main(int argc, char** argv)
     double moveLimit = 0.1;
 
     // Default temperature of the thermal bath.
-    double temperature = 0.1;
+    double temperature = 0.05;
 
     // Override temperature if command-line argument is passed.
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 1000;
+    double maxTime = 100;
 
     // Set minimum material area.
     double minArea = 0.6;
 
     // Set sampling interval.
-    double sampleInterval = 10;
+    double sampleInterval = 1;
 
     // Set time of the next sample.
-    double nextSample = 10;
+    double nextSample = 1;
 
     // Initialise a 200x200 non-periodic mesh.
     slsm::Mesh mesh(200, 200, false);
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
         unsigned int y = int(mesh.nodes[i].coord.y);
 
         // Cut out square hole.
-        if (x >= 60 && x <= 140 && y >= 60 && y <= 140)
+        if (x >= 80 && x <= 120 && y >= 80 && y <= 120)
             levelSet.signedDistance[i] = -1;
 
         // Fill with material.

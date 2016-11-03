@@ -72,7 +72,7 @@ unsigned int nDiscrete = 10;                // Boundary integral discretisation 
 double upperLobeCentre;                     // The y coordinate of the upper dumbbell lobe.
 double lowerLobeCentre;                     // The y coordinate of the lower dumbbell lobe.
 double lobeSeparation;                      // The vertical separation between dumbbell lobes.
-double reduce = 0.7;                        // Sensitivity reduction factor.
+double reduce = 0.65;                       // Sensitivity reduction factor.
 std::vector<slsm::BoundaryPoint>* points;   // Pointer to the boundary points vector.
 
 // MAIN FUNCTION
@@ -103,16 +103,16 @@ int main(int argc, char** argv)
     if (argc > 2) reduce = atof(argv[2]);
 
     // Set maximum running time.
-    double maxTime = 6000;
+    double maxTime = 8000;
 
     // Set maximumum area mismatch.
     double maxMismatch = 0.2;
 
     // Set sampling interval.
-    double sampleInterval = 30;
+    double sampleInterval = 40;
 
     // Set time of the next sample.
-    double nextSample = 30;
+    double nextSample = 40;
 
     // Initialise a 100x100 non-periodic mesh.
     slsm::Mesh mesh(100, 100, false);
