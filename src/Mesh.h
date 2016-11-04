@@ -86,7 +86,7 @@ namespace slsm
         Coord coord;                            //!< Node coordinate.
         unsigned int neighbours[4];             //!< Indices of nearest neighbour nodes.
         unsigned int elements[4];               //!< Indices of elements the node is connected to.
-        unsigned int nElements;                 //!< Number of elements that the node is connected to (no periodicity).
+        unsigned int nElements;                 //!< Number of elements that the node is connected to.
         unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with the node.
         unsigned int nBoundaryPoints;           //!< The number of boundary points associated with the node.
         bool isActive;                          //!< Whether the node is active (part of narrow band, and not fixed).
@@ -117,7 +117,7 @@ namespace slsm
         for the lower left diagonal of node i we could go left then down,
         or down then left (shortest paths).
 
-        For non-periodic meshes, neighbours that are outside of the domain are
+        The mesh is non-periodic. Neighbours that are outside of the domain are
         given the value nNodes, i.e. one past the end of the node array, which
         runs from 0 to nNodes - 1.
 
@@ -135,11 +135,8 @@ namespace slsm
 
             \param height_
                 The height of the mesh.
-
-            \param isPeriodic_
-                Whether the grid is periodic.
          */
-        Mesh(unsigned int, unsigned int, bool isPeriodic_ = false);
+        Mesh(unsigned int, unsigned int);
 
         //! For a given x-y coordinate, find the index of the closest node.
         /*! \param point
@@ -195,8 +192,6 @@ namespace slsm
         std::vector<std::vector<unsigned int> > xyToIndex;
 
     private:
-        const bool isPeriodic;          //!< Whether the grid has periodic boundaries.
-
         //! Initialise mesh nodes.
         void initialiseNodes();
 

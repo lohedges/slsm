@@ -26,14 +26,12 @@
 namespace slsm
 {
     Mesh::Mesh(unsigned int width_,
-               unsigned int height_,
-               bool isPeriodic_) :
+               unsigned int height_) :
 
                width(width_),
                height(height_),
                nElements(width*height),
-               nNodes((1+width)*(1+height)),
-               isPeriodic(isPeriodic_)
+               nNodes((1+width)*(1+height))
     {
         // Resize element and node data structures.
         elements.resize(nElements);
@@ -236,6 +234,8 @@ namespace slsm
         unsigned int w = width + 1;
         unsigned int h = height + 1;
 
+        // First assume the mesh is periodic (in case we add this feature).
+
         // Neighbours to left and right.
         nodes[node].neighbours[0] = (x - 1 + w) % w + (y * w);
         nodes[node].neighbours[1] = (x + 1 + w) % w + (y * w);
@@ -244,16 +244,14 @@ namespace slsm
         nodes[node].neighbours[2] = x + (w * ((y - 1 + h) % h));
         nodes[node].neighbours[3] = x + (w * ((y + 1 + h) % h));
 
-        // The mesh isn't periodic, flag out of bounds neighbours.
-        if (!isPeriodic)
-        {
-            // Node is on first or last row.
-            if (x == 0) nodes[node].neighbours[0] = nNodes;
-            else if (x == width) nodes[node].neighbours[1] = nNodes;
+        // Now flag out of bounds neighbours (the mesh isn't periodic).
 
-            // Node is on first or last column.
-            if (y == 0) nodes[node].neighbours[2] = nNodes;
-            else if (y == height) nodes[node].neighbours[3] = nNodes;
-        }
+        // Node is on first or last row.
+        if (x == 0) nodes[node].neighbours[0] = nNodes;
+        else if (x == width) nodes[node].neighbours[1] = nNodes;
+
+        // Node is on first or last column.
+        if (y == 0) nodes[node].neighbours[2] = nNodes;
+        else if (y == height) nodes[node].neighbours[3] = nNodes;
     }
 }
