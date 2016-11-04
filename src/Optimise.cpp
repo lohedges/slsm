@@ -58,13 +58,10 @@ namespace slsm
         nConstraints = lambdas.size() - 1;
         nConstraintsInitial = nConstraints;
 
-        // Check for empty constraint distances vector.
-        if (constraintDistances.empty())
-        {
-            errno = 0;
-            slsm_log_warn("Empty constraint distances vector. Assuming unconstrained optimisation.");
-            nConstraints = 0;
-        }
+        // Check for empty or mismatched constraint distances vector.
+        errno = EINVAL;
+        slsm_check(!((nConstraints > 0) && constraintDistances.empty()), "Empty constraint distance vector.");
+        slsm_check(nConstraints == constraintDistances.size(), "Incorrect number of constraints.");
 
         // Resize data structures.
         negativeLambdaLimits.resize(nConstraints + 1);
