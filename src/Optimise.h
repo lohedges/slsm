@@ -62,7 +62,7 @@ namespace slsm
         of side constraints on the movement of boundary points lying on, or close
         to, the domain boundary. Points are not allowed to move outside the domain.
 
-        By default, the optmiser makes use of the SLSQP algorith, which provides
+        By default, the optmiser makes use of the SLSQP algorithm, which provides
         support for equality and inequality constraints.
 
             http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
@@ -94,6 +94,8 @@ namespace slsm
                 the time step is assumed to be one, i.e. the displacement and velocity
                 vectors are equivalent. The effective time step is taken as the absolute
                 value of the lambda value for the objective, i.e. abs(lambdas[0]).
+                (Note that lambdas[0] is negative by construction so abs(lambdas[0]) is
+                the same as -lambdas[0].)
 
             \param maxDisplacement_
                 (Optional) The maximum displacement (default = 0.5).
@@ -113,7 +115,7 @@ namespace slsm
 
         //! Execute the NLopt solver.
         /*! \return
-                The optimum value of the objective function.
+                The optimum change in the objective function.
          */
         double solve();
 
@@ -122,7 +124,7 @@ namespace slsm
                 The current lambda value for each function.
 
             \param gradient
-                The gradient of the change in objective or constraint with respect to each lambda.
+                The gradient of the change in the objective or constraint with respect to each lambda.
 
             \param index
                 Function index, 0 = objective, 1, 2, 3, ... = constraints.
@@ -148,7 +150,7 @@ namespace slsm
         /// A reference to a vector of constraint violation distances.
         const std::vector<double>& constraintDistances;
 
-        /// A reference to a vector of optimum lambda values (to be found by solver).
+        /// A reference to a vector of optimum lambda values (to be found by the solver).
         std::vector<double>& lambdas;
 
         /// The effective time step.

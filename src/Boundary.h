@@ -59,16 +59,22 @@ namespace slsm
 
     // MAIN CLASS
 
-    /*! \brief A class computing and storing the discretised boundary.
+    /*! \brief A class for computing the discretised boundary of the level set zero contour.
 
-        The boundary is computed by looking for nodes lying exactly on the zero
-        contour of the level set and then constructing a set of additional boundary
-        points by simple linear interpolation when the level set changes sign
-        between the nodes on an element edge.
+        The boundary is a set of points that represent a piece-wise linear
+        discretisation of the zero contour of the level set. Boundary points
+        either lie exactly on a node of the level set (when it has a zero value)
+        or along an edge if the level set changes sign between two adjacent nodes.
+        The position of these boundary points is found using linear interpolation.
 
-        The points vector holds coordinates for boundary points (both those lying
-        exactly on nodes of the level set mesh, and the interpolated points).
-        Boundary segment data is stored in the segments vector.
+        The points vector holds coordinates for boundary points. Boundary segment
+        data is stored in the segments vector. Each segment is constructed from
+        two adjacent boundary points.
+
+        Class member functions allow the user to compute the current discretisation
+        of the zero contour, to evaluate the perimeter of the boundary, to calculate
+        the amount of material area in each of the cells of the level set domain,
+        and to determine the inward pointing normal vector at each boundary point.
      */
     class Boundary
     {
