@@ -21,9 +21,6 @@ int testSignedDistance()
 {
     // A test for correct initialisation of the signed distance function.
 
-    // Initialise a 10x10 non-periodic mesh.
-    slsm::Mesh mesh(10, 10, false);
-
     // Initialise a hole.
     slsm::Hole hole;
 
@@ -36,8 +33,8 @@ int testSignedDistance()
     std::vector<slsm::Hole> holes;
     holes.push_back(hole);
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 10x10 level set domain.
+    slsm::LevelSet levelSet(10, 10, holes);
 
     // Diagonal of reduced 3x3 box.
     double diag = sqrt(18);

@@ -66,20 +66,17 @@ int main(int argc, char** argv)
     // Set time of the next sample.
     double nextSample = 1;
 
-    // Initialise a 200x200 non-periodic mesh.
-    slsm::Mesh mesh(200, 200, false);
+    // Initialise a 200x200 level set domain.
+    slsm::LevelSet levelSet(200, 200, moveLimit, 6, true);
 
     // Calculate the area of the mesh.
-    double meshArea = mesh.width * mesh.height;
-
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, moveLimit, 6, true);
+    double meshArea = levelSet.mesh.width * levelSet.mesh.height;
 
     // Create a solid slab of material with a small square in the middle.
-    for (unsigned int i=0;i<mesh.nNodes;i++)
+    for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
     {
-        unsigned int x = int(mesh.nodes[i].coord.x);
-        unsigned int y = int(mesh.nodes[i].coord.y);
+        unsigned int x = int(levelSet.mesh.nodes[i].coord.x);
+        unsigned int y = int(levelSet.mesh.nodes[i].coord.y);
 
         // Cut out square hole.
         if (x >= 80 && x <= 120 && y >= 80 && y <= 120)

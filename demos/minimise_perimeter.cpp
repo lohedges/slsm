@@ -82,15 +82,12 @@ int main(int argc, char** argv)
     // Set time of the next sample.
     double nextSample = 30;
 
-    // Initialise a 200x200 non-periodic mesh.
-    slsm::Mesh mesh(200, 200, false);
-
-    // Create a hole in the centre with a radius of 80 grid units.
+    // Create a hole at position (100, 100) with a radius of 80 grid units.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(100, 100, 80));
 
-    // Initialise the level set object (from the hole vector).
-    slsm::LevelSet levelSet(mesh, holes, moveLimit, 6, true);
+    // Initialise a 200x200 level set domain.
+    slsm::LevelSet levelSet(200, 200, holes, moveLimit, 6, true);
 
     // Initialise io object.
     slsm::InputOutput io;

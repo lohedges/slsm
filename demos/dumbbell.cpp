@@ -114,12 +114,7 @@ int main(int argc, char** argv)
     // Set time of the next sample.
     double nextSample = 40;
 
-    // Initialise a 100x100 non-periodic mesh.
-    slsm::Mesh mesh(100, 100, false);
-
-    // Store the mesh area.
-    double meshArea = mesh.width * mesh.height;
-
+    // Hole vectors.
     std::vector<slsm::Hole> initialHoles;
     std::vector<slsm::Hole> targetHoles;
 
@@ -135,8 +130,11 @@ int main(int argc, char** argv)
     // Initialise the system with a circle in the upper lobe.
     initialHoles.push_back(slsm::Hole(50, 69, 15));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, initialHoles, targetHoles, moveLimit, 6, true);
+    // Initialise a 100x100 level set domain.
+    slsm::LevelSet levelSet(100, 100, initialHoles, targetHoles, moveLimit, 6, true);
+
+    // Store the mesh area.
+    double meshArea = levelSet.mesh.width * levelSet.mesh.height;
 
     // Read starting configuration from file.
     if (argc > 3)
@@ -171,7 +169,7 @@ int main(int argc, char** argv)
     points = &boundary.points;
 
     // Initialise target area fraction vector.
-    std::vector<double> targetArea(mesh.nElements);
+    std::vector<double> targetArea(levelSet.mesh.nElements);
 
     // Discretise the target structure.
     boundary.discretise(true);
@@ -181,8 +179,8 @@ int main(int argc, char** argv)
     boundary.computeAreaFractions();
 
     // Store the target area fractions.
-    for (unsigned int i=0;i<mesh.nElements;i++)
-        targetArea[i] = mesh.elements[i].area;
+    for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
+        targetArea[i] = levelSet.mesh.elements[i].area;
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -254,7 +252,7 @@ int main(int argc, char** argv)
         std::vector<double> constraintDistances;
 
         // Current area mismatch.
-        double mismatch = computeMismatch(mesh, targetArea);
+        double mismatch = computeMismatch(levelSet.mesh, targetArea);
 
         // Push current distance from constraint violation into vector.
         constraintDistances.push_back(meshArea*maxMismatch - mismatch);

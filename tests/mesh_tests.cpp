@@ -19,8 +19,8 @@
 
 int testMeshSize()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
     // Set error number.
     errno = 0;
@@ -38,8 +38,8 @@ error:
 
 int testNodeCoordinates()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
     // Set error number.
     errno = 0;
@@ -64,64 +64,41 @@ error:
 
 int testNodeConnectivity()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
-    // Initialise a 3x3 non-periodic mesh.
-    slsm::Mesh npMesh(3, 3, false);
-
-    // Initialise a 3x4 periodic mesh.
-    slsm::Mesh nsMesh(3, 4, true);
+    // Initialise a 3x4 mesh.
+    slsm::Mesh nsMesh(3, 4);
 
     // Set error number.
     errno = 0;
 
-    /********** Periodic Mesh Test **********/
+    /********** Square Mesh Test **********/
 
     // Check nearest neighbours of 0th node (bottom left).
-    slsm_check(mesh.nodes[0].neighbours[0] == 3, "Periodic mesh: Neighbour 0 of node 0 is incorrect!");
-    slsm_check(mesh.nodes[0].neighbours[1] == 1, "Periodic mesh: Neighbour 1 of node 0 is incorrect!");
-    slsm_check(mesh.nodes[0].neighbours[2] == 12, "Periodic mesh: Neighbour 2 of node 0 is incorrect!");
-    slsm_check(mesh.nodes[0].neighbours[3] == 4, "Periodic mesh: Neighbour 3 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[0] == mesh.nNodes, "Square mesh: Neighbour 0 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[1] == 1, "Square mesh: Neighbour 1 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[2] == mesh.nNodes, "Square mesh: Neighbour 2 of node 0 is incorrect!");
+    slsm_check(mesh.nodes[0].neighbours[3] == 4, "Square mesh: Neighbour 3 of node 0 is incorrect!");
 
     // Check nearest neighbours of 5th node (bulk).
-    slsm_check(mesh.nodes[5].neighbours[0] == 4, "Periodic mesh: Neighbour 0 of node 5 is incorrect!");
-    slsm_check(mesh.nodes[5].neighbours[1] == 6, "Periodic mesh: Neighbour 1 of node 5 is incorrect!");
-    slsm_check(mesh.nodes[5].neighbours[2] == 1, "Periodic mesh: Neighbour 2 of node 5 is incorrect!");
-    slsm_check(mesh.nodes[5].neighbours[3] == 9, "Periodic mesh: Neighbour 3 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[0] == 4, "Square mesh: Neighbour 0 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[1] == 6, "Square mesh: Neighbour 1 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[2] == 1, "Square mesh: Neighbour 2 of node 5 is incorrect!");
+    slsm_check(mesh.nodes[5].neighbours[3] == 9, "Square mesh: Neighbour 3 of node 5 is incorrect!");
 
     // Check nearest neighbours of 15th node (top right).
-    slsm_check(mesh.nodes[15].neighbours[0] == 14, "Periodic mesh: Neighbour 0 of node 15 is incorrect!");
-    slsm_check(mesh.nodes[15].neighbours[1] == 12, "Periodic mesh: Neighbour 1 of node 15 is incorrect!");
-    slsm_check(mesh.nodes[15].neighbours[2] == 11, "Periodic mesh: Neighbour 2 of node 15 is incorrect!");
-    slsm_check(mesh.nodes[15].neighbours[3] == 3, "Periodic mesh: Neighbour 3 of node 15 is incorrect!");
-
-    /********** Non-periodic Mesh Test **********/
-
-    // Check nearest neighbours of 0th node (bottom left).
-    slsm_check(npMesh.nodes[0].neighbours[0] == mesh.nNodes, "Non-periodic mesh: Neighbour 0 of node 0 is incorrect!");
-    slsm_check(npMesh.nodes[0].neighbours[1] == 1, "Non-periodic mesh: Neighbour 1 of node 0 is incorrect!");
-    slsm_check(npMesh.nodes[0].neighbours[2] == mesh.nNodes, "Non-periodic mesh: Neighbour 2 of node 0 is incorrect!");
-    slsm_check(npMesh.nodes[0].neighbours[3] == 4, "Non-periodic mesh: Neighbour 3 of node 0 is incorrect!");
-
-    // Check nearest neighbours of 5th node (bulk).
-    slsm_check(npMesh.nodes[5].neighbours[0] == 4, "Non-periodic mesh: Neighbour 0 of node 5 is incorrect!");
-    slsm_check(npMesh.nodes[5].neighbours[1] == 6, "Non-periodic mesh: Neighbour 1 of node 5 is incorrect!");
-    slsm_check(npMesh.nodes[5].neighbours[2] == 1, "Non-periodic mesh: Neighbour 2 of node 5 is incorrect!");
-    slsm_check(npMesh.nodes[5].neighbours[3] == 9, "Non-periodic mesh: Neighbour 3 of node 5 is incorrect!");
-
-    // Check nearest neighbours of 15th node (top right).
-    slsm_check(npMesh.nodes[15].neighbours[0] == 14, "Non-periodic mesh: Neighbour 0 of node 15 is incorrect!");
-    slsm_check(npMesh.nodes[15].neighbours[1] == mesh.nNodes, "Non-periodic mesh: Neighbour 1 of node 15 is incorrect!");
-    slsm_check(npMesh.nodes[15].neighbours[2] == 11, "Non-periodic mesh: Neighbour 2 of node 15 is incorrect!");
-    slsm_check(npMesh.nodes[15].neighbours[3] == mesh.nNodes, "Non-periodic mesh: Neighbour 3 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[0] == 14, "Square mesh: Neighbour 0 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[1] == mesh.nNodes, "Square mesh: Neighbour 1 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[2] == 11, "Square mesh: Neighbour 2 of node 15 is incorrect!");
+    slsm_check(mesh.nodes[15].neighbours[3] == mesh.nNodes, "Square mesh: Neighbour 3 of node 15 is incorrect!");
 
     /*********** Non-square Mesh Test ***********/
 
     // Check nearest neighbours of 0th node (bottom left).
-    slsm_check(nsMesh.nodes[0].neighbours[0] == 3, "Non-square mesh: Neighbour 0 of node 0 is incorrect!");
+    slsm_check(nsMesh.nodes[0].neighbours[0] == nsMesh.nNodes, "Non-square mesh: Neighbour 0 of node 0 is incorrect!");
     slsm_check(nsMesh.nodes[0].neighbours[1] == 1, "Non-square mesh: Neighbour 1 of node 0 is incorrect!");
-    slsm_check(nsMesh.nodes[0].neighbours[2] == 16, "Non-square mesh: Neighbour 2 of node 0 is incorrect!");
+    slsm_check(nsMesh.nodes[0].neighbours[2] == nsMesh.nNodes, "Non-square mesh: Neighbour 2 of node 0 is incorrect!");
     slsm_check(nsMesh.nodes[0].neighbours[3] == 4, "Non-square mesh: Neighbour 3 of node 0 is incorrect!");
 
     // Check nearest neighbours of 5th node (bulk).
@@ -132,9 +109,9 @@ int testNodeConnectivity()
 
     // Check nearest neighbours of 19th node (top right).
     slsm_check(nsMesh.nodes[19].neighbours[0] == 18, "Non-square mesh: Neighbour 0 of node 19 is incorrect!");
-    slsm_check(nsMesh.nodes[19].neighbours[1] == 16, "Non-square mesh: Neighbour 1 of node 19 is incorrect!");
+    slsm_check(nsMesh.nodes[19].neighbours[1] == nsMesh.nNodes, "Non-square mesh: Neighbour 1 of node 19 is incorrect!");
     slsm_check(nsMesh.nodes[19].neighbours[2] == 15, "Non-square mesh: Neighbour 2 of node 19 is incorrect!");
-    slsm_check(nsMesh.nodes[19].neighbours[3] == 3, "Non-square mesh: Neighbour 3 of node 19 is incorrect!");
+    slsm_check(nsMesh.nodes[19].neighbours[3] == nsMesh.nNodes, "Non-square mesh: Neighbour 3 of node 19 is incorrect!");
 
     return 0;
 
@@ -144,8 +121,8 @@ error:
 
 int testReverseNodeConnectivity()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
     // Set error number.
     errno = 0;
@@ -169,8 +146,8 @@ error:
 
 int testElementNodeConnectivity()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
     // Set error number.
     errno = 0;
@@ -189,8 +166,8 @@ error:
 
 int testNodeElementConnectivity()
 {
-    // Initialise a 3x3 periodic mesh.
-    slsm::Mesh mesh(3, 3, true);
+    // Initialise a 3x3 mesh.
+    slsm::Mesh mesh(3, 3);
 
     // Set error number.
     errno = 0;
@@ -219,8 +196,8 @@ error:
 
 int testCoordinateMapping()
 {
-    // Initialise a 2x2 non-periodic mesh.
-    slsm::Mesh mesh(2, 2, false);
+    // Initialise a 2x2 mesh.
+    slsm::Mesh mesh(2, 2);
 
     // Set error number.
     errno = 0;

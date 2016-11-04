@@ -23,15 +23,12 @@ int testBoundaryPoints()
     //  1) Check that there are the correct number of boundary points and segments.
     //  2) Check that boundary point coordinates are correct.
 
-    // Initialise a 1x1 non-periodic mesh.
-    slsm::Mesh mesh(1, 1, false);
-
     // Push hole into a vector container.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(1, 1, 1));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 1x1 level set domain.
+    slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
     slsm::Boundary boundary(levelSet);
@@ -151,12 +148,12 @@ int testBoundaryPoints()
     // Check the positions of the boundary points.
 
     // First point.
-    slsm_check((std::abs(boundary.points[0].coord.x - mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    slsm_check((std::abs(boundary.points[0].coord.y - mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.x - levelSet.mesh.nodes[0].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[0].coord.y - levelSet.mesh.nodes[0].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     // Second point.
-    slsm_check((std::abs(boundary.points[1].coord.x - mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
-    slsm_check((std::abs(boundary.points[1].coord.y - mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.x - levelSet.mesh.nodes[3].coord.x) < 1e-6), "Position of boundary point is incorrect!");
+    slsm_check((std::abs(boundary.points[1].coord.y - levelSet.mesh.nodes[3].coord.y) < 1e-6), "Position of boundary point is incorrect!");
 
     return 0;
 
@@ -170,15 +167,12 @@ int testBoundarySegments()
     //  1) Check for correct indexing of start and end points.
     //  2) Check that segments are assigned to the correct element.
 
-    // Initialise a 1x1 non-periodic mesh.
-    slsm::Mesh mesh(1, 1, false);
-
     // Push hole into a vector container.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(1, 1, 1));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 1x1 level set domain.
+    slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
     slsm::Boundary boundary(levelSet);
@@ -290,15 +284,12 @@ error:
 
 int testBoundarySymmetry()
 {
-    // Initialise a 1x1 non-periodic mesh.
-    slsm::Mesh mesh(1, 1, false);
-
     // Push hole into a vector container.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(1, 1, 1));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 1x1 level set domain.
+    slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
     slsm::Boundary boundary(levelSet);
@@ -378,15 +369,12 @@ error:
 
 int testConnectivity()
 {
-    // Initialise a 1x1 non-periodic mesh.
-    slsm::Mesh mesh(1, 1, false);
-
     // Push hole into a vector container.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(1, 1, 1));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 1x1 level set domain.
+    slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
     slsm::Boundary boundary(levelSet);
@@ -410,29 +398,29 @@ int testConnectivity()
     // Check connectivity between nodes and boundary points.
 
     // First node.
-    slsm_check((mesh.nodes[0].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 0!");
-    slsm_check((mesh.nodes[0].boundaryPoints[0] == 0), "Boundary point 0 of node 0 is incorrect!");
-    slsm_check((mesh.nodes[0].boundaryPoints[1] == 3), "Boundary point 1 of node 0 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[0].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 0!");
+    slsm_check((levelSet.mesh.nodes[0].boundaryPoints[0] == 0), "Boundary point 0 of node 0 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[0].boundaryPoints[1] == 3), "Boundary point 1 of node 0 is incorrect!");
 
     // Second node.
-    slsm_check((mesh.nodes[1].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 1!");
-    slsm_check((mesh.nodes[1].boundaryPoints[0] == 0), "Boundary point 0 of node 1 is incorrect!");
-    slsm_check((mesh.nodes[1].boundaryPoints[1] == 1), "Boundary point 1 of node 1 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[1].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 1!");
+    slsm_check((levelSet.mesh.nodes[1].boundaryPoints[0] == 0), "Boundary point 0 of node 1 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[1].boundaryPoints[1] == 1), "Boundary point 1 of node 1 is incorrect!");
 
     // Third node.
-    slsm_check((mesh.nodes[2].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 2!");
-    slsm_check((mesh.nodes[2].boundaryPoints[0] == 2), "Boundary point 0 of node 2 is incorrect!");
-    slsm_check((mesh.nodes[2].boundaryPoints[1] == 3), "Boundary point 1 of node 2 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[2].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 2!");
+    slsm_check((levelSet.mesh.nodes[2].boundaryPoints[0] == 2), "Boundary point 0 of node 2 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[2].boundaryPoints[1] == 3), "Boundary point 1 of node 2 is incorrect!");
 
     // Fourth node.
-    slsm_check((mesh.nodes[3].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 3!");
-    slsm_check((mesh.nodes[3].boundaryPoints[0] == 1), "Boundary point 0 of node 3 is incorrect!");
-    slsm_check((mesh.nodes[3].boundaryPoints[1] == 2), "Boundary point 1 of node 3 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[3].nBoundaryPoints == 2), "Incorrect number of boundary points associated with node 3!");
+    slsm_check((levelSet.mesh.nodes[3].boundaryPoints[0] == 1), "Boundary point 0 of node 3 is incorrect!");
+    slsm_check((levelSet.mesh.nodes[3].boundaryPoints[1] == 2), "Boundary point 1 of node 3 is incorrect!");
 
     // Check boundary segment connectivity.
-    slsm_check((mesh.elements[0].nBoundarySegments == 2), "Incorrect number of boundary segments for node 0!");
-    slsm_check((mesh.elements[0].boundarySegments[0] == 0), "Boundary segment 0 of element 0 is incorrect!");
-    slsm_check((mesh.elements[0].boundarySegments[1] == 1), "Boundary segment 1 of element 0 is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].nBoundarySegments == 2), "Incorrect number of boundary segments for node 0!");
+    slsm_check((levelSet.mesh.elements[0].boundarySegments[0] == 0), "Boundary segment 0 of element 0 is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].boundarySegments[1] == 1), "Boundary segment 1 of element 0 is incorrect!");
 
     return 0;
 
@@ -442,15 +430,12 @@ error:
 
 int testAreaFraction()
 {
-    // Initialise a 1x1 non-periodic mesh.
-    slsm::Mesh mesh(1, 1, false);
-
     // Push hole into a vector container.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(1, 1, 1));
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes);
+    // Initialise a 1x1 level set domain.
+    slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
     slsm::Boundary boundary(levelSet);
@@ -476,7 +461,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 2:
     // Vertical boundary cutting through the middle of the element.
@@ -496,7 +481,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 3:
     // Zero contour along diagonal.
@@ -516,7 +501,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check that the element is half filled.
-    slsm_check((mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
 
     // Sub test 4:
     // Zero contour along diagonal in top right quadrant.
@@ -537,7 +522,7 @@ int testAreaFraction()
 
     // Check the element area.
     // Full element minus half a quarter element, i.e. 1.0 - 1/8 = 0.875.
-    slsm_check((mesh.elements[0].area == 0.875), "Element area fraction is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].area == 0.875), "Element area fraction is incorrect!");
 
     // Sub test 4:
     // Invert the level set variables from sub-test 3.
@@ -558,7 +543,7 @@ int testAreaFraction()
     boundary.computeAreaFractions();
 
     // Check the element area.
-    slsm_check((mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");
+    slsm_check((levelSet.mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");
 
     return 0;
 

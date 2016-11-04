@@ -19,26 +19,22 @@
 
 int testUpwindFiniteDifference()
 {
-    // A test for a correct upwind finite difference
-    // approximation for negative phi. This was a bug
-    // in scikit-fmm.
-
-    // Initialise a 4x4 non-periodic mesh.
-    slsm::Mesh mesh(4, 4, false);
+    // A test for a correct upwind finite difference approximation for negative phi.
+    // This was a bug in scikit-fmm.
 
     // Create a single hole (just to pass to constructor).
     std::vector<slsm::Hole> hole;
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, hole, 0.5, 3);
+    // Initialise a 4x4 level set domain.
+    slsm::LevelSet levelSet(4, 4, hole, 0.5, 3);
 
     // Place all nodes outside the structure.
-    for (unsigned int i=0;i<mesh.nNodes;i++)
+    for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
         levelSet.signedDistance[i] = -1;
 
     // Place nodes at bottom left and top right of mesh inside the structure.
     levelSet.signedDistance[0] = 1;
-    levelSet.signedDistance[mesh.nNodes-1] = 1;
+    levelSet.signedDistance[levelSet.mesh.nNodes-1] = 1;
 
     // Fill array with expected values.
     double expected[25] =
@@ -55,7 +51,7 @@ int testUpwindFiniteDifference()
     errno = 0;
 
     // Check signed distance against expected values.
-    for (unsigned int i=0;i<mesh.nNodes;i++)
+    for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
         slsm_check((std::abs(levelSet.signedDistance[i] - expected[i]) < 1e-6), "Signed distance mismatch!");
 
     return 0;

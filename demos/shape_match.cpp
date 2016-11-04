@@ -68,10 +68,7 @@ int main(int argc, char** argv)
     // Set time of the next sample.
     double nextSample = 1;
 
-    // Initialise a 400x400 non-periodic mesh.
-    slsm::Mesh mesh(400, 400, false);
-
-    // Create a hole in the centre with a radius of 100 grid units.
+    // Create a hole at position (100, 100) with a radius of 80 grid units.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(200, 200, 100));
 
@@ -117,8 +114,8 @@ int main(int argc, char** argv)
     // Close shape file.
     shapeFile.close();
 
-    // Initialise the level set object.
-    slsm::LevelSet levelSet(mesh, holes, points, moveLimit, 6, true);
+    // Initialise the level set domain.
+    slsm::LevelSet levelSet(400, 400, holes, points, moveLimit, 6, true);
 
     // Initialise io object.
     slsm::InputOutput io;
@@ -130,7 +127,7 @@ int main(int argc, char** argv)
     slsm::Boundary boundary(levelSet);
 
     // Initialise target area fraction vector.
-    std::vector<double> targetArea(mesh.nElements);
+    std::vector<double> targetArea(levelSet.mesh.nElements);
 
     // Discretise the target structure.
     boundary.discretise(true);
@@ -139,8 +136,8 @@ int main(int argc, char** argv)
     boundary.computeAreaFractions();
 
     // Store the target area fractions.
-    for (unsigned int i=0;i<mesh.nElements;i++)
-        targetArea[i] = mesh.elements[i].area;
+    for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
+        targetArea[i] = levelSet.mesh.elements[i].area;
 
     // Perform initial boundary discretisation.
     boundary.discretise();
@@ -244,8 +241,8 @@ int main(int argc, char** argv)
             boundary.computeAreaFractions();
 
             // Current area mismatch.
-            double mismatch = computeObjective(mesh, targetArea)
-                            / (mesh.width * mesh.height);
+            double mismatch = computeObjective(levelSet.mesh, targetArea)
+                            / (levelSet.mesh.width * levelSet.mesh.height);
 
             // Record the time and area mismatch.
             times.push_back(time);
