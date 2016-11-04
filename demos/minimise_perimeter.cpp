@@ -167,10 +167,6 @@ int main(int argc, char** argv)
         // Time step associated with the iteration.
         double timeStep;
 
-        // Constraint distance vector. Since there are no constraints the
-        // vector can be left unassigned.
-        std::vector<double> constraintDistances(1);
-
         /* Initialise the optimisation object.
 
            The Optimise class is a lightweight object so there is no cost for
@@ -178,8 +174,11 @@ int main(int argc, char** argv)
            this anyway, i.e. the same memory space will be reused. It is better
            to place objects in the correct scope in order to aid readability
            and to avoid unintended name clashes, etc.
+
+           Since there are no constraints we pass an empty vector for the
+           constraint distances argument.
          */
-        slsm::Optimise optimise(boundary.points, constraintDistances,
+        slsm::Optimise optimise(boundary.points, std::vector<double>(),
             lambdas, timeStep, levelSet.moveLimit, false);
 
         // Perform the optimisation.
