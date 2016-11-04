@@ -20,7 +20,6 @@
 #ifndef _HEAP_H
 #define _HEAP_H
 
-#include <stdlib.h>
 #include <vector>
 
 /*! \file Heap.h
