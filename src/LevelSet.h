@@ -58,8 +58,11 @@ namespace slsm
     {
     public:
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param moveLimit_
                 The CFL limit (in units of the mesh grid spacing).
@@ -70,11 +73,15 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+        LevelSet(unsigned int, unsigned int, double moveLimit_ = 0.5,
+            unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param holes
                 A vector of holes.
@@ -88,12 +95,15 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Hole>&, double moveLimit_ = 0.5,
+        LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, double moveLimit_ = 0.5,
             unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param points
                 A vector of point coordinates (clockwise ordered and closed).
@@ -107,12 +117,15 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Coord>&, double moveLimit_ = 0.5,
+        LevelSet(unsigned int, unsigned int, const std::vector<Coord>&, double moveLimit_ = 0.5,
             unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param initialHoles
                 A vector of holes for the initial interface.
@@ -129,12 +142,15 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Hole>&, const std::vector<Hole>&,
+        LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, const std::vector<Hole>&,
             double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param holes
                 A vector of holes for the initial interface.
@@ -151,12 +167,15 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Hole>&, const std::vector<Coord>&,
+        LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, const std::vector<Coord>&,
             double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Constructor.
-        /*! \param mesh_
-                A reference to the fixed-grid mesh.
+        /*! \param width
+                The width of the fixed-grid mesh.
+
+            \param height
+                The height of the fixed-grid mesh.
 
             \param initialPoints
                 A vector of point coordinates for the initial interface (clockwise ordered and closed).
@@ -173,7 +192,7 @@ namespace slsm
             \param isFixed_
                 Whether the domain boundary is fixed.
          */
-        LevelSet(Mesh&, const std::vector<Coord>&, const std::vector<Coord>&,
+        LevelSet(unsigned int, unsigned int, const std::vector<Coord>&, const std::vector<Coord>&,
             double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
 
         //! Update the level set function.
@@ -237,7 +256,7 @@ namespace slsm
         unsigned int nMines;                    //!< The number of mine nodes.
         const double moveLimit;                 //!< The boundary movement limit (CFL condition).
 
-        Mesh& mesh;                             //!< A reference to the fixed-grid mesh.
+        Mesh mesh;                              //!< The fixed-grid mesh.
 
     private:
         unsigned int bandWidth;                 //!< The width of the narrow band region.

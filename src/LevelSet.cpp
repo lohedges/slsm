@@ -29,9 +29,10 @@
 
 namespace slsm
 {
-    LevelSet::LevelSet(Mesh& mesh_, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+    LevelSet::LevelSet(unsigned int width, unsigned int height,
+        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(false)
@@ -64,10 +65,10 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
+    LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& holes,
         double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(false)
@@ -100,10 +101,10 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& points,
+    LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Coord>& points,
         double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(false)
@@ -136,10 +137,10 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& initialHoles,
+    LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& initialHoles,
         const std::vector<Hole>& targetHoles, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(true)
@@ -180,10 +181,10 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Hole>& holes,
+    LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& holes,
         const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(true)
@@ -224,10 +225,10 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
-    LevelSet::LevelSet(Mesh& mesh_, const std::vector<Coord>& initialPoints,
+    LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Coord>& initialPoints,
         const std::vector<Coord>& targetPoints, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
         moveLimit(moveLimit_),
-        mesh(mesh_),
+        mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
         isFixed(isFixed_),
         isTarget(true)
