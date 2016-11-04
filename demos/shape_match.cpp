@@ -78,9 +78,9 @@ int main(int argc, char** argv)
     // Initialise the points vector.
     std::vector<slsm::Coord> points;
 
-    // Read the shape file.
+    // Read the shape file (assume we're in the root folder).
     std::ifstream shapeFile;
-    shapeFile.open("shapes/stanford-bunny.txt");
+    shapeFile.open("demos/shapes/stanford-bunny.txt");
 
     if (shapeFile.good())
     {
@@ -93,10 +93,28 @@ int main(int argc, char** argv)
     }
     else
     {
-        std::cerr << "[ERROR]: Invalid shape file!\n";
-        exit(EXIT_FAILURE);
+        // Try alternative location (inside demos folder).
+        shapeFile.clear();
+        shapeFile.open("shapes/stanford-bunny.txt");
+
+        if (shapeFile.good())
+        {
+            // Point coordinates.
+            double x, y;
+
+            // Push coordinates into points vector.
+            while (shapeFile >> x >> y)
+                points.push_back(slsm::Coord({x, y}));
+        }
+
+        else
+        {
+            std::cerr << "[ERROR]: Invalid shape file!\n";
+            exit(EXIT_FAILURE);
+        }
     }
 
+    // Close shape file.
     shapeFile.close();
 
     // Initialise the level set object.
