@@ -273,7 +273,6 @@ namespace slsm
     private:
         unsigned int bandWidth;                 //!< The width of the narrow band region.
         bool isFixed;                           //!< Whether the domain boundary is fixed.
-        bool isTarget;                          //!< Whether a target interface is defined.
 
         //! Default initialisation of the level set function (Swiss cheese configuration).
         void initialise();

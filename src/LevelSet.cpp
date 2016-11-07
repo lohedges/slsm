@@ -37,8 +37,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(false)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -73,8 +72,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(false)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -109,8 +107,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(false)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -145,8 +142,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(true)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -189,8 +185,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(true)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -233,8 +228,7 @@ namespace slsm
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_),
-        isTarget(true)
+        isFixed(isFixed_)
     {
         int size = 0.2*mesh.nNodes;
 
