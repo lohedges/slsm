@@ -30,7 +30,6 @@ namespace slsm
 {
     // FORWARD DECLARATIONS
 
-    class BoundaryPoint;
     class LevelSet;
     class Mesh;
 
