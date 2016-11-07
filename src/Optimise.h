@@ -93,9 +93,9 @@ namespace slsm
                 velocity vector multiplied by the time step. In many level set problems
                 the time step is assumed to be one, i.e. the displacement and velocity
                 vectors are equivalent. The effective time step is taken as the absolute
-                value of the lambda value for the objective, i.e. abs(lambdas[0]).
-                (Note that lambdas[0] is negative by construction so abs(lambdas[0]) is
-                the same as -lambdas[0].)
+                value of the lambda for the objective, i.e. abs(lambdas[0]). (Note that
+                for minimisation problems lambdas[0] is negative by construction so
+                abs(lambdas[0]) is the same as -lambdas[0].)
 
             \param maxDisplacement_
                 (Optional) The maximum displacement (default = 0.5).
@@ -201,7 +201,7 @@ namespace slsm
         //! Compute lambda limits.
         void computeLambdaLimits();
 
-        //! Compute the boundary movement vector.
+        //! Compute the boundary point normal displacement.
         /*! \param lambda
                 A vector of lambda values (objective, then constraints).
          */
