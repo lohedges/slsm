@@ -4,9 +4,10 @@
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 /*! \file Debug.h
     \brief A set of debugging macros.
