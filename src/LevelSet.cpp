@@ -649,8 +649,13 @@ namespace slsm
                         // Increment mine count.
                         nMines++;
 
-                        // TODO:
-                        // Check when number of mines exceeds array size!
+                        // If needed, increase the size of the mines vector.
+                        if (nMines == mines.size())
+                        {
+                            // Double in size, unless that exceeds the number of nodes.
+                            unsigned int newSize = std::min(2*nMines, mesh.nNodes);
+                            mines.resize(newSize);
+                        }
                     }
                 }
             }
