@@ -1,10 +1,6 @@
 doc/
 lib/
 obj/
-peter/
-khalid/
-notes/
-web/
 src/slsm.h
 demos/minimise_area
 demos/minimise_perimeter
