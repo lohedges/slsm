@@ -18,8 +18,9 @@
 #ifndef _BOUNDARY_H
 #define _BOUNDARY_H
 
+#include <vector>
+
 #include "Common.h"
-#include "LevelSet.h"
 
 /*! \file Boundary.h
     \brief A class for the discretised boundary.
@@ -27,6 +28,12 @@
 
 namespace slsm
 {
+    // FORWARD DECLARATIONS
+
+    class BoundaryPoint;
+    class LevelSet;
+    class Mesh;
+
     // ASSOCIATED DATA TYPES
 
     //! \brief A container for storing information associated with a boundary point.
@@ -80,25 +87,22 @@ namespace slsm
     {
     public:
         //! Constructor.
-        /*! \param levelSet_
-                A reference to the level set object.
-         */
-        Boundary(LevelSet&);
+        Boundary();
 
         //! Use linear interpolation to compute the discretised boundary
-        /*! \param isTarget
+        /*! \param levelSet
+                A reference to the level set object.
+
+            \param isTarget
                 Whether to discretise the target signed distance function.
          */
-        void discretise(bool isTarget = false);
-
-        //! Calculate the material area fraction in each element.
-        /*! \return
-                The total element area fraction.
-         */
-        double computeAreaFractions();
+        void discretise(LevelSet&, bool isTarget = false);
 
         //! Compute the local normal vector at each boundary point.
-        void computeNormalVectors();
+        /*! \param levelSet
+                A reference to the level set object.
+         */
+        void computeNormalVectors(const LevelSet&);
 
         //! Compute the local perimeter for a boundary point.
         /*! \param point
@@ -124,21 +128,21 @@ namespace slsm
         /// The total length of the boundary.
         double length;
 
-        /// The total area fraction of the mesh.
-        double area;
-
     private:
-        /// A reference to the level set object.
-        LevelSet& levelSet;
-
         //! Determine the status of the elements and nodes of the level set mesh.
-        /*! \param signedDistance
+        /*! \param mesh
+                A reference to the fixed-grid mesh.
+
+            \param signedDistance
                 A pointer to the signed distance function vector.
          */
-        void computeMeshStatus(const std::vector<double>* signedDistance) const;
+        void computeMeshStatus(Mesh&, const std::vector<double>* signedDistance) const;
 
         //! Check whether a boundary point has already been added.
-        /*! \param point
+        /*! \param mesh
+                A reference to the fixed-grid mesh.
+
+            \param point
                 The coordinates of the boundary point (to be determined).
 
             \param node
@@ -153,55 +157,19 @@ namespace slsm
             \return
                 The index of the boundary point if previously added, minus one if not.
          */
-        int isAdded(Coord&, const unsigned int&, const unsigned int&, const double&);
+        int isAdded(Mesh&, Coord&, const unsigned int&, const unsigned int&, const double&);
 
         //! Initialise a boundary point.
-        /*! \param point
+        /*! \param levelSet
+                A reference to the level set object.
+
+            \param point
                 A reference to a boundary point.
 
             \param coord
                 The position vector of the boundary point.
          */
-        void initialisePoint(BoundaryPoint&, const Coord&);
-
-        //! Calculate the material area for an element cut by the boundary.
-        /*! \param element
-                A reference to the element.
-
-            \return
-                The area fraction.
-         */
-        double cutArea(const Element&);
-
-        //! Whether a point is clockwise of another. The origin point is 12 o'clock.
-        /*! \param point1
-                The coordinates of the first point.
-
-            \param point2
-                The coordinates of the second point.
-
-            \param centre
-                The coordinates of the element centre.
-
-            \return
-                Whether the first point is clockwise of the second.
-         */
-        bool isClockwise(const Coord&, const Coord&, const Coord&) const;
-
-        //! Return the area of a polygon.
-        /*! \param vertices
-                A clockwise ordered vector of polygon vertices.
-
-            \param nVertices
-                The number of vertices.
-
-            \param centre
-                The coordinates of the element centre.
-
-            \return
-                The area of the polygon.
-         */
-        double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
+        void initialisePoint(LevelSet&, BoundaryPoint&, const Coord&);
 
         //! Return the length of a boundary segment.
         /*! \param segment

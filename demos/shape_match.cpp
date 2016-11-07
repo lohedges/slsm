@@ -124,23 +124,23 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Initialise target area fraction vector.
     std::vector<double> targetArea(levelSet.mesh.nElements);
 
     // Discretise the target structure.
-    boundary.discretise(true);
+    boundary.discretise(levelSet, true);
 
     // Compute the element area fractions.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Store the target area fractions.
     for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
         targetArea[i] = levelSet.mesh.elements[i].area;
 
     // Perform initial boundary discretisation.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Initialise random number generator.
     slsm::MersenneTwister rng;
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
         nReinit++;
 
         // Compute the new discretised boundary.
-        boundary.discretise();
+        boundary.discretise(levelSet);
 
         // Increment the time.
         time += timeStep;
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
         while (time >= nextSample)
         {
             // Compute the element area fractions.
-            boundary.computeAreaFractions();
+            levelSet.computeAreaFractions(boundary);
 
             // Current area mismatch.
             double mismatch = computeObjective(levelSet.mesh, targetArea)

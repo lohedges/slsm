@@ -16,9 +16,11 @@
 */
 
 #include <algorithm>
-#include <functional>
+#include <cmath>
 
 #include "Boundary.h"
+#include "LevelSet.h"
+#include "Mesh.h"
 
 /*! \file Boundary.cpp
     \brief A class for the discretised boundary.
@@ -26,11 +28,11 @@
 
 namespace slsm
 {
-    Boundary::Boundary(LevelSet& levelSet_) : levelSet(levelSet_)
+    Boundary::Boundary()
     {
     }
 
-    void Boundary::discretise(bool isTarget)
+    void Boundary::discretise(LevelSet& levelSet, bool isTarget)
     {
         // Clear and reserve vector memory.
         points.clear();
@@ -54,7 +56,7 @@ namespace slsm
         else signedDistance = &levelSet.signedDistance;
 
         // Compute the status of nodes and elements in level-set mesh.
-        computeMeshStatus(signedDistance);
+        computeMeshStatus(levelSet.mesh, signedDistance);
 
         // Loop over all elements.
         for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
@@ -99,7 +101,7 @@ namespace slsm
                             Coord coord;
 
                             // Make sure that the boundary point hasn't already been added.
-                            int index = isAdded(coord, n1, j, d);
+                            int index = isAdded(levelSet.mesh, coord, n1, j, d);
 
                             // Boundary point is new.
                             if (index < 0)
@@ -114,7 +116,7 @@ namespace slsm
 
                                 // Initialise boundary point.
                                 BoundaryPoint point;
-                                initialisePoint(point, coord);
+                                initialisePoint(levelSet, point, coord);
                                 points.push_back(point);
 
                                 // Increment number of boundary points.
@@ -144,7 +146,7 @@ namespace slsm
                             segment.element = i;
 
                             // Make sure that the start boundary point hasn't already been added.
-                            int index = isAdded(coord, n1, 0, 0);
+                            int index = isAdded(levelSet.mesh, coord, n1, 0, 0);
 
                             // Boundary point is new.
                             if (index < 0)
@@ -157,7 +159,7 @@ namespace slsm
 
                                 // Initialise boundary point.
                                 BoundaryPoint point;
-                                initialisePoint(point, coord);
+                                initialisePoint(levelSet, point, coord);
                                 points.push_back(point);
 
                                 // Increment number of boundary points.
@@ -168,7 +170,7 @@ namespace slsm
                             segment.start = index;
 
                             // Make sure that the end boundary point hasn't already been added.
-                            index = isAdded(coord, n2, 0, 0);
+                            index = isAdded(levelSet.mesh, coord, n2, 0, 0);
 
                             // Boundary point is new.
                             if (index < 0)
@@ -181,7 +183,7 @@ namespace slsm
 
                                 // Initialise boundary point.
                                 BoundaryPoint point;
-                                initialisePoint(point, coord);
+                                initialisePoint(levelSet, point, coord);
                                 points.push_back(point);
 
                                 // Increment number of boundary points.
@@ -269,7 +271,7 @@ namespace slsm
                                 Coord coord;
 
                                 // Make sure that the end boundary point hasn't already been added.
-                                int index = isAdded(coord, node, 0, 0);
+                                int index = isAdded(levelSet.mesh, coord, node, 0, 0);
 
                                 // Boundary point is new.
                                 if (index < 0)
@@ -282,7 +284,7 @@ namespace slsm
 
                                     // Initialise boundary point.
                                     BoundaryPoint point;
-                                    initialisePoint(point, coord);
+                                    initialisePoint(levelSet, point, coord);
                                     points.push_back(point);
 
                                     // Increment number of boundary points.
@@ -444,7 +446,7 @@ namespace slsm
 
                     // Make sure that the start boundary point hasn't already been added.
                     node = boundaryPoints[0];
-                    int index = isAdded(coord, node, 0, 0);
+                    int index = isAdded(levelSet.mesh, coord, node, 0, 0);
 
                     // Boundary point is new.
                     if (index < 0)
@@ -457,7 +459,7 @@ namespace slsm
 
                         // Initialise boundary point.
                         BoundaryPoint point;
-                        initialisePoint(point, coord);
+                        initialisePoint(levelSet, point, coord);
                         points.push_back(point);
 
                         // Increment number of boundary points.
@@ -469,7 +471,7 @@ namespace slsm
 
                     // Make sure that the end boundary point hasn't already been added.
                     node = boundaryPoints[1];
-                    index = isAdded(coord, node, 0, 0);
+                    index = isAdded(levelSet.mesh, coord, node, 0, 0);
 
                     // Boundary point is new.
                     if (index < 0)
@@ -482,7 +484,7 @@ namespace slsm
 
                         // Initialise boundary point.
                         BoundaryPoint point;
-                        initialisePoint(point, coord);
+                        initialisePoint(levelSet, point, coord);
                         points.push_back(point);
 
                         // Increment number of boundary points.
@@ -513,32 +515,7 @@ namespace slsm
         computePointLengths();
     }
 
-    double Boundary::computeAreaFractions()
-    {
-        // Zero the total area fraction.
-        area = 0;
-
-        for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
-        {
-            // Element is inside structure.
-            if (levelSet.mesh.elements[i].status & ElementStatus::INSIDE)
-                levelSet.mesh.elements[i].area = 1.0;
-
-            // Element is outside structure.
-            else if (levelSet.mesh.elements[i].status & ElementStatus::OUTSIDE)
-                levelSet.mesh.elements[i].area = 0.0;
-
-            // Element is cut by the boundary.
-            else levelSet.mesh.elements[i].area = cutArea(levelSet.mesh.elements[i]);
-
-            // Add the area to the running total.
-            area += levelSet.mesh.elements[i].area;
-        }
-
-        return area;
-    }
-
-    void Boundary::computeNormalVectors()
+    void Boundary::computeNormalVectors(const LevelSet& levelSet)
     {
         // Whether the normal vector at a boundary point has been set.
         bool isSet[nPoints];
@@ -701,59 +678,60 @@ namespace slsm
         return length;
     }
 
-    void Boundary::computeMeshStatus(const std::vector<double>* signedDistance) const
+    void Boundary::computeMeshStatus(Mesh& mesh, const std::vector<double>* signedDistance) const
     {
         // Calculate node status.
-        for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
+        for (unsigned int i=0;i<mesh.nNodes;i++)
         {
             // Reset the number of boundary points associated with the element.
-            levelSet.mesh.nodes[i].nBoundaryPoints = 0;
+            mesh.nodes[i].nBoundaryPoints = 0;
 
             // Flag node as being on the boundary if the signed distance is within
             // a small tolerance of the zero contour. This avoids problems with
             // rounding errors when generating the discretised boundary.
             if (std::abs((*signedDistance)[i]) < 1e-6)
             {
-                levelSet.mesh.nodes[i].status = NodeStatus::BOUNDARY;
+                mesh.nodes[i].status = NodeStatus::BOUNDARY;
             }
             else if ((*signedDistance)[i] < 0)
             {
-                levelSet.mesh.nodes[i].status = NodeStatus::OUTSIDE;
+                mesh.nodes[i].status = NodeStatus::OUTSIDE;
             }
-            else levelSet.mesh.nodes[i].status = NodeStatus::INSIDE;
+            else mesh.nodes[i].status = NodeStatus::INSIDE;
         }
 
         // Calculate element status.
-        for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
+        for (unsigned int i=0;i<mesh.nElements;i++)
         {
             // Tally counters for the element's node statistics.
             unsigned int tallyInside = 0;
             unsigned int tallyOutside = 0;
 
             // Reset the number of boundary segments associated with the element.
-            levelSet.mesh.elements[i].nBoundarySegments = 0;
+            mesh.elements[i].nBoundarySegments = 0;
 
             // Loop over each node of the element.
             for (unsigned int j=0;j<4;j++)
             {
-                unsigned int node = levelSet.mesh.elements[i].nodes[j];
+                unsigned int node = mesh.elements[i].nodes[j];
 
-                if (levelSet.mesh.nodes[node].status & NodeStatus::INSIDE) tallyInside++;
-                else if (levelSet.mesh.nodes[node].status & NodeStatus::OUTSIDE) tallyOutside++;
+                if (mesh.nodes[node].status & NodeStatus::INSIDE) tallyInside++;
+                else if (mesh.nodes[node].status & NodeStatus::OUTSIDE) tallyOutside++;
             }
 
             // No nodes are outside: element is inside the structure.
-            if (tallyOutside == 0) levelSet.mesh.elements[i].status = ElementStatus::INSIDE;
+            if (tallyOutside == 0) mesh.elements[i].status = ElementStatus::INSIDE;
 
             // No nodes are inside: element is outside the structure.
-            else if (tallyInside == 0) levelSet.mesh.elements[i].status = ElementStatus::OUTSIDE;
+            else if (tallyInside == 0) mesh.elements[i].status = ElementStatus::OUTSIDE;
 
             // Otherwise no status.
-            else levelSet.mesh.elements[i].status = ElementStatus::NONE;
+            else mesh.elements[i].status = ElementStatus::NONE;
         }
     }
 
-    int Boundary::isAdded(Coord& point, const unsigned int& node, const unsigned int& edge, const double& distance)
+    int Boundary::isAdded(Mesh& mesh, Coord& point, const unsigned int& node,
+        const unsigned int& edge, const double& distance)
     {
         // Work out the coordinates of the point (depends on which edge we are considering).
         // Set edge and distance equal to zero when considering boundary points lying exactly
@@ -762,33 +740,33 @@ namespace slsm
         // Bottom edge.
         if (edge == 0)
         {
-            point.x = levelSet.mesh.nodes[node].coord.x + distance;
-            point.y = levelSet.mesh.nodes[node].coord.y;
+            point.x = mesh.nodes[node].coord.x + distance;
+            point.y = mesh.nodes[node].coord.y;
         }
         // Right edge.
         else if (edge == 1)
         {
-            point.x = levelSet.mesh.nodes[node].coord.x;
-            point.y = levelSet.mesh.nodes[node].coord.y + distance;
+            point.x = mesh.nodes[node].coord.x;
+            point.y = mesh.nodes[node].coord.y + distance;
         }
         // Top edge.
         else if (edge == 2)
         {
-            point.x = levelSet.mesh.nodes[node].coord.x - distance;
-            point.y = levelSet.mesh.nodes[node].coord.y;
+            point.x = mesh.nodes[node].coord.x - distance;
+            point.y = mesh.nodes[node].coord.y;
         }
         // Left edge.
         else
         {
-            point.x = levelSet.mesh.nodes[node].coord.x;
-            point.y = levelSet.mesh.nodes[node].coord.y - distance;
+            point.x = mesh.nodes[node].coord.x;
+            point.y = mesh.nodes[node].coord.y - distance;
         }
 
         // Check all points adjacent to the node.
-        for (unsigned int i=0;i<levelSet.mesh.nodes[node].nBoundaryPoints;i++)
+        for (unsigned int i=0;i<mesh.nodes[node].nBoundaryPoints;i++)
         {
             // Index of the ith boundary point connected to the node.
-            unsigned int index = levelSet.mesh.nodes[node].boundaryPoints[i];
+            unsigned int index = mesh.nodes[node].boundaryPoints[i];
 
             // Point already exists.
             if ((std::abs(point.x - points[index].coord.x) < 1e-6) &&
@@ -803,7 +781,7 @@ namespace slsm
         return -1;
     }
 
-    void Boundary::initialisePoint(BoundaryPoint& point, const Coord& coord)
+    void Boundary::initialisePoint(LevelSet& levelSet, BoundaryPoint& point, const Coord& coord)
     {
         // Initialise position, length, number of segments, and isDomain.
         point.coord = coord;
@@ -867,149 +845,6 @@ namespace slsm
                 if (-d > point.negativeLimit) point.negativeLimit = -d;
             }
         }
-    }
-
-    double Boundary::cutArea(const Element& element)
-    {
-        // Number of polygon vertices.
-        unsigned int nVertices = 0;
-
-        // Polygon vertices (maximum of six).
-        std::vector<Coord> vertices(6);
-
-        // Whether we're searching for nodes that are inside or outside the boundary.
-        NodeStatus::NodeStatus status;
-
-        if (element.status & ElementStatus::CENTRE_OUTSIDE) status = NodeStatus::OUTSIDE;
-        else status = NodeStatus::INSIDE;
-
-        // Check all nodes of the element.
-        for (unsigned int i=0;i<4;i++)
-        {
-            // Node index;
-            unsigned int node = element.nodes[i];
-
-            // Node matches status.
-            if (levelSet.mesh.nodes[node].status & status)
-            {
-                // Add coordinates to vertex array.
-                vertices[nVertices].x = levelSet.mesh.nodes[node].coord.x;
-                vertices[nVertices].y = levelSet.mesh.nodes[node].coord.y;
-
-                // Increment number of vertices.
-                nVertices++;
-            }
-
-            // Node is on the boundary.
-            else if (levelSet.mesh.nodes[node].status & NodeStatus::BOUNDARY)
-            {
-                // Next node.
-                unsigned int n1 = (i == 3) ? 0 : (i + 1);
-                n1 = element.nodes[n1];
-
-                // Previous node.
-                unsigned int n2 = (i == 0) ? 3 : (i - 1);
-                n2 = element.nodes[n2];
-
-                // Check that node isn't part of a boundary segment, i.e. both of its
-                // neighbours are inside the structure.
-                if ((levelSet.mesh.nodes[n1].status & NodeStatus::INSIDE) &&
-                    (levelSet.mesh.nodes[n2].status & NodeStatus::INSIDE))
-                {
-                    // Add coordinates to vertex array.
-                    vertices[nVertices].x = levelSet.mesh.nodes[node].coord.x;
-                    vertices[nVertices].y = levelSet.mesh.nodes[node].coord.y;
-
-                    // Increment number of vertices.
-                    nVertices++;
-                }
-            }
-        }
-
-        // Add boundary segment start and end points.
-        for (unsigned int i=0;i<element.nBoundarySegments;i++)
-        {
-            // Segment index.
-            unsigned int segment = element.boundarySegments[i];
-
-            // Add start point coordinates to vertices array.
-            vertices[nVertices].x = points[segments[segment].start].coord.x;
-            vertices[nVertices].y = points[segments[segment].start].coord.y;
-
-            // Increment number of vertices.
-            nVertices++;
-
-            // Add end point coordinates to vertices array.
-            vertices[nVertices].x = points[segments[segment].end].coord.x;
-            vertices[nVertices].y = points[segments[segment].end].coord.y;
-
-            // Increment number of vertices.
-            nVertices++;
-        }
-
-        // Return area of the polygon.
-        if (element.status & ElementStatus::CENTRE_OUTSIDE)
-            return (1.0 - polygonArea(vertices, nVertices, element.coord));
-        else
-            return polygonArea(vertices, nVertices, element.coord);
-    }
-
-    bool Boundary::isClockwise(const Coord& point1, const Coord& point2, const Coord& centre) const
-    {
-        if ((point1.x - centre.x) >= 0 && (point2.x - centre.x) < 0)
-            return false;
-
-        if ((point1.x - centre.x) < 0 && (point2.x - centre.x) >= 0)
-            return true;
-
-        if ((point1.x - centre.x) == 0 && (point2.x - centre.x) == 0)
-        {
-            if ((point1.y - centre.y) >= 0 || (point2.y - centre.y) >= 0)
-                return (point1.y > point2.y) ? false : true;
-
-            return (point2.y > point1.y) ? false : true;
-        }
-
-        // Compute the cross product of the vectors (centre --> point1) x (centre --> point2).
-        double det = (point1.x - centre.x) * (point2.y - centre.y)
-                   - (point2.x - centre.x) * (point1.y - centre.y);
-
-        if (det < 0) return false;
-        else return true;
-
-        // Points are on the same line from the centre, check which point is
-        // closer to the centre.
-
-        double d1 = (point1.x - centre.x) * (point1.x - centre.x)
-                  + (point1.y - centre.y) * (point1.y - centre.y);
-
-        double d2 = (point2.x - centre.x) * (point2.x - centre.x)
-                  + (point2.y - centre.y) * (point2.y - centre.y);
-
-        return (d1 > d2) ? false : true;
-    }
-
-    double Boundary::polygonArea(std::vector<Coord>& vertices, const unsigned int& nVertices, const Coord& centre) const
-    {
-        double area = 0;
-
-        // Sort vertices in anticlockwise order.
-        std::sort(vertices.begin(), vertices.begin() + nVertices, std::bind(&Boundary::isClockwise,
-            this, std::placeholders::_1, std::placeholders::_2, centre));
-
-        // Loop over all vertices.
-        for (unsigned int i=0;i<nVertices;i++)
-        {
-            // Next point around (looping back to beginning).
-            unsigned int j = (i == (nVertices - 1)) ? 0 : (i + 1);
-
-            area += vertices[i].x * vertices[j].y;
-            area -= vertices[j].x * vertices[i].y;
-        }
-
-        area *= 0.5;
-
-        return (std::abs(area));
     }
 
     double Boundary::segmentLength(const BoundarySegment& segment)

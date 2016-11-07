@@ -95,10 +95,10 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Perform initial boundary discretisation.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
         nReinit++;
 
         // Compute the new discretised boundary.
-        boundary.discretise();
+        boundary.discretise(levelSet);
 
         // Increment the time.
         time += timeStep;

@@ -15,6 +15,8 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Boundary.h"
+#include "LevelSet.h"
 #include "Sensitivity.h"
 
 /*! \file Sensitivity.cpp
@@ -27,7 +29,7 @@ namespace slsm
     {
     }
 
-    double Sensitivity::computeSensitivity(BoundaryPoint& point, SensitivityCallback& callback)
+    double Sensitivity::computeSensitivity(BoundaryPoint& point, SensitivityCallback& callback) const
     {
         // Store the initial boundary point coordinates.
         Coord coord = point.coord;
@@ -59,12 +61,32 @@ namespace slsm
         return sens;
     }
 
-    void Sensitivity::itoCorrection(Boundary& boundary, double temperature)
+    void Sensitivity::itoCorrection(const LevelSet& levelSet, Boundary& boundary, double temperature) const
     {
         if (temperature == 0) return;
 
         // Compute the boundary normal vector.
-        boundary.computeNormalVectors();
+        boundary.computeNormalVectors(levelSet);
+
+        using namespace std::placeholders;
+        SensitivityCallback callback = std::bind(&Boundary::computePerimeter, boundary, _1);
+
+        // Apply the deterministic Ito correction.
+        for (unsigned int i=0;i<boundary.points.size();i++)
+        {
+            // Compute the local boundary point curvature.
+            double curvature = computeSensitivity(boundary.points[i], callback);
+
+            // Correct the objective sensitivity.
+            boundary.points[i].sensitivities[0] -= (temperature * curvature) / (2.0 * boundary.points[i].length);
+        }
+    }
+
+    void Sensitivity::itoCorrection(Boundary& boundary, double temperature) const
+    {
+        // This overloaded method assumes that normal vectors have been pre-computed.
+
+        if (temperature == 0) return;
 
         using namespace std::placeholders;
         SensitivityCallback callback = std::bind(&Boundary::computePerimeter, boundary, _1);

@@ -18,10 +18,11 @@
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
 
 #include <cmath>
-#include <cstdlib>
 
 #include "Debug.h"
 #include "FastMarchingMethod.h"
+#include "Heap.h"
+#include "Mesh.h"
 
 /*! \file FastMarchingMethod.cpp
     \brief An implementation of the Fast Marching Method.

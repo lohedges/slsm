@@ -19,8 +19,6 @@
 #define _LEVELSET_H
 
 #include "Common.h"
-#include "Hole.h"
-#include "MersenneTwister.h"
 #include "Mesh.h"
 
 /*! \file LevelSet.h
@@ -29,8 +27,12 @@
 
 namespace slsm
 {
-    //! Forward declaration of the BoundaryPoint data structure.
+    // FORWARD DECLARATIONS
+
+    class  Boundary;
     struct BoundaryPoint;
+    class  Hole;
+    class  MersenneTwister;
 
     /*! \brief A class for the level set function.
 
@@ -246,6 +248,15 @@ namespace slsm
         //! Compute the modulus of the gradient of the signed distance function.
         void computeGradients();
 
+        //! Calculate material area fraction enclosed by the discretised boundary.
+        /*! \param boundary
+                A reference to the discretised boundary.
+
+            \return
+                The total area fraction enclosed by the boundary.
+         */
+        double computeAreaFractions(const Boundary&);
+
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
         std::vector<double> velocity;           //!< The nodal signed normal velocity.
         std::vector<double> gradient;           //!< The nodal gradient of the level set function (modulus).
@@ -256,6 +267,7 @@ namespace slsm
         unsigned int nMines;                    //!< The number of mine nodes.
         const double moveLimit;                 //!< The boundary movement limit (CFL condition).
 
+        double area;                            //!< The total mesh area fraction enclosed by the boundary.
         Mesh mesh;                              //!< The fixed-grid mesh.
 
     private:
@@ -364,6 +376,48 @@ namespace slsm
                 < 0 if right of the line.
          */
         int isLeftOfLine(const Coord&, const Coord&, const Coord&) const;
+
+        //! Calculate the material area for an element cut by the boundary.
+        /*! \param element
+                A reference to the element.
+
+            \param boundary
+                A reference to the discretised boundary.
+
+            \return
+                The area fraction.
+         */
+        double cutArea(const Element&, const Boundary&) const;
+
+        //! Whether a point is clockwise of another. The origin point is 12 o'clock.
+        /*! \param point1
+                The coordinates of the first point.
+
+            \param point2
+                The coordinates of the second point.
+
+            \param centre
+                The coordinates of the element centre.
+
+            \return
+                Whether the first point is clockwise of the second.
+         */
+        bool isClockwise(const Coord&, const Coord&, const Coord&) const;
+
+        //! Return the area of a polygon.
+        /*! \param vertices
+                A clockwise ordered vector of polygon vertices.
+
+            \param nVertices
+                The number of vertices.
+
+            \param centre
+                The coordinates of the element centre.
+
+            \return
+                The area of the polygon.
+         */
+        double polygonArea(std::vector<Coord>&, const unsigned int&, const Coord&) const;
     };
 }
 

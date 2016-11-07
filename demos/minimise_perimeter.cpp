@@ -96,16 +96,16 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Perform initial boundary discretisation.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Compute the initial element area fractions.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Compute the initial boundary point normal vectors.
-    boundary.computeNormalVectors();
+    boundary.computeNormalVectors(levelSet);
 
     // Number of cycles since signed distance reinitialisation.
     unsigned int nReinit = 0;
@@ -206,13 +206,13 @@ int main(int argc, char** argv)
         nReinit++;
 
         // Compute the new discretised boundary.
-        boundary.discretise();
+        boundary.discretise(levelSet);
 
         // Compute the element area fractions.
-        boundary.computeAreaFractions();
+        levelSet.computeAreaFractions(boundary);
 
         // Compute the boundary point normal vectors.
-        boundary.computeNormalVectors();
+        boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
         time += timeStep;

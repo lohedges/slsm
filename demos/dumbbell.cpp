@@ -163,7 +163,7 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Initialise boundary points pointer.
     points = &boundary.points;
@@ -172,24 +172,24 @@ int main(int argc, char** argv)
     std::vector<double> targetArea(levelSet.mesh.nElements);
 
     // Discretise the target structure.
-    boundary.discretise(true);
+    boundary.discretise(levelSet, true);
     io.saveBoundarySegmentsTXT(0, boundary);
 
     // Compute the element area fractions.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Store the target area fractions.
     for (unsigned int i=0;i<levelSet.mesh.nElements;i++)
         targetArea[i] = levelSet.mesh.elements[i].area;
 
     // Perform initial boundary discretisation.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Compute the element area fractions.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Compute the initial boundary point normal vectors.
-    boundary.computeNormalVectors();
+    boundary.computeNormalVectors(levelSet);
 
     // Initialise random number generator.
     slsm::MersenneTwister rng;
@@ -300,13 +300,13 @@ int main(int argc, char** argv)
         nReinit++;
 
         // Compute the new discretised boundary.
-        boundary.discretise();
+        boundary.discretise(levelSet);
 
         // Compute the element area fractions.
-        boundary.computeAreaFractions();
+        levelSet.computeAreaFractions(boundary);
 
         // Compute the boundary point normal vectors.
-        boundary.computeNormalVectors();
+        boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
         time += timeStep;

@@ -20,14 +20,16 @@
 
 #include <functional>
 
-#include "Boundary.h"
-
 /*! \file Sensitivity.h
     \brief A class for calculating finite-difference boundary point sensitivities.
  */
 
 namespace slsm
 {
+    // FORWARD DECLARATIONS
+
+    struct BoundaryPoint;
+
     //! Calculate the value of a function for a small displacement of a boundary point.
     /*! \param point
             A reference to the boundary point.
@@ -58,17 +60,30 @@ namespace slsm
             \return
                 The finite-difference sensitivity.
          */
-        double computeSensitivity(BoundaryPoint&, SensitivityCallback&);
+        double computeSensitivity(BoundaryPoint&, SensitivityCallback&) const;
 
         //! Apply deterministic Ito correction to objective sensitivity.
-        /*! \param boundary
-                A reference to the boundary object.
+        /*! \param levelSet
+                A reference to the level set object.
+
+            \param boundary
+                A reference to the discretised boundary.
 
             \param temperature
                 The temperature of the thermal bath.
 
          */
-        void itoCorrection(Boundary&, double);
+        void itoCorrection(const LevelSet&, Boundary&, double) const;
+
+        //! Apply deterministic Ito correction to objective sensitivity.
+        /*! \param boundary
+                A reference to the discretised boundary.
+
+            \param temperature
+                The temperature of the thermal bath.
+
+         */
+        void itoCorrection(Boundary&, double) const;
 
     private:
         /// The finite-difference derivative length (in units of the grid spacing).

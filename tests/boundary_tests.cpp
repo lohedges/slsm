@@ -31,7 +31,7 @@ int testBoundaryPoints()
     slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Set error number.
     errno = 0;
@@ -48,7 +48,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the number of points and segments.
     slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
@@ -76,7 +76,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the number of points and segments.
     slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
@@ -104,7 +104,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the number of points and segments.
     slsm_check((boundary.nPoints == 4), "The number of boundary points is incorrect!");
@@ -143,7 +143,7 @@ int testBoundaryPoints()
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the positions of the boundary points.
 
@@ -175,7 +175,7 @@ int testBoundarySegments()
     slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Set error number.
     errno = 0;
@@ -192,7 +192,7 @@ int testBoundarySegments()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the number of points and segments.
     slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
@@ -224,7 +224,7 @@ int testBoundarySegments()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the number of points and segments.
     slsm_check((boundary.nPoints == 2), "The number of boundary points is incorrect!");
@@ -259,7 +259,7 @@ int testBoundarySegments()
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Check the boundary segment. The single boundary segment should lie
     // along the diagonal between nodes 0 and 3 (which lie on the zero contour).
@@ -292,7 +292,7 @@ int testBoundarySymmetry()
     slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Set error number.
     errno = 0;
@@ -306,7 +306,7 @@ int testBoundarySymmetry()
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Boundary should cut diagonally through the upper and lower triangles of the element.
 
@@ -337,7 +337,7 @@ int testBoundarySymmetry()
         levelSet.signedDistance[i] *= -1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Boundary points should be unchanged.
 
@@ -377,7 +377,7 @@ int testConnectivity()
     slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Set error number.
     errno = 0;
@@ -391,7 +391,7 @@ int testConnectivity()
     levelSet.signedDistance[2] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Boundary should cut diagonally through the upper and lower triangles of the element.
 
@@ -438,7 +438,7 @@ int testAreaFraction()
     slsm::LevelSet levelSet(1, 1, holes);
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Set error number.
     errno = 0;
@@ -455,10 +455,10 @@ int testAreaFraction()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Calculate the element area.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Check that the element is half filled.
     slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
@@ -475,10 +475,10 @@ int testAreaFraction()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Calculate the element area.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Check that the element is half filled.
     slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
@@ -495,10 +495,10 @@ int testAreaFraction()
     levelSet.signedDistance[2] = -1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Calculate the element area.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Check that the element is half filled.
     slsm_check((levelSet.mesh.elements[0].area == 0.5), "Element area fraction is incorrect!");
@@ -515,10 +515,10 @@ int testAreaFraction()
     levelSet.signedDistance[3] = -1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Calculate the element area.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Check the element area.
     // Full element minus half a quarter element, i.e. 1.0 - 1/8 = 0.875.
@@ -537,10 +537,10 @@ int testAreaFraction()
     levelSet.signedDistance[3] = 1;
 
     // Discretise the boundary.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Calculate the element area.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Check the element area.
     slsm_check((levelSet.mesh.elements[0].area == (1.0/8.0)), "Element area fraction is incorrect!");

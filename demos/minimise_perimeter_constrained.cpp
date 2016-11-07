@@ -93,16 +93,16 @@ int main(int argc, char** argv)
     levelSet.reinitialise();
 
     // Initialise the boundary object.
-    slsm::Boundary boundary(levelSet);
+    slsm::Boundary boundary;
 
     // Perform initial boundary discretisation.
-    boundary.discretise();
+    boundary.discretise(levelSet);
 
     // Compute the initial element area fractions.
-    boundary.computeAreaFractions();
+    levelSet.computeAreaFractions(boundary);
 
     // Compute the initial boundary point normal vectors.
-    boundary.computeNormalVectors();
+    boundary.computeNormalVectors(levelSet);
 
     // Initialise random number generator.
     slsm::MersenneTwister rng;
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
         std::vector<double> constraintDistances;
 
         // Push current distance from constraint violation into vector.
-        constraintDistances.push_back(meshArea*minArea - boundary.area);
+        constraintDistances.push_back(meshArea*minArea - levelSet.area);
 
         /* Initialise the optimisation object.
 
@@ -205,13 +205,13 @@ int main(int argc, char** argv)
         nReinit++;
 
         // Compute the new discretised boundary.
-        boundary.discretise();
+        boundary.discretise(levelSet);
 
         // Compute the element area fractions.
-        boundary.computeAreaFractions();
+        levelSet.computeAreaFractions(boundary);
 
         // Compute the boundary point normal vectors.
-        boundary.computeNormalVectors();
+        boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
         time += timeStep;
@@ -226,7 +226,7 @@ int main(int argc, char** argv)
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%9.2f %8.1f %6.2f\n", time, boundary.length, boundary.area / meshArea);
+            printf("%9.2f %8.1f %6.2f\n", time, boundary.length, levelSet.area / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), levelSet);
@@ -236,7 +236,7 @@ int main(int argc, char** argv)
             lengths.push_back(boundary.length);
 
             // Store the material area.
-            areas.push_back(boundary.area / meshArea);
+            areas.push_back(levelSet.area / meshArea);
         }
     }
 

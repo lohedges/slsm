@@ -24,10 +24,12 @@
 
 #include <nlopt.hpp>
 
-#include "Boundary.h"
-
 namespace slsm
 {
+    // FORWARD DECLARATIONS
+
+    struct BoundaryPoint;
+
     // ASSOCIATED DATA TYPES
 
     //! Wrapper structure for interfacing with NLopt.

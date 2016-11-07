@@ -18,6 +18,7 @@
 #include <cmath>
 
 #include "Mesh.h"
+#include "MersenneTwister.h"
 
 /*! \file Mesh.cpp
     \brief A class for the level-set domain fixed-grid mesh.

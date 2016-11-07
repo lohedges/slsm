@@ -17,7 +17,9 @@
 
 #include <algorithm>
 #include <iostream>
+#include <numeric>
 
+#include "Boundary.h"
 #include "Debug.h"
 #include "Optimise.h"
 

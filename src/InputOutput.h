@@ -18,13 +18,8 @@
 #ifndef _INPUTOUTPUT_H
 #define _INPUTOUTPUT_H
 
-#include <fstream>
 #include <sstream>
 #include <string>
-
-#include "Boundary.h"
-#include "LevelSet.h"
-#include "Mesh.h"
 
 /*! \file InputOutput.h
     \brief A class for reading and writing data.
@@ -32,6 +27,12 @@
 
 namespace slsm
 {
+    // FORWARD DECLARATIONS
+
+    class Boundary;
+    class LevelSet;
+    class Mesh;
+
     //! A class for reading and writing data.
     class InputOutput
     {

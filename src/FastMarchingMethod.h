@@ -21,9 +21,7 @@
 #define _FASTMARCHINGMETHOD_H
 
 #include <limits>
-
-#include "Heap.h"
-#include "Mesh.h"
+#include <vector>
 
 /*! \file FastMarchingMethod.h
     \brief An implementation of the Fast Marching Method.
@@ -31,6 +29,11 @@
 
 namespace slsm
 {
+    // FORWARD DECLARATIONS
+
+    class Heap;
+    class Mesh;
+
     // ASSOCIATED DATA TYPES
 
     //! Whether a node lies inside, outside, or on the boundary.

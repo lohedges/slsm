@@ -15,13 +15,16 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include <cmath>
-#include <cstdlib>
+#include <functional>
 
+#include "Boundary.h"
 #include "Debug.h"
 #include "FastMarchingMethod.h"
+#include "Hole.h"
 #include "LevelSet.h"
-#include "Sensitivity.h"
+#include "MersenneTwister.h"
 
 /*! \file LevelSet.cpp
     \brief A class for the level set function.
@@ -372,6 +375,18 @@ namespace slsm
         reinitialise();
     }
 
+    void LevelSet::reinitialise()
+    {
+        // Initialise fast marching method object.
+        FastMarchingMethod fmm(mesh, false);
+
+        // Reinitialise the signed distance function.
+        fmm.march(signedDistance);
+
+        // Reinitialise the narrow band.
+        initialiseNarrowBand();
+    }
+
     void LevelSet::computeVelocities(const std::vector<BoundaryPoint>& boundaryPoints)
     {
         // Initialise velocity (map boundary points to boundary nodes).
@@ -440,16 +455,29 @@ namespace slsm
         }
     }
 
-    void LevelSet::reinitialise()
+    double LevelSet::computeAreaFractions(const Boundary& boundary)
     {
-        // Initialise fast marching method object.
-        FastMarchingMethod fmm(mesh, false);
+        // Zero the total area fraction.
+        area = 0;
 
-        // Reinitialise the signed distance function.
-        fmm.march(signedDistance);
+        for (unsigned int i=0;i<mesh.nElements;i++)
+        {
+            // Element is inside structure.
+            if (mesh.elements[i].status & ElementStatus::INSIDE)
+                mesh.elements[i].area = 1.0;
 
-        // Reinitialise the narrow band.
-        initialiseNarrowBand();
+            // Element is outside structure.
+            else if (mesh.elements[i].status & ElementStatus::OUTSIDE)
+                mesh.elements[i].area = 0.0;
+
+            // Element is cut by the boundary.
+            else mesh.elements[i].area = cutArea(mesh.elements[i], boundary);
+
+            // Add the area to the running total.
+            area += mesh.elements[i].area;
+        }
+
+        return area;
     }
 
     void LevelSet::initialise()
@@ -1298,5 +1326,148 @@ namespace slsm
     {
         return ((vertex2.x - vertex1.x) * (point.y - vertex1.y)
             - (point.x -  vertex1.x) * (vertex2.y - vertex1.y));
+    }
+
+    double LevelSet::cutArea(const Element& element, const Boundary& boundary) const
+    {
+        // Number of polygon vertices.
+        unsigned int nVertices = 0;
+
+        // Polygon vertices (maximum of six).
+        std::vector<Coord> vertices(6);
+
+        // Whether we're searching for nodes that are inside or outside the boundary.
+        NodeStatus::NodeStatus status;
+
+        if (element.status & ElementStatus::CENTRE_OUTSIDE) status = NodeStatus::OUTSIDE;
+        else status = NodeStatus::INSIDE;
+
+        // Check all nodes of the element.
+        for (unsigned int i=0;i<4;i++)
+        {
+            // Node index;
+            unsigned int node = element.nodes[i];
+
+            // Node matches status.
+            if (mesh.nodes[node].status & status)
+            {
+                // Add coordinates to vertex array.
+                vertices[nVertices].x = mesh.nodes[node].coord.x;
+                vertices[nVertices].y = mesh.nodes[node].coord.y;
+
+                // Increment number of vertices.
+                nVertices++;
+            }
+
+            // Node is on the boundary.
+            else if (mesh.nodes[node].status & NodeStatus::BOUNDARY)
+            {
+                // Next node.
+                unsigned int n1 = (i == 3) ? 0 : (i + 1);
+                n1 = element.nodes[n1];
+
+                // Previous node.
+                unsigned int n2 = (i == 0) ? 3 : (i - 1);
+                n2 = element.nodes[n2];
+
+                // Check that node isn't part of a boundary segment, i.e. both of its
+                // neighbours are inside the structure.
+                if ((mesh.nodes[n1].status & NodeStatus::INSIDE) &&
+                    (mesh.nodes[n2].status & NodeStatus::INSIDE))
+                {
+                    // Add coordinates to vertex array.
+                    vertices[nVertices].x = mesh.nodes[node].coord.x;
+                    vertices[nVertices].y = mesh.nodes[node].coord.y;
+
+                    // Increment number of vertices.
+                    nVertices++;
+                }
+            }
+        }
+
+        // Add boundary segment start and end points.
+        for (unsigned int i=0;i<element.nBoundarySegments;i++)
+        {
+            // Segment index.
+            unsigned int segment = element.boundarySegments[i];
+
+            // Add start point coordinates to vertices array.
+            vertices[nVertices].x = boundary.points[boundary.segments[segment].start].coord.x;
+            vertices[nVertices].y = boundary.points[boundary.segments[segment].start].coord.y;
+
+            // Increment number of vertices.
+            nVertices++;
+
+            // Add end point coordinates to vertices array.
+            vertices[nVertices].x = boundary.points[boundary.segments[segment].end].coord.x;
+            vertices[nVertices].y = boundary.points[boundary.segments[segment].end].coord.y;
+
+            // Increment number of vertices.
+            nVertices++;
+        }
+
+        // Return area of the polygon.
+        if (element.status & ElementStatus::CENTRE_OUTSIDE)
+            return (1.0 - polygonArea(vertices, nVertices, element.coord));
+        else
+            return polygonArea(vertices, nVertices, element.coord);
+    }
+
+    bool LevelSet::isClockwise(const Coord& point1, const Coord& point2, const Coord& centre) const
+    {
+        if ((point1.x - centre.x) >= 0 && (point2.x - centre.x) < 0)
+            return false;
+
+        if ((point1.x - centre.x) < 0 && (point2.x - centre.x) >= 0)
+            return true;
+
+        if ((point1.x - centre.x) == 0 && (point2.x - centre.x) == 0)
+        {
+            if ((point1.y - centre.y) >= 0 || (point2.y - centre.y) >= 0)
+                return (point1.y > point2.y) ? false : true;
+
+            return (point2.y > point1.y) ? false : true;
+        }
+
+        // Compute the cross product of the vectors (centre --> point1) x (centre --> point2).
+        double det = (point1.x - centre.x) * (point2.y - centre.y)
+                   - (point2.x - centre.x) * (point1.y - centre.y);
+
+        if (det < 0) return false;
+        else return true;
+
+        // Points are on the same line from the centre, check which point is
+        // closer to the centre.
+
+        double d1 = (point1.x - centre.x) * (point1.x - centre.x)
+                  + (point1.y - centre.y) * (point1.y - centre.y);
+
+        double d2 = (point2.x - centre.x) * (point2.x - centre.x)
+                  + (point2.y - centre.y) * (point2.y - centre.y);
+
+        return (d1 > d2) ? false : true;
+    }
+
+    double LevelSet::polygonArea(std::vector<Coord>& vertices, const unsigned int& nVertices, const Coord& centre) const
+    {
+        double area = 0;
+
+        // Sort vertices in anticlockwise order.
+        std::sort(vertices.begin(), vertices.begin() + nVertices, std::bind(&LevelSet::isClockwise,
+            this, std::placeholders::_1, std::placeholders::_2, centre));
+
+        // Loop over all vertices.
+        for (unsigned int i=0;i<nVertices;i++)
+        {
+            // Next point around (looping back to beginning).
+            unsigned int j = (i == (nVertices - 1)) ? 0 : (i + 1);
+
+            area += vertices[i].x * vertices[j].y;
+            area -= vertices[j].x * vertices[i].y;
+        }
+
+        area *= 0.5;
+
+        return (std::abs(area));
     }
 }
