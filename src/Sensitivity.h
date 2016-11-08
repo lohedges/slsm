@@ -63,17 +63,17 @@ namespace slsm
         double computeSensitivity(BoundaryPoint&, SensitivityCallback&) const;
 
         //! Apply deterministic Ito correction to objective sensitivity.
-        /*! \param levelSet
-                A reference to the level set object.
-
-            \param boundary
+        /*! \param boundary
                 A reference to the discretised boundary.
+
+            \param levelSet
+                A reference to the level set object.
 
             \param temperature
                 The temperature of the thermal bath.
 
          */
-        void itoCorrection(const LevelSet&, Boundary&, double) const;
+        void itoCorrection(Boundary&, const LevelSet&, double) const;
 
         //! Apply deterministic Ito correction to objective sensitivity.
         /*! \param boundary
