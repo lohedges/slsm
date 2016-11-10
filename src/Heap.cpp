@@ -17,8 +17,6 @@
 
 // Adapted from Scikit-FMM: https://github.com/scikit-fmm/scikit-fmm
 
-#include <cstdlib>
-
 #include "Debug.h"
 #include "Heap.h"
 
