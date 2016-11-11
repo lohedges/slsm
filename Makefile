@@ -286,7 +286,7 @@ valgrind:
 	@VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE) test
 
 # Build documentation using Doxygen.
-doc: $(headers) $(sources) $(dox_files)
+doc: $(headers) $(sources) $(demo_sources) $(dox_files)
 	$(call colorecho, 4, "--> Generating CXX source documentation with Doxygen")
 	doxygen dox/Doxyfile
 
