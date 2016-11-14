@@ -166,12 +166,6 @@ int main(int argc, char** argv)
 
         /* Initialise the optimisation object.
 
-           The Optimise class is a lightweight object so there is no cost for
-           reinitialising at every iteration. A smart compiler will optimise
-           this anyway, i.e. the same memory space will be reused. It is better
-           to place objects in the correct scope in order to aid readability
-           and to avoid unintended name clashes, etc.
-
            Since there are no constraints we pass an empty vector for the
            constraint distances argument.
          */
