@@ -199,7 +199,7 @@ int main(int argc, char** argv)
            constraint distances argument.
          */
         slsm::Optimise optimise(boundary.points, std::vector<double>(),
-            lambdas, timeStep, levelSet.moveLimit, false);
+            lambdas, timeStep, levelSet.moveLimit);
 
         // Perform the optimisation.
         optimise.solve();

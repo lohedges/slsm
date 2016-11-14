@@ -257,10 +257,6 @@ int main(int argc, char** argv)
         // Push current distance from constraint violation into vector.
         constraintDistances.push_back(meshArea*maxMismatch - mismatch);
 
-        // Set constraint type.
-        std::vector<bool> isEquality;
-        isEquality.push_back(false);
-
         /* Initialise the optimisation object.
 
            The Optimise class is a lightweight object so there is no cost for
@@ -270,7 +266,7 @@ int main(int argc, char** argv)
            and to avoid unintended name clashes, etc.
          */
         slsm::Optimise optimise(boundary.points, constraintDistances,
-            lambdas, timeStep, levelSet.moveLimit, false, isEquality);
+            lambdas, timeStep, levelSet.moveLimit);
 
         // Perform the optimisation.
         optimise.solve();

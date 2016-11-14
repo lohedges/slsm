@@ -175,7 +175,7 @@ int main(int argc, char** argv)
            and to avoid unintended name clashes, etc.
          */
         slsm::Optimise optimise(boundary.points, constraintDistances,
-            lambdas, timeStep, levelSet.moveLimit, false);
+            lambdas, timeStep, levelSet.moveLimit);
 
         // Perform the optimisation.
         optimise.solve();
