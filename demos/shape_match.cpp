@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
         // Push coordinates into points vector.
         while (shapeFile >> x >> y)
-            points.push_back(slsm::Coord({x, y}));
+            points.push_back(slsm::Coord(x, y));
     }
     else
     {
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
 
             // Push coordinates into points vector.
             while (shapeFile >> x >> y)
-                points.push_back(slsm::Coord({x, y}));
+                points.push_back(slsm::Coord(x, y));
         }
 
         else
