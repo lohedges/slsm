@@ -27,6 +27,18 @@ namespace slsm
     //! Two-dimensional coordinate information.
     struct Coord
     {
+        //! Constructor.
+        Coord() {};
+
+        //! Constructor.
+        /*! \param x_
+                The x coordinate.
+
+            \param y_
+                The y coordinate.
+         */
+        Coord(double x_, double y_) {x = x_; y = y_;};
+
         double x;   //!< The x coordinate.
         double y;   //!< The y coordinate.
     };

@@ -25,15 +25,11 @@ namespace slsm
 {
     Hole::Hole() {}
 
-    Hole::Hole(double x, double y, double r) : r(r)
+    Hole::Hole(double x, double y, double r) : coord(x, y), r(r)
     {
-        coord.x = x;
-        coord.y = y;
     }
 
-    Hole::Hole(Coord& coord_, double r) : r(r)
+    Hole::Hole(Coord& coord_, double r) : coord(coord_), r(r)
     {
-        coord.x = coord_.x;
-        coord.y = coord_.y;
     }
 }
