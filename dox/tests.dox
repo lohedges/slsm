@@ -1,0 +1,19 @@
+/**
+\page Tests Tests
+
+A test suite is provided in the `tests` directory. To run all unit tests:
+
+\code
+make test
+\endcode
+
+Note that this will compile the tests (and library) using the default compilation
+flags (`release`). To build the library and tests in a specific mode, run, e.g.
+
+\code
+make devel test
+\endcode
+
+The testing framework uses a modified version of Minunit.h and Debug.h adapted from
+Zed Shaw's <a href="http://c.learncodethehardway.org/book">Learn C The Hard Way</a>.
+*/

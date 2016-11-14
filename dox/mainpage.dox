@@ -1,0 +1,53 @@
+/** \mainpage Stochastic Level-Set Method (SLSM) Documentation
+
+Copyright &copy; 2015-2016 <a href="http://lesterhedges.net">Lester Hedges</a>
+<img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png" align="left">
+<br><br>
+
+\section intro_sec Introduction
+<a href="https://github.com/lohedges/slsm">LibSLSM</a> is a small C++ library
+that forms an accompaniment to the paper
+<a href="https://arxiv.org">"Stochastic level-set method for shape optimisation"</a>.
+The library provides a simple set of building blocks for implementing
+the method. Various example codes illustrate how to make make use of the
+library and reproduce the data in the <a href="https://arxiv.org">paper</a>.
+
+Unlike traditional level-set optimisation methods, which use a steepest
+descent approach, SLSM updates the level set using a stochastic differential
+equation. The addition of thermal noise allows the exploration of design
+space during the optimisation proces. In situations where the objective
+function is non-convex, this allows for the possibility of escaping local
+minima and converging to the true global optimum. See the
+<a href="https://arxiv.org">paper</a> for further details.
+
+\section compiling_sec Using the Code
+For specific instructions regarding how to install LibSLSM, see:
+- \ref Compiling
+
+For an overview of the class structure and details on how to instantiate
+and use objects, see:
+- \ref Classes
+
+To learn how to compile and run unit tests, see:
+- \ref Tests
+
+\section demos_sec Examples
+To get a feel for the how to write a code using the library, see the
+demonstration programs:
+- \ref Demos
+
+\section Acknowledgements
+- Parts of this library were based on code written by
+<a href="http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning">Peter Dunning</a>.
+
+- The Fast Marching Method implementation was adapted from
+<a href="https://github.com/scikit-fmm/scikitt-fmm">Scikit-FMM</a>.
+
+\section Disclaimer
+Please be aware that this a working repository so the code should be used at
+your own risk.
+
+It would be great to hear from you if this code was of use in your research.
+Email bugs, comments, and suggestions to lester.hedges+slsm@gmail.com.
+
+*/

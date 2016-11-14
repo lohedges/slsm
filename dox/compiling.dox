@@ -1,0 +1,82 @@
+/**
+\page Compiling Compiling & Linking
+
+\section Compiling-Compiling Compiling using Make
+
+LibSLSM uses <a href="https://www.gnu.org/software/make">
+GNU Make</a> for builds.
+
+Before Compiling:
+-# If you do not already have it, download and install <a href="http://git-scm.com">
+git</a>. To check if git is installed, try
+\code
+git --version
+\endcode
+-# Download the LibSLSM source via
+\code
+git clone https://github.com/lohedges/slsm.git
+\endcode
+
+Compiling and Installing:
+-# Change to the newly created slsm directory
+\code
+cd slsm
+\endcode
+-# run Make
+\code
+make build
+make install
+\endcode
+By default, the library installs to /usr/local. Therefore, you may need admin
+priveleges for the final "make install" step above. An alternative is to change
+the install location:
+\code
+make PREFIX=MY_INSTALL_DIR install
+\endcode
+Further details on using the Makefile can be found by running make without
+a target, i.e.
+\code
+make
+\endcode
+
+Note that you will need a working installation of
+<a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a> in order
+to build LibLSM. See the \ref Compiling-Dependencies section for details of
+how to add the library to your path.
+
+\section Compiling-Linking Linking with C/C++
+
+To use LibSLSM with a C/C++ code first include the library header file
+in the code.
+
+\code
+//example.cpp
+#include <slsm/slsm.h>
+\endcode
+
+Then to compile, we can use something like the following:
+\code
+g++ -std=c++11 example.cpp -lslsm -lnlopt
+\endcode
+
+This assumes that we have used the default install location /usr/local/. If
+we specify an install location, we would use a command more like the following:
+\code
+g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
+\endcode
+
+Note that the -std=c++11 compiler flag is needed for std::function and std::random.
+
+\section Compiling-Dependencies External Dependencies
+
+- LibSLSM uses the <a href="http://en.wikipedia.org/wiki/Mersenne_Twister">
+Mersenne Twister</a> psuedorandom number generator. A C++11 implementation
+is included as a bundled header file, MersenneTwister.h.
+
+- The Optimise class makes use of <a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a>.
+Make sure that the library and header files are in your path. If not, do something like:
+\code
+make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
+\endcode
+
+*/
