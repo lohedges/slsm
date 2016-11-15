@@ -130,7 +130,7 @@ namespace slsm
         void initialiseHeap();
 
         //! Initialise the trial set. Find nodes adjacent to the boundary
-        // ! and mark them as trial nodes.
+        //! and mark them as trial nodes.
         void initialiseTrial();
 
         //! Obtain the fast marching solution.

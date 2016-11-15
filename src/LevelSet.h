@@ -278,13 +278,13 @@ namespace slsm
         void initialise();
 
         //! Initialise the level set from a vector of user-defined holes.
-        /* \param holes
+        /*! \param holes
                 A vector of holes.
          */
         void initialise(const std::vector<Hole>&);
 
         //! Initialise the level set from a vector of user-defined points.
-        /* \param points
+        /*! \param points
                 A vector of point coordinates.
          */
         void initialise(const std::vector<Coord>&);

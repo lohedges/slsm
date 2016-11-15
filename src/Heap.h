@@ -100,7 +100,7 @@ namespace slsm
         const double& peek() const;
 
         //! Return the current size of the heap.
-        /* \return
+        /*! \return
                 The current size of the heap.
          */
         const unsigned int& size() const;
