@@ -5,21 +5,49 @@
 <img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png"></a></p>
 
 ## About
-A simple C++ library to implement the Stochastic Level-Set Method (SLSM) for
-performing structural topology optimisation. Based on code written by
-[Peter Dunning](http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning).
+LibSLSM in a small C++ library that forms an accompaniment to the paper
+[Stochastic level-set method for shape optimisation](https://arxiv.org).
+The library provides a simple set of building blocks for implementing
+the method. Various example codes illustrate how to make make use of the
+library and reproduce the data in the [paper](https://arxiv.org).
 
-The aim is to provide a robust and exstensible, object-oriented topology
-optimisation framework.
+Unlike traditional level-set optimisation methods, which use a steepest
+descent approach, SLSM updates the level set using a stochastic differential
+equation. The addition of thermal noise allows the exploration of design
+space during the optimisation proces. In situations where the objective
+function is non-convex, this allows for the possibility of escaping local
+minima and converging to the true global optimum. See the
+[paper](https://arxiv.org) for further details.
 
-## Installation
-A `Makefile` is included for building and installing LibSLSM.
+## Using the Code
 
-To compile LibSLSM, then install the library, documentation, and demos:
+Before Compiling:
+* If you do not already have it, download and install [`git`](http://git-scm.com).
+To check if `git` is installed, try:
 
 ```bash
-$ make build
-$ make install
+git --version
+```
+
+* Download the LibSLSM source via:
+
+```bash
+git clone https://github.com/lohedges/slsm.git
+```
+
+### Compiling and Installing:
+
+* Change to the newly created `slsm` directory:
+
+```bash
+cd slsm
+```
+
+* Run `Make`
+
+```bash
+make build
+make install
 ```
 
 By default, the library installs to `/usr/local`. Therefore, you may need admin
@@ -27,23 +55,24 @@ privileges for the final `make install` step above. An alternative is to change
 the install location:
 
 ```bash
-$ make PREFIX=MY_INSTALL_DIR install
+make PREFIX=MY_INSTALL_DIR install
 ```
-
 Further details on using the Makefile can be found by running make without
 a target, i.e.
 
 ```bash
-$ make
+make
 ```
 
-Note that you don't have to install the library in order to use it. You can
-always build locally then link against the library in the `lib` directory
-inside of the repository.
+Note that you will need a working installation of
+[NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt) in order to build LibLSM.
+See the [dependencies](##External-Dependencies) section for details of how to
+add the library to your path.
 
-## Compiling and linking
-To use LibSLSM with a C/C++ code first include the LibSLSM header file somewhere
-in the code.
+### Linking with C/C++
+
+To use LibSLSM with a C/C++ code first include the library header file
+in the code:
 
 ```cpp
 //example.cpp
@@ -51,127 +80,71 @@ in the code.
 ```
 
 Then to compile, we can use something like the following:
-
 ```bash
-$ g++ -std=c++11 example.cpp -lslsm -lnlopt
+g++ -std=c++11 example.cpp -lslsm -lnlopt
 ```
 
-This assumes that we have used the default install location `/usr/local`. If
+This assumes that we have used the default install location `/usr/local/`. If
 we specify an install location, we would use a command more like the following:
 
 ```bash
-$ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
+g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
 ```
 
-Note that the `-std=c++11` compiler flag is needed for `std::function` and
-`std::random`.
+Note that the `-std=c++11` compiler flag is needed for `std::function` and `std::random`.
 
-## Dependencies
-Documentation can be generated using [Doxygen](http://www.stack.nl/~dimitri/doxygen)
-by running `make doc`. Note that the `doc` target is a dependency of`install`,
-so you will require a working doxygen installation. If you do not require
-documentation then simply remove `doc` from the `install` dependency list in
-the Makefile.
+### External Dependencies
 
-LibSLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
-psuedorandom number generator. A C++11 implementation using `std::random` is
-included as a bundled header file, `MersenneTwister.h`. See the source code or
-generate Doxygen documentation with `make doc` for details on how to use it.
+- LibSLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
+psuedorandom number generator. A C++11 implementation is included as a bundled
+header file, [MersenneTwister.h](src/MersenneTwister.h).
 
-The `Optimise` class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
+- The Optimise class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
 Make sure that the library and header files are in your path. If not, do something like:
 
 ```bash
-$ make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
+make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
 ```
 
-## Tests
-A test suite is provided in the `tests` directory. To run all unit tests:
+## Documentation
+
+### Source code
+
+Comprehensive documentation is provided via [Doxygen](www.doxygen.org). To
+generate the documentation, run:
 
 ```bash
-$ make test
+make doc
 ```
 
-Note that this will compile the tests (and library) using the default compilation
-flags (`release`). To build the library and tests in a specific mode, run, e.g.
+Following this, point your web browser to `doc/html/index.html`.
 
-```bash
-$ make devel test
-```
+### Class Structure
 
-## Demos
-There are several example codes showing how to use the library:
+For an overview of the class structure and details on how to instantiate
+and use objects, see:
+- [Class Overview](src/README.md)
 
-* `demos/minimise_area.cpp`
-* `demos/minimise_perimeter.cpp`
-* `demos/minimise_area_constrained.cpp`
-* `demos/minimise_perimeter_constrained.cpp`
-* `demos/shape_match.cpp`
-* `demos/dumbbell.cpp`
-* `demos/umbrella_sample.cpp`
+### Tests
 
-The Makefile will build standalone executables, which can be run (from the top level
-directory) as follows, e.g.
+To learn how to compile and run unit tests, see:
+- [Tests](tests/README.md)
 
-```bash
-$ ./demos/minimise_area
+### Examples
+To get a feel for the how to write a code using the library, see the
+demonstration programs:
+- [Demos](demos/README.md)
 
-```
+## Acknowledgements
+- Parts of this library were based on code written by
+[Peter Dunning](http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning).
 
-The demos serve as a test of our numerical implementation. The comments
-in the source file provide further details of the calculations.
+- The Fast Marching Method implementation was adapted from
+[Scikit-FMM](https://github.com/scikit-fmm/scikitt-fmm).
 
-## Completed
+## Disclaimer
+Please be aware that this a working repository so the code should be used at
+your own risk.
 
-### Mesh
-Stores and initialises the two-dimensional fixed-grid mesh. This creates
-the required elements and nodes and stores information regarding their
-connectivity. Support is provided for periodic and non-periodic meshes.
-Note that this is not the finite-element mesh, which may be of a different
-geometry or resolution.
-
-### LevelSet
-Holds information relating to the level set function. Methods are
-provided to initialise the signed distance function (either using a vector of
-holes, or in a default "Swiss cheese" configuration) and to reinitialise it
-using the fast marching method.
-
-### FastMarchingMethod
-An implementation of the fast marching method to find approximate solutions
-to boundary value problems of the Eikonal equation. This is adapted from
-[scikit-fmm](https://github.com/scikit-fmm/scikit-fmm), for which I've added
-a few performance tweaks and bug fixes. The object provides functionality for
-calculating signed distances and extension velocities.
-
-### Boundary
-An object for the discretised boundary. The `discretise` method solves for
-a set of boundary points and segments given the current mesh and level set.
-Following this, the `computeAreaFractions` method can determine the material
-area fraction in each of the elements of the level set mesh.
-
-### InputOutput
-Provides functionality for reading and writing data structures. Currently
-able to write: level set information, boundary points and segments, and
-material area fractions. Data can be written as plain text (.txt) or in
-ParaView readable VTK format. Methods should be able to read/write files
-in the current directory, or from a user defined path.
-
-### Optimise
-Solve for the optimum boundary point velocity vector using the SLP method.
-I have made numerous modifications to the method in order to remove unphysical
-velocity capping and ensure that variable scaling is consistent and transparent.
-
-### Sensitivity
-A general purpose class for computing boundary point sensitivities by finite
-differences. A callback function allows sensitivities to be calculated with
-respect to an arbitrary function.
-
-## Todo
-* Work out why constraint fails when noisy sensitivity is used, e.g. perimeter
-constraint. Minimising area at constant perimeter fails, whereas minimising
-perimeter at constant area works.
-
-## Limitations
-* Limited to two-dimensional systems.
-* Fixed-grid mesh is assumed to be two-dimensional and is comprised of square
-elements of unit side.
+It would be great to hear from you if this code was of use in your research.
+Email bugs, comments, and suggestions to lester.hedges+slsm@gmail.com.
