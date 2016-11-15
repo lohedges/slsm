@@ -1183,7 +1183,7 @@ namespace slsm
 
     double LevelSet::gradHJWENO(double v1, double v2, double v3, double v4, double v5)
     {
-        // Approximate the gradient using the 5th order Hamilton-Jacobi WENO approximation.
+        // Calculate the gradient using the 5th order Hamilton-Jacobi WENO approximation.
         // Taken from pages 34-35 of "Level Set Methods and Dynamic Implicit Surfaces".
         // See: http://web.stanford.edu/class/cs237c/Lecture16.pdf
 
