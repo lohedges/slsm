@@ -41,7 +41,7 @@ demonstration programs:
 <a href="http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning">Peter Dunning</a>.
 
 - The Fast Marching Method implementation was adapted from
-<a href="https://github.com/scikit-fmm/scikitt-fmm">Scikit-FMM</a>.
+<a href="https://github.com/scikit-fmm/scikit-fmm">Scikit-FMM</a>.
 
 \section Disclaimer
 Please be aware that this a working repository so the code should be used at
