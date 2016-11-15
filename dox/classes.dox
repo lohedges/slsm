@@ -247,6 +247,11 @@ Absolute gradients of the signed distance function can be computed as follows:
 levelSet.computeGradients();
 \endcode
 
+The gradient is calculated using the 5th order Hamilton-Jacobi Weighted
+Essentially Non-Oscillatory (HJ-WENO) approximation taken from the book
+<a href="http://www.springer.com/gp/book/9780387954820">
+Level Set Methods and Dynamic Implicit Surfaces</a>.
+
 \subsection signedDistance Signed Distance
 
 Once velocities and gradients have been calculated then the signed distance
