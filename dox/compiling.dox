@@ -8,7 +8,7 @@ GNU Make</a> for builds.
 
 Before Compiling:
 -# If you do not already have it, download and install <a href="http://git-scm.com">
-git</a>. To check if git is installed, try
+`git`</a>. To check if `git` is installed, try
 \code
 git --version
 \endcode
@@ -22,13 +22,13 @@ Compiling and Installing:
 \code
 cd slsm
 \endcode
--# run Make
+-# run `Make`
 \code
 make build
 make install
 \endcode
-By default, the library installs to /usr/local. Therefore, you may need admin
-priveleges for the final "make install" step above. An alternative is to change
+By default, the library installs to `/usr/local`. Therefore, you may need admin
+priveleges for the final `"make install"` step above. An alternative is to change
 the install location:
 \code
 make PREFIX=MY_INSTALL_DIR install
@@ -65,7 +65,7 @@ we specify an install location, we would use a command more like the following:
 g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
 \endcode
 
-Note that the -std=c++11 compiler flag is needed for std::function and std::random.
+Note that the `-std=c++11` compiler flag is needed for `std::function` and `std::random`.
 
 \section Compiling-Dependencies External Dependencies
 

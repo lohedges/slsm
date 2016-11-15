@@ -20,7 +20,7 @@ As such, the interface should move at a constant unit velocity. The demo tests
 this assertion by initialising the level set with a single circular interface
 centred in the middle of the domain, then mimising the area enclosed by the
 circle. By measuring the radius of the circle at each iteration of the
-algorithm it is possible to measure the distance that the interface moves
+algorithm it is possible to calculate the distance that the interface moves
 as a function of time. As expected, the circle shrinks at a constant unit
 velocity.
 
@@ -36,7 +36,7 @@ sensitivities measure the local rate of change in perimeter for a movement
 of the boundary in the normal direction. This sensitivity should measure the
 local curvature of the interface, hence the shape should shrink with a velocity
 proportional to its mean curvature. To check this we choose to minimise the
-perimeter of a circle since the symmetry of the shape simplifies the problem.
+perimeter of a circle, since the symmetry of the shape simplifies the problem.
 At each iteration of the algorithm we compare the interface velocity, the
 average boundary point sensitivity (an estimate of the mean curvature), and
 the inverse radius of the circle (the analytical curvature). The three time
@@ -49,11 +49,11 @@ The source code for this demo can be found in minimise_perimeter.cpp
 \page Demos-ConstrainedPerimeterMinimisation Constrained Perimeter Minimisation
 
 To test that the \ref Classes-Optimise class is correctly handling constraints
-and our stochastic level set algorithm is sampling the correct thermal distribution
-we perform perimeter minimisation with a lower bound on the area. Starting from
-a square interface that encloses an area in excess of the constraint limit we
-should see the convergence to a fluctuating circlular interface at lying on
-the constraint manifold. By running many long and independent simulations we can
+and that our stochastic level set algorithm is sampling the correct thermal
+distribution we perform perimeter minimisation with a lower bound on the area.
+Starting from a square interface that encloses an area in excess of the constraint
+we should see convergence to a fluctuating circlular interface at lying on the
+constraint manifold. By running many long and independent simulations we can
 compute the distribution of the boundary perimeter at different temperatures,
 allowing us to confirm that we indeed sample the correct equilibrium
 distribution.
@@ -70,9 +70,9 @@ Demos-PerimeterMinimisation, shape matching simulations converge to a steady
 state in the absence of a constraint. Boundary point sensitivities are trivial
 to calculate and indicate the direction that boundary needs to move in order
 to increase or decrease the area around a boundary point, thus reducing the
-mismatch. The animation below shows a circle converging towards a piecewise
-linear representation of the <a href="https://en.wikipedia.org/wiki/Stanford_bunny">
-Stanford Bunny</a>.
+mismatch with the target. The animation below shows a circle converging towards
+a piecewise linear representation of the
+<a href="https://en.wikipedia.org/wiki/Stanford_bunny"> Stanford Bunny</a>.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/shape_match.gif" alt="Shape Matching.">
 
@@ -82,8 +82,8 @@ The source code for this demo can be found in shape_match.cpp
 
 As a means of demonstrating the utility the stochastic level-set method we
 construct a simple problem that exhibits a non-convex objective function.
-Here we aim to minimise the perimeter and height of a shape subject to a
-\ref Demos-ShapeMatching constraint with a target shape (the difference in
+Here we aim to minimise the perimeter and height of a shape, subject to a
+\ref Demos-ShapeMatching constraint with a target design (the difference in
 the area enclosed by the two shapes must be below a threshold). The target
 shape (shown as blue in the animations below) is a dumbbell, formed from the
 union of two vertically offset, overlapping circles. The level set is then
@@ -96,10 +96,9 @@ local minimum and the shape remains stuck in the dumbbell's neck.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/dumbbell.gif" alt="Dumbbell.">
 
-In contrast, under the stochastic dynamics the addition of a small amount
-of thermal noise allows the system to escape the local minimum. Eventually
-the shape advances through the neck of the dummbell and reaches the global
-minimum at the bottom of the lower lobe.
+In contrast, the addition of a small amount of thermal noise allows the system
+to escape the local minimum. Eventually the shape advances through the neck of
+the dummbell and reaches the global minimum at the bottom of the lower lobe.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/dumbbell_noise.gif" alt="Noisy Dumbbell.">
 

@@ -41,14 +41,14 @@ boundary.discretise(levelSet, true);
 \endcode
 
 Following discretisation, the total length of the boundary may be accesed
-using the length member variable, e.g.
+using the `length` member variable, e.g.
 
 \code
 // Print the boundary length.
 std::cout << boundary.length << '\n';
 \endcode
 
-Individual boundary points are contained in the points member vector. To
+Individual boundary points are contained in the `points` member vector. To
 print the length associated with each point:
 
 \code
@@ -57,7 +57,7 @@ for (unsigned int i=0;i<boundary.points.size();i++)
   std::cout << boundary.points[i].length << '\n';
 \endcode
 
-To compute inward point normal vectors for the set of the boundary points:
+To compute inward pointing normal vectors for the set of the boundary points:
 
 \code
 boundary.computeNormalVectors(levelSet);
@@ -82,7 +82,7 @@ This class provides functionality for the level set domain. We use a fixed-grid
 \ref Classes-Mesh to represent a non-periodic, rectangular design domain. The mesh
 represents a discretisation of the level set, or implicit function. At each
 node of the mesh we store the signed distance from the nearest interface, i.e.
-the closest point of the zero contour of the level set. A set of methods are
+the closest point on the zero contour of the level set. A set of methods are
 provide for initialising, maintaining, and updating the level set.
 
 \section Initialisation
@@ -133,7 +133,7 @@ slsm::LevelSet levelSet(200, 200, holes);
 \subsection Points
 
 Alternatively, the level set can be initialised using a vector of points that
-defines a single piece-wise linear shape. The points must be clockwise
+define a single piece-wise linear shape. The points must be clockwise
 ordered and closed. For example, to initialise the level set using a square:
 
 \code
@@ -182,11 +182,11 @@ slsm::LevelSet levelSet(200, 200, holes, points, 0.5, 6, true);
 \endcode
 
 It's possible to use any combination of holes and points to initialise the
-level set and target signed distance functions.
+level-set and target signed-distance functions.
 
 \subsection Manual
 
-It is also possible to manually initialise the signed distance function.
+It is also possible to manually initialise the signed distance function, e.g.
 
 \code
 // Initialise a 200x200 level set domain.
@@ -212,7 +212,7 @@ levelSet.reinitialise();
 
 \section Updating
 
-There are several steps that go into updating the level set.
+There are several steps that go into updating the level set:
 
 \subsection Velocities
 
@@ -223,8 +223,7 @@ point velocities can be extended to the nodes of the level set as follows:
 levelSet.computeVelocities(boundary.points);
 \endcode
 
-For a stochastic level-set simulation, the same update would be achieved as
-using:
+For a stochastic level-set simulation, the same update would be achieved by:
 
 \code
 // Initialise the random number generator.
@@ -237,7 +236,7 @@ double temperature = 0.1;
 levelSet.computeVelocities(boundary.points, timeStep, temperature, rng);
 \endcode
 
-Here the timeStep parameter is an output from the optimiser. See the
+Here the `timeStep` parameter is an output from the optimiser. See the
 \ref Classes-Optimise class documentation for details.
 
 \subsection Gradients
@@ -251,13 +250,13 @@ levelSet.computeGradients();
 \subsection signedDistance Signed Distance
 
 Once velocities and gradients have been calculated then the signed distance
-function can be updated.
+function can be updated:
 
 \code
 bool isReinitialise = levelSet.update(timeStep);
 \endcode
 
-Once again, the timeStep parameter is an output from the optimiser. See the
+Once again, the `timeStep` parameter is an output from the optimiser. See the
 \ref Classes-Optimise class documentation for details.
 
 The return value of the update method indicates whether the zero contour of
@@ -279,7 +278,7 @@ of the zero contour using a \ref Classes-Boundary object, this can be done by:
 double area = levelSet.computeAreaFractions(boundary);
 \endcode
 
-The computeAreaFractions method returns the total area fraction. Individual
+The `computeAreaFractions` method returns the total area fraction. Individual
 mesh element area fractions can be accessed using:
 
 \code
@@ -301,9 +300,9 @@ If you require units in your application, simply assign a physical dimension
 to the element edge length in your calculations.
 
 The Mesh class provides useful bookkeeping functionality for the mapping
-between elements and nodes of the level set domain. Each LevelSet object
-stores its mesh as a member and most Mesh operations should be hidden from
-the user.
+between elements and nodes of the level set domain. Each \ref Classes-LevelSet
+object stores its mesh as a member and most Mesh operations should be hidden
+from the user.
 
 To instantiate a 200 by 200 Mesh object:
 
@@ -353,9 +352,10 @@ function, subject to satisfying any constraints. Support is provided for
 minimising or maximising the objective function, and for an arbitrary number
 of equality and inequality constraints. The class makes use of the
 <a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a> package.
-See the \ref Compiling-Dependencies section for details. The optmiser assumes that boundary
-point sensitivities have been calculated for all of the objective and
-constraint functions.
+See the \ref Compiling-Dependencies section for details. The optimiser assumes
+that boundary point sensitivities have been calculated for all of the objective
+and constraint functions. See the \ref Classes-Sensitivity documentation for
+details on computing sensitivities.
 
 As an example, let's consider the minimisation of an arbitrary objective
 function subject to a single inequality constraint: a lower bound on the
@@ -374,7 +374,7 @@ std::vector<double> lambdas(2);
 // Constraint distance vector.
 std::vector<double> constraintDistances;
 
-// Push current distance from constraint violation into vector.
+// Push current distance from constraint into vector.
 constraintDistances.push_back(meshArea*minArea - levelSet.area);
 
 // Initialise the optimisation object.
@@ -386,9 +386,9 @@ optimise.solve()
 \endcode
 
 Here the boundary point displacement, \f$d_i\f$ is written as a linear
-combination of sensitivities, i.e. \f$d_i=\lambda^f s^f_i + \lambda^g s^g_i ...\f$
+combination of sensitivities, i.e. \f$d_i=\lambda^f s^f_i + \lambda^g s^g_i + \ldots\f$
 
-If we wished to instead maximise the objective function subject to an equality
+If we instead wish to maximise the objective function subject to an equality
 constraint:
 
 \code
@@ -404,7 +404,7 @@ std::vector<double> lambdas(2);
 // Constraint distance vector.
 std::vector<double> constraintDistances;
 
-// Push current distance from constraint violation into vector.
+// Push current distance from constraint into vector.
 constraintDistances.push_back(meshArea*minArea - levelSet.area);
 
 // Whether each constraint is an equality.
@@ -440,11 +440,11 @@ describes the rate of change of the objective function associated with moving
 the boundary point in its normal direction.
 
 The Sensitivity class provides a callback interface to allow the calculation
-of sensitivities for an arbitrary function. The SensitivityCallback must take
-a boundary point as an input argument and return the value of the function
+of sensitivities for an arbitrary function. The `SensitivityCallback` must take
+a `BoundaryPoint` as an input argument and return the value of the function
 associated with the point at its current position. As an example, let's consider
 minimising the perimeter of a shape. Here the callback function measures the
-length of the interface around each boundary point. The resulting sensitivity,
+length of the interface around the boundary point. The resulting sensitivity,
 the rate of change of the perimeter per unit length of the boundary, is the
 local curvature of the interface. The following code shows how to set up and
 compute the required sensitivities. Here we assume that the sensitivities
@@ -471,7 +471,7 @@ for (unsigned int i=0;i<boundary.points.size();i++)
 \endcode
 
 For some functions it is possible to analytically calculate boundary point
-sensitivities. For example, the sensitivity associated the minimising or
+sensitivities. For example, the sensitivity associated with minimising or
 maximising the area of a shape is simply plus or minus one, i.e. the change
 in area when moving a section of the interface in the normal direction is
 simply the length of that section, so the change per unit length is one.
@@ -502,7 +502,7 @@ See Sensitivity.h and Sensitivity.cpp for further implementation details.
 \page Classes-Hole Hole
 
 The Hole class provides a simple data type for circular holes. These can be
-used for initialising the signed distance function of the \ref Classes-LevelSet.
+used when initialising the signed distance function of the \ref Classes-LevelSet.
 
 To create a hole:
 
@@ -528,17 +528,17 @@ slsm::Coord coord(10, 20);
 double r = 20;
 
 // Initialise the hole.
-slsm::Hole hole(coord r);
+slsm::Hole hole(coord, r);
 \endcode
 
 \page Classes-InputOutput InputOutput
 
 The InputOutput class provides functionality for reading and writing data.
-Data can be writting in plain text `*.txt`, or in a
-<a href="http://www.paraview.org">ParaView</a> compatible VTK format.
+Data can be writting in plain text, `*.txt`, or in a
+<a href="http://www.paraview.org">ParaView</a> compatible `VTK` format.
 
-To instantiate an `InputOutput` object and write level set, boundary
-segment, and area fraction information to file:
+To instantiate an object and write level set, boundary segment, and area
+fraction information to file:
 
 \code
 // Instantiate InputOutput object.
@@ -555,7 +555,7 @@ io.saveBoundarySegmentsTXT(1, boundary);
 io.saveAreaFractions(1, levelSet.mesh);
 \endcode
 
-Here the `1` parameter indicates the index of the data file, which is used to
+Here the first argument specifies the index of the data file, which is used to
 generate a file prefix. This is useful when saving multiple data sets in a time
 series.
 
@@ -563,14 +563,14 @@ See InputOutput.h and InputOutput.cpp for further implementation details.
 
 \page Classes-MersenneTwister MersenneTwister
 
-MersenneTwister.h provides a C++11 implementation of the
+This class provides a C++11 implementation of the
 <a href="http://en.wikipedia.org/wiki/Mersenne_Twister">
 Mersenne Twister</a> psuedorandom number generator.
 
-This can be used as follows:
+Here are some examples of how it may be used:
 
 \code
-// Initialise random number generator.
+// Initialise a random number generator.
 slsm::MersenneTwister rng;
 
 // Generate a uniform random double between 0 and 1.
