@@ -8,21 +8,21 @@ GNU Make</a> for builds.
 
 Before Compiling:
 -# If you do not already have it, download and install <a href="http://git-scm.com">
-`git`</a>. To check if `git` is installed, try
+`git`</a>. To check if `git` is installed, try:
 \code
 git --version
 \endcode
--# Download the LibSLSM source via
+-# Download the LibSLSM source via:
 \code
 git clone https://github.com/lohedges/slsm.git
 \endcode
 
 Compiling and Installing:
--# Change to the newly created `slsm` directory
+-# Change to the newly created `slsm` directory:
 \code
 cd slsm
 \endcode
--# run `Make`
+-# Run `Make`:
 \code
 make build
 make install
