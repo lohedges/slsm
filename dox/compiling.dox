@@ -18,7 +18,7 @@ git clone https://github.com/lohedges/slsm.git
 \endcode
 
 Compiling and Installing:
--# Change to the newly created slsm directory
+-# Change to the newly created `slsm` directory
 \code
 cd slsm
 \endcode
@@ -28,7 +28,7 @@ make build
 make install
 \endcode
 By default, the library installs to `/usr/local`. Therefore, you may need admin
-priveleges for the final `"make install"` step above. An alternative is to change
+privileges for the final `"make install"` step above. An alternative is to change
 the install location:
 \code
 make PREFIX=MY_INSTALL_DIR install
@@ -59,7 +59,7 @@ Then to compile, we can use something like the following:
 g++ -std=c++11 example.cpp -lslsm -lnlopt
 \endcode
 
-This assumes that we have used the default install location /usr/local/. If
+This assumes that we have used the default install location `/usr/local/`. If
 we specify an install location, we would use a command more like the following:
 \code
 g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt

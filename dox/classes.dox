@@ -40,7 +40,7 @@ as follows:
 boundary.discretise(levelSet, true);
 \endcode
 
-Following discretisation, the total length of the boundary may be accesed
+Following discretisation, the total length of the boundary may be accessed
 using the `length` member variable, e.g.
 
 \code
@@ -216,8 +216,8 @@ There are several steps that go into updating the level set:
 
 \subsection Velocities
 
-For a traditional, zero temperature level-set simulation, \ref Classes-Boundary
-point velocities can be extended to the nodes of the level set as follows:
+For a traditional, zero temperature level-set simulation, boundary point
+velocities can be extended to the nodes of the level set as follows:
 
 \code
 levelSet.computeVelocities(boundary.points);
@@ -299,7 +299,7 @@ See LevelSet.h and LevelSet.cpp for further implementation details.
 
 \page Classes-Mesh Mesh
 
-The mesh represents a two-dimensionl rectangular design domain comprised of
+The mesh represents a two-dimensional rectangular design domain comprised of
 fixed, unit square elements. The mesh is non-periodic and dimensionless.
 If you require units in your application, simply assign a physical dimension
 to the element edge length in your calculations.

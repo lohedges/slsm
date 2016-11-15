@@ -4,7 +4,7 @@ Copyright &copy; 2015-2016 <a href="http://lesterhedges.net">Lester Hedges</a>
 <img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png" align="left">
 <br><br>
 
-\section intro_sec Introduction
+\section Introduction
 <a href="https://github.com/lohedges/slsm">LibSLSM</a> is a small C++ library
 that forms an accompaniment to the paper
 <a href="https://arxiv.org">"Stochastic level-set method for shape optimisation"</a>.
@@ -20,7 +20,7 @@ function is non-convex, this allows for the possibility of escaping local
 minima and converging to the true global optimum. See the
 <a href="https://arxiv.org">paper</a> for further details.
 
-\section compiling_sec Using the Code
+\section Main-Compiling Using the Code
 For specific instructions regarding how to install LibSLSM, see:
 - \ref Compiling
 
@@ -31,7 +31,7 @@ and use objects, see:
 To learn how to compile and run unit tests, see:
 - \ref Tests
 
-\section demos_sec Examples
+\section Examples
 To get a feel for the how to write a code using the library, see the
 demonstration programs:
 - \ref Demos

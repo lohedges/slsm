@@ -14,6 +14,6 @@ flags (`release`). To build the library and tests in a specific mode, run, e.g.
 make devel test
 \endcode
 
-The testing framework uses a modified version of Minunit.h and Debug.h adapted from
+The testing framework uses a modified version of MinUnit.h and Debug.h adapted from
 Zed Shaw's <a href="http://c.learncodethehardway.org/book">Learn C The Hard Way</a>.
 */
