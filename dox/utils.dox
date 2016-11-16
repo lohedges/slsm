@@ -16,6 +16,7 @@ shape_match.cpp demo run the following in your terminal:
 You will now have an animated GIF called `shape_match.gif` in your directory.
 
 The scripts require
+<a href="http://gnuplot.sourceforge.net">Gnuplot</a>,
 <a href="https://www.imagemagick.org/script/index.php">ImageMagick</a>
 and <a href="https://www.lcdf.org/gifsicle">Gifsicle</a>.
 

@@ -14,7 +14,8 @@ terminal:
 
 You will now have an animated GIF called `shape_match.gif` in your directory.
 
-The scripts require [ImageMagick](https://www.imagemagick.org/script/index.php)
+The scripts require [Gnuplot](http://gnuplot.sourceforge.net),
+[ImageMagick](https://www.imagemagick.org/script/index.php)
 and [Gifsicle](https://www.lcdf.org/gifsicle).
 
 To clean all of the output from a demo code from your working directory, run:
