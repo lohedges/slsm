@@ -110,8 +110,11 @@ make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
 
 ### Source code
 
-Comprehensive documentation is provided via [Doxygen](www.doxygen.org). To
-generate the documentation, run:
+Comprehensive documentation is provided via [Doxygen](www.doxygen.org). Make
+sure you also have working [Graphviz](http://www.graphviz.org) (for
+[DOT](http://www.graphviz.org/doc/info/lang.html)) and
+[Tex Live](https://www.tug.org/texlive) (for [LaTeX](https://www.latex-project.org))
+installations. To generate the documentation, run:
 
 ```bash
 make doc
