@@ -4,18 +4,19 @@
 # The first argument, $1, is the name of the output file.
 
 # Convert the PNGs to GIFs.
-echo "Converting PNG images ..."
+printf "Converting PNG images ... "
 for i in $(ls frame*.png)
 do
     convert $i ${i%.png}.gif
 done
+printf "Done\n"
 
 # Create the animated GIF.
-echo "Creatine animated GIF ..."
+printf "Creating animated GIF ... "
 gifsicle --colors 256 --delay=1 --loop frame*.gif > $1.gif
+printf "Done\n"
 
 # Remove the PNG and GIF files.
-echo "Cleaning files ..."
+printf "Cleaning files        ... "
 rm -f frame*.{png,gif}
-
-echo "Done!"
+printf "Done\n"
