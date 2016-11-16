@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 # Create an animated gif from a bunch of PNG images.
+# The first argument, $1, is the name of the output file.
 
 # Convert the PNGs to GIFs.
 echo "Converting PNG images ..."
-for i in $(ls frame*.png)                                                                                                             ⏎ master ◼jjjj
+for i in $(ls frame*.png)
 do
     convert $i ${i%.png}.gif
 done
