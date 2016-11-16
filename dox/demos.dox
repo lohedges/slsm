@@ -26,6 +26,18 @@ velocity.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/minimise_area.gif" alt="Area minimisation.">
 
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/minimise_area
+./utils/minimise_area.gp
+./utils/gif.sh minimise_area
+\endcode
+
+(This assumes that you are in the top level directory of the repository.)
+
+See the \ref Utils page for more details on using the scripts.
+
 The source code for this demo can be found in minimise_area.cpp
 
 \page Demos-PerimeterMinimisation Perimeter Minimisation
@@ -44,6 +56,18 @@ series show excellent agreement.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/minimise_perimeter.gif" alt="Perimeter minimisation.">
 
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/minimise_perimeter
+./utils/minimise_perimeter.gp
+./utils/gif.sh minimise_perimeter
+\endcode
+
+(This assumes that you are in the top level directory of the repository.)
+
+See the \ref Utils page for more details on using the scripts.
+
 The source code for this demo can be found in minimise_perimeter.cpp
 
 \page Demos-ConstrainedPerimeterMinimisation Constrained Perimeter Minimisation
@@ -60,6 +84,18 @@ distribution.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/minimise_perimeter_constrained.gif" alt="Constrained Perimeter minimisation.">
 
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/minimise_perimeter_constrained
+./utils/minimise_perimeter_constrained.gp
+./utils/gif.sh minimise_perimeter_constrained
+\endcode
+
+(This assumes that you are in the top level directory of the repository.)
+
+See the \ref Utils page for more details on using the scripts.
+
 The source code for this demo can be found in minimise_perimeter_constrained.cpp
 
 \page Demos-ShapeMatching Shape Matching
@@ -75,6 +111,18 @@ a piecewise linear representation of the
 <a href="https://en.wikipedia.org/wiki/Stanford_bunny"> Stanford Bunny</a>.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/shape_match.gif" alt="Shape Matching.">
+
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/shape_match
+./utils/shape_match.gp
+./utils/gif.sh shape_match
+\endcode
+
+(This assumes that you are in the top level directory of the repository.)
+
+See the \ref Utils page for more details on using the scripts.
 
 The source code for this demo can be found in shape_match.cpp
 
@@ -96,11 +144,31 @@ local minimum and the shape remains stuck in the dumbbell's neck.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/dumbbell.gif" alt="Dumbbell.">
 
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/dumbbell 0 0.65
+./utils/dumbbell.gp
+./utils/gif.sh dumbbell
+\endcode
+
+(This assumes that you are in the top level directory of the repository.)
+
+See the \ref Utils page for more details on using the scripts.
+
 In contrast, the addition of a small amount of thermal noise allows the system
 to escape the local minimum. Eventually the shape advances through the neck of
 the dumbbell and reaches the global minimum at the bottom of the lower lobe.
 
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/dumbbell_noise.gif" alt="Noisy Dumbbell.">
+
+To create the animation above, run the following in your terminal:
+
+\code
+./demos/dumbbell 0.002 0.65
+./utils/dumbbell_noise.gp
+./utils/gif.sh dumbbell_noise
+\endcode
 
 The source code for this demo can be found in dumbbell.cpp
 

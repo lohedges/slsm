@@ -138,6 +138,9 @@ To get a feel for the how to write a code using the library, see the
 demonstration programs:
 - [Demos](demos/README.md)
 
+A set of utility scripts are provided for processing the output data:
+- [Utils](utils/README.md)
+
 ## Acknowledgements
 - Parts of this library were based on code written by
 [Peter Dunning](http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning).

@@ -36,6 +36,9 @@ To get a feel for the how to write a code using the library, see the
 demonstration programs:
 - \ref Demos
 
+A set of utility scripts are provided for processing the output data:
+- \ref Utils
+
 \section Acknowledgements
 - Parts of this library were based on code written by
 <a href="http://www.abdn.ac.uk/engineering/people/profiles/peter.dunning">Peter Dunning</a>.
