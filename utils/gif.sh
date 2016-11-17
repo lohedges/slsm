@@ -13,7 +13,7 @@ printf "Done\n"
 
 # Create the animated GIF.
 printf "Creating animated GIF ... "
-gifsicle --colors 256 --delay=1 --loop frame*.gif > $1.gif
+gifsicle --colors 16 --delay=1 --loop frame*.gif > $1.gif
 printf "Done\n"
 
 # Remove the PNG and GIF files.
