@@ -30,6 +30,22 @@
 
 ############################### MACROS ########################################
 
+# Plain terminal output on Windows.
+ifeq ($(OS),Windows_NT)
+define colorecho
+	echo $2
+endef
+
+define boldcolorecho
+	echo $2
+endef
+
+define inlinecolorecho
+	echo $2
+endef
+
+# Colorize terminal output on Linux & OS X.
+else
 define colorecho
 	@if [[ -t 1 ]]; then	\
 		tput setaf $1;	    \
@@ -56,6 +72,7 @@ define inlinecolorecho
 		tput setaf $1; echo $2; tput sgr0;  \
 	fi
 endef
+endif
 
 ############################## VARIABLES ######################################
 
