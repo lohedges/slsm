@@ -1,5 +1,6 @@
 /*
   Copyright (c) 2015-2016 Lester Hedges <lester.hedges+lsm@gmail.com>
+  Copyright (c) 2012 the scikit-fmm team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
