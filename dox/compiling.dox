@@ -3,8 +3,14 @@
 
 \section Compiling-Compiling Compiling using Make
 
-LibSLSM uses <a href="https://www.gnu.org/software/make">
-GNU Make</a> for builds.
+LibSLSM is intended to be used on a
+<a href="https://en.wikipedia.org/wiki/Unix-like">Unix-like</a>
+operating system and has been extensively tested on macOS (formerly OS X) and
+Linux. Windows users are advised to use
+<a href="http://www.mingw.org">MinGW</a> to build LibSLSM and its
+\ref Compiling-Dependencies. The
+<a href="http://oldwiki.mingw.org/index.php/MsysShell">MSYS</a> shell has been
+used to successfully build LibSLSM on Windows 7 and 10.
 
 Before Compiling:
 -# If you do not already have it, download and install <a href="http://git-scm.com">
@@ -17,12 +23,15 @@ git --version
 git clone https://github.com/lohedges/slsm.git
 \endcode
 
+(Alternatively, a zip file can be downloaded from
+<a href="https://github.com/lohedges/slsm/archive/master.zip">here</a>.)
+
 Compiling and Installing:
 -# Change to the newly created `slsm` directory:
 \code
 cd slsm
 \endcode
--# Run `Make`:
+-# Run <a href="https://www.gnu.org/software/make">`Make`</a>:
 \code
 make build
 make install
@@ -41,7 +50,7 @@ make
 
 Note that you will need a working installation of
 <a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a> in order
-to build LibLSM. See the \ref Compiling-Dependencies section for details of
+to build LibSLSM. See the \ref Compiling-Dependencies section for details of
 how to add the library to your path.
 
 \section Compiling-Linking Linking with C/C++

@@ -21,6 +21,13 @@ minima and converging to the true global optimum. See the
 
 ## Using the Code
 
+LibSLSM is intended to be used on a [Unix-like](https://en.wikipedia.org/wiki/Unix-like)
+operating system and has been extensively tested on macOS (formerly OS X) and
+Linux. Windows users are advised to use [MinGW](http://www.mingw.org/) to
+build LibSLSM and its [dependencies](##External-Dependencies). The
+[MSYS](http://oldwiki.mingw.org/index.php/MsysShell) shell has been used to
+successfully build LibSLSM on Windows 7 and 10.
+
 Before Compiling:
 * If you do not already have it, download and install [`git`](http://git-scm.com).
 To check if `git` is installed, try:
@@ -34,6 +41,9 @@ git --version
 ```bash
 git clone https://github.com/lohedges/slsm.git
 ```
+
+(Alternatively, a zip file can be downloaded from
+[here](https://github.com/lohedges/slsm/archive/master.zip).)
 
 ### Compiling and Installing:
 
@@ -65,7 +75,7 @@ make
 ```
 
 Note that you will need a working installation of
-[NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt) in order to build LibLSM.
+[NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt) in order to build LibSLSM.
 See the [dependencies](##External-Dependencies) section for details of how to
 add the library to your path.
 
