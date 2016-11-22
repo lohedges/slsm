@@ -67,6 +67,11 @@ the install location:
 ```bash
 make PREFIX=MY_INSTALL_DIR install
 ```
+
+(Note that there is no need to install the library in order to use it. You
+can always build locally and link against the library using whatever path
+is appropriate.)
+
 Further details on using the Makefile can be found by running make without
 a target, i.e.
 

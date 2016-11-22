@@ -42,7 +42,10 @@ the install location:
 \code
 make PREFIX=MY_INSTALL_DIR install
 \endcode
-Further details on using the Makefile can be found by running make without
+(Note that there is no need to install the library in order to use it. You
+can always build locally and link against the library using whatever path
+is appropriate.)
+<br>Further details on using the Makefile can be found by running make without
 a target, i.e.
 \code
 make
