@@ -60,7 +60,7 @@ define boldcolorecho
 endef
 
 define inlinecolorecho
-	@if hash tput 2> /dev/null; then			\
+	if hash tput 2> /dev/null; then				\
 		if [[ -t 1 ]]; then						\
 			tput setaf $1; echo $2; tput sgr0;	\
 		else									\
