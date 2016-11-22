@@ -8,9 +8,15 @@ LibSLSM is intended to be used on a
 operating system and has been extensively tested on macOS (formerly OS X) and
 Linux. Windows users are advised to use
 <a href="http://www.mingw.org">MinGW</a> to build LibSLSM and its
-\ref Compiling-Dependencies. The
-<a href="http://oldwiki.mingw.org/index.php/MsysShell">MSYS</a> shell has been
-used to successfully build LibSLSM on Windows 7 and 10.
+\ref Compiling-Dependencies. For modern, 64-bit Windows systems we recommend
+using <a href="http://msys2.github.io">MSYS2</a>. This has been used to
+successfully build LibSLSM on Windows 7 and 10. After installing MSYS2
+(following the instructions on the <a href="http://msys2.github.io">website</a>)
+you will need to install several additional packages:
+
+\code
+pacman -S gcc git diffutils make
+\endcode
 
 Before Compiling:
 -# If you do not already have it, download and install <a href="http://git-scm.com">
