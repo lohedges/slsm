@@ -23,7 +23,7 @@ minima and converging to the true global optimum. See the
 
 LibSLSM is intended to be used on a [Unix-like](https://en.wikipedia.org/wiki/Unix-like)
 operating system and has been extensively tested on macOS (formerly OS X) and
-Linux. Windows users are advised to use [MinGW](http://www.mingw.org/) to
+Linux. Windows users are advised to use [MinGW](http://www.mingw.org) to
 build LibSLSM and its [dependencies](##External-Dependencies). For modern, 64-bit
 Windows systems we recommend using [MYSYS2](http://msys2.github.io). This
 has been used to successfully build LibSLSM on Windows 7 and 10. After
