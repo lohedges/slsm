@@ -1,6 +1,6 @@
 # CXX Project Makefile
 
-# Copyright (c) 2014, 2015  Lester Hedges <lester.hedges@gmail.com>
+# Copyright (c) 2014, 2015, 2016  Lester Hedges <lester.hedges@gmail.com>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,49 +30,46 @@
 
 ############################### MACROS ########################################
 
-# Plain terminal output on Windows.
-ifeq ($(OS),Windows_NT)
 define colorecho
-	echo $2
-endef
-
-define boldcolorecho
-	echo $2
-endef
-
-define inlinecolorecho
-	echo $2
-endef
-
-# Colorize terminal output on Linux & OS X.
-else
-define colorecho
-	@if [[ -t 1 ]]; then	\
-		tput setaf $1;	    \
-		echo $2;            \
-		tput sgr0;          \
-	else                    \
-		echo $2;            \
+	@if hash tput 2> /dev/null; then			\
+		if [[ -t 1 ]]; then						\
+			tput setaf $1;						\
+			echo $2;							\
+			tput sgr0;							\
+		else									\
+			echo $2;							\
+		fi										\
+	else										\
+		echo $2;								\
 	fi
 endef
 
 define boldcolorecho
-	@if [[ -t 1 ]]; then    \
-		tput bold;          \
-		tput setaf $1;	    \
-		echo $2;            \
-		tput sgr0;          \
-	else                    \
-		echo $2;            \
+	@if hash tput 2> /dev/null; then			\
+		if [[ -t 1 ]]; then						\
+			tput bold;							\
+			tput setaf $1;						\
+			echo $2;							\
+			tput sgr0;							\
+		else									\
+			echo $2;							\
+		fi										\
+	else										\
+		echo $2;								\
 	fi
 endef
 
 define inlinecolorecho
-	if [[ -t 1 ]]; then                     \
-		tput setaf $1; echo $2; tput sgr0;  \
+	@if hash tput 2> /dev/null; then			\
+		if [[ -t 1 ]]; then						\
+			tput setaf $1; echo $2; tput sgr0;	\
+		else									\
+			echo $2;							\
+		fi										\
+	else										\
+		echo $2;								\
 	fi
 endef
-endif
 
 ############################## VARIABLES ######################################
 
