@@ -198,7 +198,10 @@ namespace slsm
         void computeScaleFactors();
 
         //! Compute constraint distances.
-        void computeConstraintDistances();
+        /*! \param nCurrentConstraints
+                The current number of active constraints.
+         */
+        void computeConstraintDistances(unsigned int);
 
         //! Compute lambda limits.
         void computeLambdaLimits();

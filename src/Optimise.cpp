@@ -121,7 +121,7 @@ namespace slsm
 
         // Compute scaled constraint change distances and remove inactive
         // inequality constraints (only if there are constraints).
-        if (nConstraints > 0) computeConstraintDistances();
+        if (nConstraints > 0) computeConstraintDistances(nConstraints);
 
         // Create wrapper for objective.
         NLoptWrapper objectiveWrapper;
@@ -306,7 +306,7 @@ namespace slsm
         }
     }
 
-	void Optimise::computeConstraintDistances()
+	void Optimise::computeConstraintDistances(unsigned int nCurrentConstraints)
     {
         /* If we are far from satisfying the constraint then we need to scale
            the constraint distance so that it can be "satisfied" by simply
@@ -322,28 +322,26 @@ namespace slsm
            displacements at the vertices of the lambda search hypercube. For each
            variable, the constraint changes are computed at each vertex, then
            sorted into ascending order (from which the min and max change can be
-           extracted). Here we must make the assumption that all of the constraints
-           are active. There is no way to self-consistently solve for the constraint
-           change targets and remove inactive constraints, i.e. when a constraint is
-           removed it reduces the dimensionality of the optimisation problem, hence
-           the constraint change limits for all other variables are immediately
-           affected. As such, this scheme will likely work poorly for optimisation
-           problems with many constraints. The method has been shown to work well
-           for simple problems with a single constraint.
+           extracted). Here we assume that all of the current constraints are
+           active. To self-consistently solve for the constraint change targets
+           while remove inactive constraints we recursively call this method until
+           the number of active constraints stops changing. As such, the estimated
+           constraint changes are computed within a hypercube of ever decreasing
+           dimension.
          */
 
-        // Number of active contraints.
+        // Zero the number of active contraints.
         unsigned int nActive = 0;
 
         // Whether each constraint is active.
-        std::vector<bool> isActive(nConstraints);
+        std::vector<bool> isActive(nCurrentConstraints);
 
         /*******************************************************************
          * Generate a vector of vertex coordinates for the lambda hypercube.
          *******************************************************************/
 
         // The dimensionality of the hypercube.
-        unsigned int nDim = nConstraints + 1;
+        unsigned int nDim = nCurrentConstraints + 1;
 
         // The number of vertices.
         unsigned int nVertices = std::pow(2, nDim);
@@ -376,7 +374,7 @@ namespace slsm
          *****************************************************************/
 
         // Loop over all constraints.
-        for (unsigned int i=0;i<nConstraints;i++)
+        for (unsigned int i=0;i<nCurrentConstraints;i++)
         {
             // Flag constraint as active.
             isActive[i] = true;
@@ -409,7 +407,7 @@ namespace slsm
                     if(!boundaryPoints[k].isFixed)
                     {
                         constraintChange += displacements[k]
-                                          * boundaryPoints[k].sensitivities[i+1]
+                                          * boundaryPoints[k].sensitivities[indexMap[i+1]]
                                           * boundaryPoints[k].length;
                     }
                 }
@@ -425,9 +423,9 @@ namespace slsm
             double min = constraintChanges[0];
             double max = constraintChanges.back();
 
-            /* We reduce the limits slightly to ensure that the optimiser
-               can find a solution, i.e. the change in the constraint function
-               must be less than zero. If we take the full limit then it's possible
+            /* We reduce the limits slightly to ensure that the optimiser can
+               find a solution, i.e. the change in the constraint function must
+               be less than zero. If we take the full limit then it's possible
                (on rare occasions) that the constraint can't be met (due to rounding,
                and the step size of the optimiser).
              */
@@ -435,9 +433,9 @@ namespace slsm
             max *= 0.99;
 
             // Constraint is violated.
-            if (constraintDistances[i] < 0)
+            if (constraintDistances[indexMap[i+1]] < 0)
             {
-                if (constraintDistances[i] < min)
+                if (constraintDistances[indexMap[i+1]] < min)
                 {
                     /* Here we reduce the constraint change target to produce a smoother
                        approach to the constraint manifold, i.e. this allows the objective
@@ -453,7 +451,7 @@ namespace slsm
             // Constraint is satisfied.
             else
             {
-                if (constraintDistances[i] > max)
+                if (constraintDistances[indexMap[i+1]] > max)
                 {
                     // Flag inequality constraint as inactive.
                     if (!isEquality[i]) isActive[i] = false;
@@ -508,12 +506,13 @@ namespace slsm
             isEquality.resize(nActive);
             indexMap.resize(nActive);
 
-            // Store the original number of constraints.
-            nConstraintsInitial = nConstraints;
-
             // Reduce the number of constraints.
             nConstraints = nActive;
         }
+
+        // If a constraint has been removed, then repeat the process.
+        if ((nActive > 0) && (nActive < nCurrentConstraints))
+            computeConstraintDistances(nConstraints);
     }
 
     void Optimise::computeLambdaLimits()
