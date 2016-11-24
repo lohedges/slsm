@@ -638,11 +638,14 @@ namespace slsm
         gradient[0] = 0;
         for (unsigned int i=1;i<nConstraints+1;i++) gradient[i] = 0;
 
-        /* If all lambda values are zero then we need a fix for the
-           analytic gradient calculation. This is because side constraints
-           for boundary points lying exactly on the domain boundary will
-           be active for lambda < 0 and inactive for lambda > 0. As such,
-           the gradient will be half as large, i.e. only positive lambda
+        /* If all lambda values are zero then we need a fix for the analytic
+           gradient calculation. Considering a central finite-difference
+           for the gradient, the side constraint will be active for any point
+           lying exactly on the domain boundary on one side of the difference,
+           i.e. it is not allowed to move outside of the domain. The direction
+           in which this occurs (positive or negative lambda) depends on the
+           sign of the sensitivity in question. This means that the gradient
+           will be half as large, i.e. only one side of the finite difference
            contributes.
          */
 
