@@ -15,7 +15,7 @@ successfully build LibSLSM on Windows 7 and 10. After installing MSYS2
 you will need to install several additional packages:
 
 \code
-pacman -S gcc git diffutils make
+pacman -S diffutils gcc git make
 \endcode
 
 Before Compiling:

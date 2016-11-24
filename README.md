@@ -31,7 +31,7 @@ installing MYSYS2 (following the instructions on the [website](http://msys2.gith
 you will need to install several additional packages:
 
 ```bash
-pacman -S gcc git diffutils make
+pacman -S diffutils gcc git make
 ```
 
 Before Compiling:
