@@ -103,7 +103,6 @@ namespace slsm
 
         // Resize boundary point dependent data structures.
         displacements.resize(nPoints);
-        isSideLimit.resize(nPoints);
 
         // Initialise the index map.
         indexMap.resize(nConstraints + 1);
@@ -533,7 +532,7 @@ namespace slsm
         // Loop over objective and constraints.
         for (unsigned int i=0;i<nConstraints+1;i++)
         {
-            // Remap the sensitivity index: active --> original
+            // Remap the sensitivity index: active --> original.
             unsigned int k = indexMap[i];
 
             // Initialise max sensitivity.
@@ -577,16 +576,13 @@ namespace slsm
             // Don't consider fixed points.
             if (!boundaryPoints[i].isFixed)
             {
-                // Reset side limit flag.
-                isSideLimit[i] = false;
-
                 // Initialise component for objective.
                 displacements[i] = scaleFactors[0] * lambda[0] * boundaryPoints[i].sensitivities[0];
 
                 // Add components for active constraints.
                 for (unsigned int j=1;j<nConstraints+1;j++)
                 {
-                    // Remap the sensitivity index: active --> original
+                    // Remap the sensitivity index: active --> original.
                     unsigned int k = indexMap[j];
 
                     // Update displacement vector.
@@ -596,12 +592,9 @@ namespace slsm
                 // Check side limits if point lies close to domain boundary.
                 if (boundaryPoints[i].isDomain)
                 {
-                    // Apply side limit.
+                    // Apply side limit (the point can't move outside the domain).
                     if (displacements[i] < boundaryPoints[i].negativeLimit)
-                    {
                         displacements[i] = boundaryPoints[i].negativeLimit;
-                        isSideLimit[i] = true;
-                    }
                 }
             }
         }
@@ -611,7 +604,7 @@ namespace slsm
     {
         // This method assumes that displacements have already been calculated.
 
-        // Remap the sensitivity index: active --> original
+        // Remap the sensitivity index: active --> original.
         unsigned int j = indexMap[index];
 
         // Initialise function.
@@ -631,40 +624,9 @@ namespace slsm
 
     void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
     {
-        // Whether we're at the origin, i.e. all lambda values are zero.
-        bool isOrigin = false;
-
         // Zero the gradients.
         gradient[0] = 0;
         for (unsigned int i=1;i<nConstraints+1;i++) gradient[i] = 0;
-
-        /* If all lambda values are zero then we need a fix for the analytic
-           gradient calculation. Considering a central finite-difference
-           for the gradient, the side constraint will be active for any point
-           lying exactly on the domain boundary on one side of the difference,
-           i.e. it is not allowed to move outside of the domain. The direction
-           in which this occurs (positive or negative lambda) depends on the
-           sign of the sensitivity in question. This means that the gradient
-           will be half as large, i.e. only one side of the finite difference
-           contributes.
-         */
-
-        // Sum lambda values.
-        double lambdaSum = 0;
-        for (unsigned int i=0;i<nConstraints+1;i++) lambdaSum += std::abs(lambda[i]);
-
-        // If all lambdas are zero, then we're at the origin.
-        if (lambdaSum < 1e-6)
-        {
-            isOrigin = true;
-
-            // Find points lying on domain boundary.
-            for (unsigned int i=0;i<nPoints;i++)
-            {
-                if (boundaryPoints[i].isDomain) isSideLimit[i] = true;
-                else isSideLimit[i] = false;
-            }
-        }
 
         // Calculate the derivative with respect to each lambda.
 
@@ -677,26 +639,16 @@ namespace slsm
                 // Loop over all functions (objective, then constraints).
                 for (unsigned int j=0;j<nConstraints+1;j++)
                 {
-                    // Remap the sensitivity index: active --> original
+                    // Remap the sensitivity index: active --> original.
                     unsigned int k = indexMap[j];
 
                     // Scale factor.
                     double scaleFactor = scaleFactors[index] * scaleFactors[k];
 
-                    if (!isSideLimit[i])
-                    {
-                        gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                     *  boundaryPoints[i].sensitivities[k]
-                                     *  boundaryPoints[i].length
-                                     *  scaleFactor);
-                    }
-                    else if (isOrigin)
-                    {
-                        gradient[k] += (boundaryPoints[i].sensitivities[index]
-                                     *  boundaryPoints[i].sensitivities[k]
-                                     *  boundaryPoints[i].length
-                                     *  0.5 * scaleFactor);
-                    }
+                    gradient[k] += (boundaryPoints[i].sensitivities[index]
+                                 *  boundaryPoints[i].sensitivities[k]
+                                 *  boundaryPoints[i].length
+                                 *  scaleFactor);
                 }
             }
         }

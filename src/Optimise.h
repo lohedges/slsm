@@ -176,9 +176,6 @@ namespace slsm
         /// The boundary point displacement vector.
         std::vector<double> displacements;
 
-        /// Whether the displacement side limit is active for each boundary point.
-        std::vector<bool> isSideLimit;
-
         /// Negative lambda limits.
         std::vector<double> negativeLambdaLimits;
 
