@@ -541,11 +541,15 @@ namespace slsm
             // Loop over all boundary points.
             for (unsigned int j=0;j<boundaryPoints.size();j++)
             {
-                // Take absolute sensitivity.
-                double sens = std::abs(boundaryPoints[j].sensitivities[k]);
+                // Don't consider fixed points.
+                if (!boundaryPoints[j].isFixed)
+                {
+                    // Take absolute sensitivity.
+                    double sens = std::abs(boundaryPoints[j].sensitivities[k]);
 
-                // Check max sensitivity.
-                if (sens > maxSens) maxSens = sens;
+                    // Check max sensitivity.
+                    if (sens > maxSens) maxSens = sens;
+                }
             }
 
             // Store limits.
