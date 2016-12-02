@@ -32,10 +32,10 @@ do for [i=1:100] {
     plot filename1 w l ls 1
 
     # Set up right-hand plot pane.
-    set xrange  [0:100]
+    set xrange  [0:50]
     set yrange  [100:500]
     set y2range [0.5:1.0]
-    set xtics   0,20,100
+    set xtics   0,10,50
     set ytics   100,100,500
     set y2tics  0.5,0.1,1.0
     set ytics   nomirror
@@ -45,7 +45,7 @@ do for [i=1:100] {
     set y2label 'Area'      textcolor rgb '#ad0009'
 
     # Set up the time series file name.
-    filename2 = sprintf('perimeter_0.0500.txt')
+    filename2 = sprintf('perimeter_0.1000.txt')
 
     # Plot the time series data.
     plot filename2 every ::1::i using 1:2 w l ls 2 axes x1y1, \
