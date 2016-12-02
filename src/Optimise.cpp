@@ -36,7 +36,7 @@ namespace slsm
     }
 
     Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
-                       const std::vector<double>& constraintDistances_,
+                       std::vector<double> constraintDistances_,
                        std::vector<double>& lambdas_,
                        double& timeStep_,
                        double maxDisplacement_,
@@ -444,9 +444,9 @@ namespace slsm
             max *= 0.99;
 
             // Constraint is violated.
-            if (constraintDistances[indexMap[i+1]] < 0)
+            if (constraintDistances[i] < 0)
             {
-                if (constraintDistances[indexMap[i+1]] < min)
+                if (constraintDistances[i] < min)
                 {
                     /* Here we reduce the constraint change target to produce a smoother
                        approach to the constraint manifold, i.e. this allows the objective
@@ -462,7 +462,7 @@ namespace slsm
             // Constraint is satisfied.
             else
             {
-                if (constraintDistances[indexMap[i+1]] > max)
+                if (constraintDistances[i] > max)
                 {
                     // Flag inequality constraint as inactive.
                     if (!isEquality[i]) isActive[i] = false;
@@ -492,7 +492,8 @@ namespace slsm
                 // Shift scale factors.
                 scaleFactors[nActive+1] = scaleFactors[i+1];
 
-                // Shift constraint distance.
+                // Shift constraint distances.
+                constraintDistances[nActive] = constraintDistances[i];
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
 
                 // Shift negative lambda limit.
@@ -520,6 +521,7 @@ namespace slsm
             negativeLambdaLimits.resize(nActive + 1);
             positiveLambdaLimits.resize(nActive + 1);
             indexMap.resize(nActive + 1);
+            constraintDistances.resize(nActive);
             constraintDistancesScaled.resize(nActive);
             isEquality.resize(nActive);
 

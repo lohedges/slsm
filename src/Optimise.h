@@ -111,8 +111,8 @@ namespace slsm
             \param algorithm_
                 (Optional) The NLopt algorithm (default = LD_SLSQP).
          */
-        Optimise(std::vector<BoundaryPoint>&, const std::vector<double>&,
-            std::vector<double>&, double&, double maxDisplacement_ = 0.5, bool isMax_ = false,
+        Optimise(std::vector<BoundaryPoint>&, std::vector<double>, std::vector<double>&,
+            double&, double maxDisplacement_ = 0.5, bool isMax_ = false,
             const std::vector<bool>& isEquality_ = {}, nlopt::algorithm algorithm_ = nlopt::LD_SLSQP);
 
         //! Execute the NLopt solver.
@@ -149,8 +149,8 @@ namespace slsm
         /// A reference to a vector of boundary points.
         std::vector<BoundaryPoint>& boundaryPoints;
 
-        /// A reference to a vector of constraint violation distances.
-        const std::vector<double>& constraintDistances;
+        /// A vector of distances from the constraint manifold.
+        std::vector<double> constraintDistances;
 
         /// A reference to a vector of optimum lambda values (to be found by the solver).
         std::vector<double>& lambdas;
