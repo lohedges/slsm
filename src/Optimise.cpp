@@ -329,9 +329,6 @@ namespace slsm
            dimension.
          */
 
-        // Zero the number of active contraints.
-        unsigned int nActive = 0;
-
         // Whether each constraint is active.
         std::vector<bool> isActive(nCurrentConstraints);
 
@@ -465,8 +462,11 @@ namespace slsm
          * Remove any inactive constraints.
          ***********************************/
 
+        // Zero the number of active contraints.
+        unsigned int nActive = 0;
+
         // Loop over all constraints.
-        for (unsigned int i=0;i<nConstraints;i++)
+        for (unsigned int i=0;i<nCurrentConstraints;i++)
         {
             // Constraint is active.
             if (isActive[i])
@@ -478,16 +478,16 @@ namespace slsm
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
 
                 // Shift negative lambda limit.
-                negativeLambdaLimits[nActive] = negativeLambdaLimits[i];
+                negativeLambdaLimits[nActive] = negativeLambdaLimits[i+1];
 
                 // Shift positive lambda limit.
-                positiveLambdaLimits[nActive] = positiveLambdaLimits[i];
+                positiveLambdaLimits[nActive] = positiveLambdaLimits[i+1];
 
                 // Shift equality flag.
                 isEquality[nActive] = isEquality[i];
 
                 // Map the constraint index: active --> original
-                indexMap[nActive+1] = i + 1;
+                indexMap[nActive+1] = indexMap[i+1];
 
                 // Incremement the number of active constraints.
                 nActive++;
@@ -501,9 +501,9 @@ namespace slsm
             negativeLambdaLimits.resize(nActive + 1);
             positiveLambdaLimits.resize(nActive + 1);
             scaleFactors.resize(nActive + 1);
+            indexMap.resize(nActive + 1);
             constraintDistancesScaled.resize(nActive);
             isEquality.resize(nActive);
-            indexMap.resize(nActive);
 
             // Reduce the number of constraints.
             nConstraints = nActive;
