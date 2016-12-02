@@ -188,6 +188,9 @@ namespace slsm
         /// Scaled constraint distances.
         std::vector<double> constraintDistancesScaled;
 
+        /// Gradients of the objective and constraint functions.
+        std::vector<std::vector<double> > gradients;
+
         /// Optimiser return code.
         nlopt::result returnCode;
 
@@ -216,16 +219,13 @@ namespace slsm
         double computeFunction(unsigned int);
 
         //! Compute the gradient of the objective or constraint functions.
-        /*! \param lambda
-                A vector of lambda values (objective, then constraints).
-
-            \param gradient
+        /*! \param gradient
                 The gradient of the change in objective or constraint with respect to each lambda.
 
             \param index
                 Function index, 0 = objective, 1, 2, 3, ... = constraints.
          */
-        void computeGradients(const std::vector<double>&, std::vector<double>&, unsigned int index);
+        void computeGradients(std::vector<double>&, unsigned int index);
 
         //! Rescale displacements and lambda values if the CFL condition is violated.
         /*! \return

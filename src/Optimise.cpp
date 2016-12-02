@@ -89,7 +89,7 @@ namespace slsm
 
         // Compute the gradients.
         if (!gradient.empty())
-            computeGradients(lambda, gradient, index);
+            gradient = gradients[index];
 
         // Return the function value.
         return computeFunction(index);
@@ -121,6 +121,21 @@ namespace slsm
         // Compute scaled constraint change distances and remove inactive
         // inequality constraints (only if there are constraints).
         if (nConstraints > 0) computeConstraintDistances(nConstraints);
+
+        // Resize gradient vector.
+        gradients.resize(nConstraints + 1);
+
+        // Calculate and store the gradient for each function.
+        for (unsigned int i=0;i<nConstraints+1;i++)
+        {
+            std::vector<double> gradient(nConstraints + 1);
+
+            // Calculate the gradient.
+            computeGradients(gradient, i);
+
+            // Store the gradient.
+            gradients[i] = gradient;
+        }
 
         // Create wrapper for objective.
         NLoptWrapper objectiveWrapper;
@@ -298,7 +313,7 @@ namespace slsm
         for (unsigned int i=0;i<nConstraints+1;i++)
         {
             // Calculate the gradient.
-            computeGradients(lambda, gradient, i);
+            computeGradients(gradient, i);
 
             // Scale by diagonal gradient entry (absolute value).
             scaleFactors[i] *= (1.0 / std::abs(gradient[i]));
@@ -474,6 +489,9 @@ namespace slsm
                 // Shift initial lambda estimate.
                 lambdas[nActive+1] = lambdas[i+1];
 
+                // Shift scale factors.
+                scaleFactors[nActive+1] = scaleFactors[i+1];
+
                 // Shift constraint distance.
                 constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
 
@@ -498,9 +516,9 @@ namespace slsm
         if (nActive < nConstraints)
         {
             lambdas.resize(nActive + 1);
+            scaleFactors.resize(nActive + 1);
             negativeLambdaLimits.resize(nActive + 1);
             positiveLambdaLimits.resize(nActive + 1);
-            scaleFactors.resize(nActive + 1);
             indexMap.resize(nActive + 1);
             constraintDistancesScaled.resize(nActive);
             isEquality.resize(nActive);
@@ -626,7 +644,7 @@ namespace slsm
         else return (func - (scaleFactors[index] * constraintDistancesScaled[index - 1]));
     }
 
-    void Optimise::computeGradients(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
+    void Optimise::computeGradients(std::vector<double>& gradient, unsigned int index)
     {
         // Zero the gradients.
         gradient[0] = 0;
@@ -647,9 +665,9 @@ namespace slsm
                     unsigned int k = indexMap[j];
 
                     // Scale factor.
-                    double scaleFactor = scaleFactors[index] * scaleFactors[k];
+                    double scaleFactor = scaleFactors[index] * scaleFactors[j];
 
-                    gradient[k] += (boundaryPoints[i].sensitivities[index]
+                    gradient[k] += (boundaryPoints[i].sensitivities[indexMap[index]]
                                  *  boundaryPoints[i].sensitivities[k]
                                  *  boundaryPoints[i].length
                                  *  scaleFactor);
