@@ -446,17 +446,9 @@ namespace slsm
             // Constraint is violated.
             if (constraintDistances[i] < 0)
             {
+                // Adjust constraint change limit.
                 if (constraintDistances[i] < min)
-                {
-                    /* Here we reduce the constraint change target to produce a smoother
-                       approach to the constraint manifold, i.e. this allows the objective
-                       to be minimised on approach, helping to reduce unwanted artefacts,
-                       such as peeling away from domain boundaries in minimisation problems
-                       with volume constraints. The factor of 50% is arbitrary, but seems
-                       to work well.
-                     */
-                    constraintDistancesScaled[i] = 0.5*min;
-                }
+                    constraintDistancesScaled[i] = min;
             }
 
             // Constraint is satisfied.
@@ -467,8 +459,8 @@ namespace slsm
                     // Flag inequality constraint as inactive.
                     if (!isEquality[i]) isActive[i] = false;
 
-                    // Reduce target for a smoother approach (see above).
-                    else constraintDistancesScaled[i] = 0.5*max;
+                    // Adjust constraint change limit.
+                    else constraintDistancesScaled[i] = max;
                 }
             }
         }
