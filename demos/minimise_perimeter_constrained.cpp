@@ -49,22 +49,22 @@ int main(int argc, char** argv)
     double moveLimit = 0.1;
 
     // Default temperature of the thermal bath.
-    double temperature = 0.05;
+    double temperature = 0.1;
 
     // Override temperature if command-line argument is passed.
     if (argc == 2) temperature = atof(argv[1]);
 
     // Set maximum running time.
-    double maxTime = 100;
+    double maxTime = 50;
 
     // Set minimum material area.
     double minArea = 0.6;
 
     // Set sampling interval.
-    double sampleInterval = 1;
+    double sampleInterval = 0.5;
 
     // Set time of the next sample.
-    double nextSample = 1;
+    double nextSample = 0.5;
 
     // Initialise a 200x200 level set domain.
     slsm::LevelSet levelSet(200, 200, moveLimit, 6, true);
