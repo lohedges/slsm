@@ -137,7 +137,7 @@ branch := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null)
 cxxflags_devel := -O0 -std=c++11 -g -Wall -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS)
 
 # C++ compiler flags for release build.
-cxxflags_release := -O3 -std=c++11 -funroll-loops -DNDEBUG -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS)
+cxxflags_release := -O3 -std=c++11 -DNDEBUG -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS)
 
 # Default to release build.
 CXXFLAGS := $(cxxflags_release)
