@@ -309,7 +309,7 @@ namespace slsm
             \return
                 The gradient at the node.
          */
-        double computeGradient(const unsigned int);
+        double computeGradient(const unsigned int) const;
 
         //! Compute Hamilton-Jacobi WENO gradient approximation.
         /*! \param v1
@@ -330,7 +330,7 @@ namespace slsm
             \return
                 The smoothed function (gradient).
          */
-        double gradHJWENO(double, double, double, double, double);
+        double gradHJWENO(double, double, double, double, double) const;
 
         //! Compute the minimum distance between a point and a line segment.
         /*! \param vertex1

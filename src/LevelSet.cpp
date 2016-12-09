@@ -779,7 +779,7 @@ namespace slsm
         }
     }
 
-    double LevelSet::computeGradient(const unsigned int node)
+    double LevelSet::computeGradient(const unsigned int node) const
     {
         // Nodal coordinates.
         unsigned int x = mesh.nodes[node].coord.x;
@@ -1181,7 +1181,7 @@ namespace slsm
         return grad;
     }
 
-    double LevelSet::gradHJWENO(double v1, double v2, double v3, double v4, double v5)
+    double LevelSet::gradHJWENO(double v1, double v2, double v3, double v4, double v5) const
     {
         // Calculate the gradient using the 5th order Hamilton-Jacobi WENO approximation.
         // Taken from pages 34-35 of "Level Set Methods and Dynamic Implicit Surfaces".
