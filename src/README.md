@@ -444,7 +444,7 @@ implementation details.
 This class provides functionality for generic finite-difference boundary
 point sensitivity calculations. Informally, the boundary point sensitivity
 describes the rate of change of the objective function associated with moving
-the boundary point in its normal direction.
+the boundary point in the inward-pointing normal direction.
 
 The Sensitivity class provides a callback interface to allow the calculation
 of sensitivities for an arbitrary function. The `SensitivityCallback` must take
