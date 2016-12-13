@@ -7,7 +7,7 @@
 [![Build Status](https://travis-ci.org/lohedges/slsm.svg?branch=master)](https://travis-ci.org/lohedges/slsm)
 
 ## About
-LibSLSM in a small C++ library that forms an accompaniment to the paper
+LibSLSM is a small C++ library that forms an accompaniment to the paper
 [Stochastic level-set method for shape optimisation](https://arxiv.org).
 The library provides a simple set of building blocks for implementing
 the method. Various example codes illustrate how to make make use of the
@@ -157,7 +157,7 @@ To learn how to compile and run unit tests, see:
 - [Tests](tests/README.md)
 
 ### Examples
-To get a feel for the how to write a code using the library, see the
+To get a feel for the how to write code using the library, see the
 demonstration programs:
 - [Demos](demos/README.md)
 

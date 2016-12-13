@@ -79,11 +79,11 @@ implementation details.
 ## LevelSet
 
 This class provides functionality for the level set domain. We use a fixed-grid
-[Mesh](##Mesh) to represent a non-periodic, rectangular design domain. The mesh
+[Mesh](#mesh) to represent a non-periodic, rectangular design domain. The mesh
 represents a discretisation of the level set, or implicit function. At each
 node of the mesh we store the signed distance from the nearest interface, i.e.
 the closest point on the zero contour of the level set. A set of methods are
-provide for initialising, maintaining, and updating the level set.
+provided for initialising, maintaining, and updating the level set.
 
 ### Initialisation
 There are many ways to initialise the level set domain, providing flexibility
@@ -91,7 +91,7 @@ for a range of different use cases.
 
 #### 1) Default
 
-To initialise a 200 by 200 level set domain:
+To initialise a 200 by 200 level-set domain:
 
 ```cpp
 slsm::LevelSet levelSet(200, 200);
@@ -102,7 +102,7 @@ of holes, as is commonly used in may compliance minimisation simulations.
 The are several optional parameters that may be passed to the constructor,
 allowing the user to specify the
 [Courant-Friedrichs-Lewy](https://en.wikipedia.org/wiki/Courant–Friedrichs–Lewy_condition)
-(CFL) condition, to adjust the width of the narrow band region, or to fixed
+(CFL) condition, to adjust the width of the narrow band region, or to fix
 the boundary of the domain. Default parameters are a CFL limit of 0.5 grid
 units, a narrow band of 6 elements, and a free domain boundary.
 
@@ -116,7 +116,7 @@ slsm::LevelSet levelSet(200, 200, 0.1, 10, true);
 #### 2) Holes
 
 It is also possible to initialise the level set using a custom arrangement
-of \ref Classes-Hole objects:
+of [Hole](#hole) objects:
 
 ```cpp
 // Initialise a vector of holes.
@@ -133,14 +133,14 @@ slsm::LevelSet levelSet(200, 200, holes);
 #### 3) Points
 
 Alternatively, the level set can be initialised using a vector of points that
-define a single piece-wise linear shape. The points must be clockwise
-ordered and closed. For example, to initialise the level set using a square:
+define a single piece-wise linear shape. The points must be clockwise-ordered
+and closed. For example, to initialise the level set using a square:
 
 ```cpp
 // Initialise a vector of points.
 std::vector<slsm::Coord> points;
 
-// Create the square (clockwise ordered and closed).
+// Create the square (clockwise-ordered and closed).
 points.push_back(slsm::Coord(50,  50);
 points.push_back(slsm::Coord(50,  150);
 points.push_back(slsm::Coord(150, 150);
@@ -182,7 +182,7 @@ slsm::LevelSet levelSet(200, 200, holes, points, 0.5, 6, true);
 ```
 
 It's possible to use any combination of holes and points to initialise the
-level-set and target signed-distance functions.
+signed-distance functions of the level-set and target.
 
 #### 5) Manual
 
@@ -237,7 +237,7 @@ levelSet.computeVelocities(boundary.points, timeStep, temperature, rng);
 ```
 
 Here the `timeStep` parameter is an output from the optimiser. See the
-\ref Classes-Optimise class documentation for details.
+[Optimise](#optimise) class documentation for details.
 
 #### 2) Gradients
 
@@ -260,8 +260,7 @@ function can be updated:
 bool isReinitialise = levelSet.update(timeStep);
 ```
 
-Once again, the `timeStep` parameter is an output from the optimiser. See the
-\ref Classes-Optimise class documentation for details.
+Once again, the `timeStep` parameter is an output from the [optimiser](#optimise).
 
 The return value of the update method indicates whether the zero contour of
 the level set has reached the edge of the current narrow band region,
@@ -274,9 +273,9 @@ levelSet.reinitialise();
 
 ### Area Fractions
 
-For many problems one needs to know the area of the level set domain that
+For many problems one needs to know the area of the level-set domain that
 is enclosed by the discretised zero contour. Having generated a discretisation
-of the zero contour using a \ref Classes-Boundary object, this can be done by:
+of the zero contour using a [Boundary](#boundary) object, this can be done by:
 
 ```cpp
 double area = levelSet.computeAreaFractions(boundary);
@@ -305,7 +304,7 @@ If you require units in your application, simply assign a physical dimension
 to the element edge length in your calculations.
 
 The Mesh class provides useful bookkeeping functionality for the mapping
-between elements and nodes of the level set domain. Each [LevelSet](##LevelSet)
+between elements and nodes of the level set domain. Each [LevelSet](#levelset)
 object stores its mesh as a member and most Mesh operations should be hidden
 from the user.
 
@@ -360,7 +359,7 @@ of equality and inequality constraints. The class makes use of the
 [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt) package.
 See the [Dependencies](../README.md) section for details. The optimiser assumes
 that boundary point sensitivities have been calculated for all of the objective
-and constraint functions. See the \ref Classes-Sensitivity documentation for
+and constraint functions. See the [Sensitivity](#sensitivity) documentation for
 details on computing sensitivities.
 
 As an example, let's consider the minimisation of an arbitrary objective
@@ -390,9 +389,6 @@ slsm::Optimise optimise(boundary.points, constraintDistances,
 // Perform the optimisation.
 optimise.solve()
 ```
-
-(Here the boundary point displacement$ is written as a linear combination of
-sensitivities.)
 
 If we instead wish to maximise the objective function subject to an equality
 constraint:
@@ -510,7 +506,7 @@ further implementation details.
 ## Hole
 
 The Hole class provides a simple data type for circular holes. These can be
-used when initialising the signed distance function of the [LevelSet](##LevelSet).
+used when initialising the signed distance function of the [LevelSet](#levelset).
 
 To create a hole:
 

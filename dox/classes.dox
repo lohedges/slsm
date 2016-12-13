@@ -83,7 +83,7 @@ This class provides functionality for the level set domain. We use a fixed-grid
 represents a discretisation of the level set, or implicit function. At each
 node of the mesh we store the signed distance from the nearest interface, i.e.
 the closest point on the zero contour of the level set. A set of methods are
-provide for initialising, maintaining, and updating the level set.
+provided for initialising, maintaining, and updating the level set.
 
 \section Initialisation
 There are many ways to initialise the level set domain, providing flexibility
@@ -91,7 +91,7 @@ for a range of different use cases.
 
 \subsection Default
 
-To initialise a 200 by 200 level set domain:
+To initialise a 200 by 200 level-set domain:
 
 \code
 slsm::LevelSet levelSet(200, 200);
@@ -102,7 +102,7 @@ of holes, as is commonly used in may compliance minimisation simulations.
 The are several optional parameters that may be passed to the constructor,
 allowing the user to specify the
 <a href="https://en.wikipedia.org/wiki/Courant–Friedrichs–Lewy_condition">Courant-Friedrichs-Lewy</a>
-(CFL) condition, to adjust the width of the narrow band region, or to fixed
+(CFL) condition, to adjust the width of the narrow band region, or to fix
 the boundary of the domain. Default parameters are a CFL limit of 0.5 grid
 units, a narrow band of 6 elements, and a free domain boundary.
 
@@ -133,14 +133,14 @@ slsm::LevelSet levelSet(200, 200, holes);
 \subsection Points
 
 Alternatively, the level set can be initialised using a vector of points that
-define a single piece-wise linear shape. The points must be clockwise
-ordered and closed. For example, to initialise the level set using a square:
+define a single piece-wise linear shape. The points must be clockwise-ordered
+and closed. For example, to initialise the level set using a square:
 
 \code
 // Initialise a vector of points.
 std::vector<slsm::Coord> points;
 
-// Create the square (clockwise ordered and closed).
+// Create the square (clockwise-ordered and closed).
 points.push_back(slsm::Coord(50,  50);
 points.push_back(slsm::Coord(50,  150);
 points.push_back(slsm::Coord(150, 150);
@@ -182,7 +182,7 @@ slsm::LevelSet levelSet(200, 200, holes, points, 0.5, 6, true);
 \endcode
 
 It's possible to use any combination of holes and points to initialise the
-level-set and target signed-distance functions.
+signed distance functions of the level-set and target.
 
 \subsection Manual
 
@@ -275,7 +275,7 @@ levelSet.reinitialise();
 
 \section AreaFractions Area Fractions
 
-For many problems one needs to know the area of the level set domain that
+For many problems one needs to know the area of the level-set domain that
 is enclosed by the discretised zero contour. Having generated a discretisation
 of the zero contour using a \ref Classes-Boundary object, this can be done by:
 
