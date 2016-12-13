@@ -12,16 +12,20 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - debian-sid
           packages:
             - g++-4.9
+            - libnlopt-dev
       env: COMPILER=g++-4.9
     - compiler: gcc
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - debian-sid
           packages:
             - g++-5
+            - libnlopt-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -29,8 +33,10 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
+            - debian-sid
           packages:
             - clang-3.6
+            - libnlopt-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -38,13 +44,11 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
+            - debian-sid
           packages:
             - clang-3.7
+            - libnlopt-dev
       env: COMPILER=clang++-3.7
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y libnlopt-dev
 
 script:
   - make CXX=$COMPILER devel test
