@@ -4,6 +4,8 @@
 <a href="http://www.gnu.org/licenses/gpl-3.0.html">
 <img width="80" src="http://www.gnu.org/graphics/gplv3-127x51.png"></a></p>
 
+[![Build Status](https://travis-ci.org/lohedges/slsm.svg?branch=master)](https://travis-ci.org/lohedges/slsm)
+
 ## About
 LibSLSM in a small C++ library that forms an accompaniment to the paper
 [Stochastic level-set method for shape optimisation](https://arxiv.org).
