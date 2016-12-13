@@ -14,7 +14,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-4.9
-            - libnlopt-dev
       env: COMPILER=g++-4.9
     - compiler: gcc
       addons:
@@ -23,7 +22,6 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-5
-            - libnlopt-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -33,7 +31,6 @@ matrix:
             - llvm-toolchain-precise-3.6
           packages:
             - clang-3.6
-            - libnlopt-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -43,8 +40,11 @@ matrix:
             - llvm-toolchain-precise-3.7
           packages:
             - clang-3.7
-            - libnlopt-dev
       env: COMPILER=clang++-3.7
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libnlopt-dev
 
 script:
   - make CXX=$COMPILER devel test
