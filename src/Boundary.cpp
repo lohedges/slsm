@@ -537,8 +537,8 @@ namespace slsm
             // Node index.
             unsigned int node = levelSet.narrowBand[i];
 
-            // Node has a neighbouring boundary point and isn't on the domain boundary.
-            if ((levelSet.mesh.nodes[node].nBoundaryPoints > 0) && !levelSet.mesh.nodes[node].isDomain)
+            // Make sure the node has at least one neighbouring boundary point.
+            if (levelSet.mesh.nodes[node].nBoundaryPoints > 0)
             {
                 // Nodal coordinates.
                 unsigned int x = levelSet.mesh.nodes[node].coord.x;
