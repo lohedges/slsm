@@ -162,7 +162,7 @@ the dumbbell and reaches the global minimum at the bottom of the lower lobe.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/dumbbell 0.0002 0.65
+./demos/dumbbell 0.002 0.65
 ./utils/dumbbell_noise.gp
 ./utils/gif.sh dumbbell_noise
 ```
