@@ -12,20 +12,16 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - debian-sid
           packages:
             - g++-4.9
-            - libnlopt-dev
       env: COMPILER=g++-4.9
     - compiler: gcc
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
-            - debian-sid
           packages:
             - g++-5
-            - libnlopt-dev
       env: COMPILER=g++-5
     - compiler: clang
       addons:
@@ -33,10 +29,8 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.6
-            - debian-sid
           packages:
             - clang-3.6
-            - libnlopt-dev
       env: COMPILER=clang++-3.6
     - compiler: clang
       addons:
@@ -44,11 +38,14 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-precise-3.7
-            - debian-sid
           packages:
             - clang-3.7
-            - libnlopt-dev
       env: COMPILER=clang++-3.7
+
+install:
+  - wget http://ab-initio.mit.edu/nlopt/nlopt-2.4.2.tar.gz
+  - tar -xzvf nlopt-2.4.2.tar.gz
+  - pushd nlopt-2.4.2 && ./configure --prefix=/usr && make && sudo make install && popd
 
 script:
   - make CXX=$COMPILER devel test
