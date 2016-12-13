@@ -99,7 +99,7 @@ The source code for this demo can be found in
 
 A fun test of the optimisation algorithm is to perform shape matching
 simulations using a predefined target interface. Unlike
-[perimeter Minimisation](##Perimeter-Minimisation), shape matching simulations
+[perimeter minimisation](#perimeter-minimisation), shape matching simulations
 converge to a steady state in the absence of a constraint. Boundary point
 sensitivities are trivial to calculate and indicate the direction that boundary
 needs to move in order to increase or decrease the area around a boundary point,
@@ -127,7 +127,7 @@ The source code for this demo can be found in
 As a means of demonstrating the utility the stochastic level-set method we
 construct a simple problem that exhibits a non-convex objective function.
 Here we aim to minimise the perimeter and height of a shape, subject to a
-[shape matching](##Shape-Matching) constraint with a target design (the
+[shape matching](#shape-matching) constraint with a target design (the
 difference in the area enclosed by the two shapes must be below a
 threshold). The target shape (shown as blue in the animations below) is a
 dumbbell, formed from the union of two vertically offset, overlapping
