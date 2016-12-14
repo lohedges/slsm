@@ -73,12 +73,14 @@ The source code for this demo can be found in
 
 To test that the Optimise class is correctly handling constraints and that our
 stochastic level set algorithm is sampling the correct thermal distribution we
-perform perimeter minimisation with a lower bound on the area. Starting from a
-square interface that encloses an area in excess of the constraint we should
-see convergence to a fluctuating circular interface at lying on the constraint
-manifold. By running many long and independent simulations we can compute the
-distribution of the boundary perimeter at different temperatures, allowing us
-to confirm that we indeed sample the correct equilibrium distribution.
+perform perimeter minimisation with an upper bound on the material area fraction.
+(The square is cut from a filled domain so we constrain the area outside of the
+shape.) Starting from a square interface that encloses an area below the
+constraint we should see convergence to a fluctuating circular interface lying
+on the constraint manifold. By running many long and independent simulations
+we can compute the distribution of the boundary perimeter at different
+temperatures, allowing us to confirm that we indeed sample the correct
+equilibrium distribution.
 
 <p align="center">
 <img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/minimise_perimeter_constrained.gif" alt="Constrained Perimeter minimisation.">

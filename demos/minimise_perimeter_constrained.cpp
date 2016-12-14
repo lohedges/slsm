@@ -25,6 +25,8 @@
 
     \brief An example code showing perimeter minimisation with noise.
     Minimisation is performed subject to a lower bound on the area (hole area).
+    (Since the shape is cut from a filled domain this corresponds to an upper
+    bound on the area outside of the shape.)
 
     The output file, "perimeter_*.txt", contains the measured boundary length vs
     time data for the optmisation run. Level set information for each sample
@@ -57,8 +59,8 @@ int main(int argc, char** argv)
     // Set maximum running time.
     double maxTime = 50;
 
-    // Set minimum material area.
-    double minArea = 0.6;
+    // Set maximum material area.
+    double maxArea = 0.6;
 
     // Set sampling interval.
     double sampleInterval = 0.5;
@@ -164,7 +166,7 @@ int main(int argc, char** argv)
         std::vector<double> constraintDistances;
 
         // Push current distance from constraint violation into vector.
-        constraintDistances.push_back(meshArea*minArea - levelSet.area);
+        constraintDistances.push_back(meshArea*maxArea - levelSet.area);
 
         // Initialise the optimisation object.
         slsm::Optimise optimise(boundary.points, constraintDistances,
