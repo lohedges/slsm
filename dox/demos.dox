@@ -3,7 +3,7 @@
 
 Several example codes illustrate how to interface with LibSLSM, provide tests
 of various components of the algorithm, and reproduce the data in the
-<a href="https://arxiv.org">paper</a>:
+<a href="https://arxiv.org/abs/1612.04681">paper</a>:
 
 - \subpage Demos-AreaMinimisation
 - \subpage Demos-PerimeterMinimisation
