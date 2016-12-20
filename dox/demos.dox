@@ -129,7 +129,7 @@ The source code for this demo can be found in shape_match.cpp
 
 \page Demos-Dumbbell Dumbbell
 
-As a means of demonstrating the utility the stochastic level-set method we
+As a means of demonstrating the utility of the stochastic level-set method we
 construct a simple problem that exhibits a non-convex objective function.
 Here we aim to minimise the perimeter and height of a shape, subject to a
 \ref Demos-ShapeMatching constraint with a target design (the difference in
