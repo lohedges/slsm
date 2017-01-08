@@ -478,27 +478,20 @@ namespace slsm
             // Constraint is active.
             if (isActive[i])
             {
-                // Shift initial lambda estimate.
+                // Shift full vectors (objective and constraints).
+
                 lambdas[nActive+1] = lambdas[i+1];
-
-                // Shift scale factors.
                 scaleFactors[nActive+1] = scaleFactors[i+1];
-
-                // Shift constraint distances.
-                constraintDistances[nActive] = constraintDistances[i];
-                constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
-
-                // Shift negative lambda limit.
-                negativeLambdaLimits[nActive] = negativeLambdaLimits[i+1];
-
-                // Shift positive lambda limit.
-                positiveLambdaLimits[nActive] = positiveLambdaLimits[i+1];
-
-                // Shift equality flag.
-                isEquality[nActive] = isEquality[i];
+                negativeLambdaLimits[nActive+1] = negativeLambdaLimits[i+1];
+                positiveLambdaLimits[nActive+1] = positiveLambdaLimits[i+1];
 
                 // Map the constraint index: active --> original
                 indexMap[nActive+1] = indexMap[i+1];
+
+                // Shift constraint only vectors.
+                constraintDistances[nActive] = constraintDistances[i];
+                constraintDistancesScaled[nActive] = constraintDistancesScaled[i];
+                isEquality[nActive] = isEquality[i];
 
                 // Incremement the number of active constraints.
                 nActive++;
