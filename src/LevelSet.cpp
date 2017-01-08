@@ -318,7 +318,7 @@ namespace slsm
                 double dist = sqrt(dx*dx + dy*dy);
 
                 // Point is inside the hole.
-                if (dist < signedDistance[i])
+                if (dist < holes[j].r)
                 {
                     signedDistance[i] = -1e-6;
                     mesh.nodes[i].isMasked = true;
