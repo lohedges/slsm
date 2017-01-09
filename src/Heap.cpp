@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015-2016 Lester Hedges <lester.hedges+slsm@gmail.com>
+  Copyright (c) 2015-2017 Lester Hedges <lester.hedges+slsm@gmail.com>
   Copyright (c) 2012 the scikit-fmm team
 
   This program is free software: you can redistribute it and/or modify
