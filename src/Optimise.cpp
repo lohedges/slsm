@@ -320,7 +320,7 @@ namespace slsm
         }
     }
 
-	void Optimise::computeConstraintDistances(unsigned int nCurrentConstraints)
+    void Optimise::computeConstraintDistances(unsigned int nCurrentConstraints)
     {
         /* If we are far from satisfying the constraint then we need to scale
            the constraint distance so that it can be "satisfied" by simply
@@ -637,7 +637,16 @@ namespace slsm
         gradient[0] = 0;
         for (unsigned int i=1;i<nConstraints+1;i++) gradient[i] = 0;
 
-        // Calculate the derivative with respect to each lambda.
+        /* Calculate the derivative with respect to each lambda.
+
+           Note that this isn't strictly correct, since points lying close the
+           domain boundary might trigger a displacement cap if they are to move
+           outside of the domain. This means that the change in the objective
+           and constraint functions are no longer linear functions of the lambda
+           variables. In practice, this effect seems to be negligible.
+           (Also note that none of the example problems have a structural
+           boundary lying on, or close to, the domain boundary.)
+         */
 
         // Loop over all points.
         for (unsigned int i=0;i<nPoints;i++)
