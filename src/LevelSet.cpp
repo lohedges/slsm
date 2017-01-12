@@ -480,8 +480,13 @@ namespace slsm
         // The holes have a default radius of 5.
 
         // Number of holes in x and y directions.
+#ifndef WIN
         unsigned int nx = std::round((double) mesh.width / 30);
         unsigned int ny = std::round((double) mesh.height / 30);
+#else
+        unsigned int nx = round((double) mesh.width / 30);
+        unsigned int ny = round((double) mesh.height / 30);
+#endif
 
         // Number of holes.
         unsigned int n1 = (nx * ny);                // outer grid

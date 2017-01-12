@@ -30,6 +30,8 @@
 
 ############################### MACROS ########################################
 
+# Colorize terminal output.
+
 define colorecho
 	@if hash tput 2> /dev/null; then			\
 		if [[ -t 1 ]]; then						\
@@ -70,6 +72,12 @@ define inlinecolorecho
 		echo $2;								\
 	fi
 endef
+
+# Add Windows support.
+
+ifeq ($(OS),Windows_NT)
+	WINDOWS := -DWIN
+endif
 
 ############################## VARIABLES ######################################
 
@@ -134,10 +142,10 @@ commit := $(shell git describe --abbrev=4 --dirty --always --tags 2> /dev/null)
 branch := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null)
 
 # C++ compiler flags for development build.
-cxxflags_devel := -O0 -std=c++11 -g -Wall -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS)
+cxxflags_devel := -O0 -std=c++11 -g -Wall -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS) $(WINDOWS)
 
 # C++ compiler flags for release build.
-cxxflags_release := -O3 -std=c++11 -DNDEBUG -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS)
+cxxflags_release := -O3 -std=c++11 -DNDEBUG -Isrc -DCOMMIT=\"$(commit)\" -DBRANCH=\"$(branch)\" $(OPTFLAGS) $(WINDOWS)
 
 # Default to release build.
 CXXFLAGS := $(cxxflags_release)
