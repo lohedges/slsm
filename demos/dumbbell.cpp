@@ -65,7 +65,7 @@ double computePerimeter(const std::vector<slsm::BoundaryPoint>&);
 double computePointLength(const slsm::BoundaryPoint& point);
 
 // Perimeter weight function prototype.
-double computePerimeterWeight(double y);
+double computePerimeterWeight(double);
 
 // GLOBALS
 unsigned int nDiscrete = 10;                // Boundary integral discretisation factor.
