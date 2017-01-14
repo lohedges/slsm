@@ -526,6 +526,9 @@ namespace slsm
         // Initialise front (zero contour) distance array.
         double frontDist[2] = {0, 0};
 
+        // Whether the front distance has been set.
+        bool isSet[2] = {false, false};
+
         // Initialise velocity array.
         double vel[2] = {0, 0};
 
@@ -548,10 +551,13 @@ namespace slsm
                     double d = std::abs((*signedDistance)[neighbour]);
 
                     // Check whether the neighbour is closer to the zero contour.
-                    if ((frontDist[dim] == 0) || (frontDist[dim] > d))
+                    if (!isSet[dim] || (frontDist[dim] > d))
                     {
                         // Store updated distance to the front.
                         frontDist[dim] = d;
+
+                        // Flag that the front distance has been set.
+                        isSet[dim] = true;
 
                         // Calculate the distance to the front in this direction.
                         d = (*signedDistance)[node] - (*signedDistance)[neighbour];
