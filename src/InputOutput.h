@@ -103,6 +103,34 @@ namespace slsm
          */
         void saveLevelSetTXT(const std::ostringstream&, const LevelSet&, bool isXY = false) const;
 
+        //! Load the level set function from a plain text file.
+        /*! \param datapoint
+                The datapoint of the current optimisation trajectory.
+
+            \param levelSet
+                A reference to the level set object.
+
+            \param inputDirectory
+                The input directory path (optional).
+
+            \param isXY
+                Whether the data file also contains nodal x/y coordinates (optional).
+         */
+        void loadLevelSetTXT(const unsigned int&, LevelSet&,
+            const std::string& inputDirectory = "", bool isXY = false) const;
+
+        //! Load the level set function from a plain text file.
+        /*! \param fileName
+                The name of the data file.
+
+            \param levelSet
+                A reference to the level set object.
+
+            \param isXY
+                Whether the data file also contains nodal x/y coordinates (optional).
+         */
+        void loadLevelSetTXT(const std::ostringstream&, LevelSet&, bool isXY = false) const;
+
         //! Save boundary points as a plain text file.
         /*! \param datapoint
                 The datapoint of the current optimisation trajectory.

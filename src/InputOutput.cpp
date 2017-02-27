@@ -21,6 +21,9 @@
 #include "LevelSet.h"
 #include "Mesh.h"
 
+#include <fstream>
+#include <ios>
+
 /*! \file InputOutput.cpp
     \brief A class for reading and writing data.
  */
@@ -53,8 +56,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -125,8 +128,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Write the nodal signed distance to file.
         for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
@@ -136,6 +139,71 @@ namespace slsm
         }
 
         fclose(pFile);
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
+    void InputOutput::loadLevelSetTXT(const unsigned int& datapoint,
+        LevelSet& levelSet, const std::string& inputDirectory, bool isXY) const
+    {
+        std::ostringstream fileName, num;
+
+        num.str("");
+        num.width(4);
+        num.fill('0');
+        num << std::right << datapoint;
+
+        fileName.str("");
+        if (!inputDirectory.empty()) fileName << inputDirectory << "/";
+        fileName << "level-set_" << num.str() << ".txt";
+
+        loadLevelSetTXT(fileName, levelSet, isXY);
+    }
+
+    void InputOutput::loadLevelSetTXT(const std::ostringstream& fileName,
+        LevelSet& levelSet, bool isXY) const
+    {
+        unsigned int nLines = 0;
+        std::string line;
+        std::ifstream inputFile(fileName.str().c_str());
+
+        // Check file is valid.
+
+        errno = ENOENT;
+        slsm_check(inputFile.good(), "Cannot open file %s", fileName.str().c_str());
+
+        while (std::getline(inputFile, line))
+            nLines++;
+
+        errno = EFBIG;
+        slsm_check(nLines == levelSet.mesh.nNodes, "Input file contains incorrect number of nodes!");
+
+        // Rewind the file.
+        inputFile.seekg(0, std::ios::beg);
+
+        // Read the nodal signed distance fom file.
+
+        // File contains additional nodal coordinate information.
+        if (isXY)
+        {
+            double tmp;
+            unsigned int node = 0;
+
+            while (inputFile >> tmp >> levelSet.signedDistance[node])
+                node++;
+        }
+
+        // File only contains signed distance data.
+        else
+        {
+            unsigned int node = 0;
+
+            while (inputFile >> levelSet.signedDistance[node])
+                node++;
+        }
 
         return;
 
@@ -166,8 +234,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nPoints;i++)
@@ -205,8 +273,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nSegments;i++)
@@ -264,8 +332,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -317,8 +385,8 @@ namespace slsm
 
         pFile = fopen(fileName.str().c_str(), "w");
 
-        if (pFile == NULL)
-            slsm_sentinel("Write error, cannot open file %s", fileName.str().c_str())
+        errno = ENOENT;
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
 
         // Write the element area fractions to file.
         for (unsigned int i=0;i<mesh.nElements;i++)
