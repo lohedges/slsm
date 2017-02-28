@@ -15,14 +15,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <fstream>
+#include <ios>
+
 #include "Boundary.h"
 #include "Debug.h"
 #include "InputOutput.h"
 #include "LevelSet.h"
 #include "Mesh.h"
-
-#include <fstream>
-#include <ios>
 
 /*! \file InputOutput.cpp
     \brief A class for reading and writing data.
