@@ -182,6 +182,7 @@ namespace slsm
         slsm_check(nLines == levelSet.mesh.nNodes, "Input file contains incorrect number of nodes!");
 
         // Rewind the file.
+        inputFile.clear();
         inputFile.seekg(0, std::ios::beg);
 
         // Read the nodal signed distance fom file.
@@ -192,16 +193,17 @@ namespace slsm
             double tmp;
             unsigned int node = 0;
 
-            while (inputFile >> tmp >> levelSet.signedDistance[node])
+            while (inputFile >> tmp >> tmp >> levelSet.signedDistance[node] >> tmp >> tmp)
                 node++;
         }
 
         // File only contains signed distance data.
         else
         {
+            double tmp;
             unsigned int node = 0;
 
-            while (inputFile >> levelSet.signedDistance[node])
+            while (inputFile >> levelSet.signedDistance[node] >> tmp >> tmp)
                 node++;
         }
 
