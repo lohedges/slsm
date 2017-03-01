@@ -16,7 +16,6 @@
 */
 
 #include <fstream>
-#include <ios>
 
 #include "Boundary.h"
 #include "Debug.h"
@@ -146,6 +145,40 @@ namespace slsm
         exit(EXIT_FAILURE);
     }
 
+    void InputOutput::saveLevelSetBIN(const unsigned int& datapoint,
+        const LevelSet& levelSet, const std::string& outputDirectory) const
+    {
+        std::ostringstream fileName, num;
+
+        num.str("");
+        num.width(4);
+        num.fill('0');
+        num << std::right << datapoint;
+
+        fileName.str("");
+        if (!outputDirectory.empty()) fileName << outputDirectory << "/";
+        fileName << "level-set_" << num.str() << ".bin";
+
+        saveLevelSetBIN(fileName, levelSet);
+    }
+
+    void InputOutput::saveLevelSetBIN(const std::ostringstream& fileName,
+        const LevelSet& levelSet) const
+    {
+        std::ofstream outputFile(fileName.str().c_str(), std::ios::out | std::ios::binary);
+
+        // Check file is valid.
+        errno = ENOENT;
+        slsm_check(outputFile.good(), "Cannot open file %s", fileName.str().c_str());
+
+        outputFile.write((char*)&levelSet.signedDistance[0], levelSet.mesh.nNodes*sizeof(double));
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
     void InputOutput::loadLevelSetTXT(const unsigned int& datapoint,
         LevelSet& levelSet, const std::string& inputDirectory, bool isXY) const
     {
@@ -171,7 +204,6 @@ namespace slsm
         std::ifstream inputFile(fileName.str().c_str());
 
         // Check file is valid.
-
         errno = ENOENT;
         slsm_check(inputFile.good(), "Cannot open file %s", fileName.str().c_str());
 
@@ -212,6 +244,42 @@ namespace slsm
     error:
         exit(EXIT_FAILURE);
     }
+
+    void InputOutput::loadLevelSetBIN(const unsigned int& datapoint,
+        LevelSet& levelSet, const std::string& inputDirectory) const
+    {
+        std::ostringstream fileName, num;
+
+        num.str("");
+        num.width(4);
+        num.fill('0');
+        num << std::right << datapoint;
+
+        fileName.str("");
+        if (!inputDirectory.empty()) fileName << inputDirectory << "/";
+        fileName << "level-set_" << num.str() << ".bin";
+
+        loadLevelSetBIN(fileName, levelSet);
+    }
+
+    void InputOutput::loadLevelSetBIN(const std::ostringstream& fileName,
+        LevelSet& levelSet) const
+    {
+        std::ifstream inputFile(fileName.str().c_str(), std::ios::in | std::ios::binary);
+
+        // Check file is valid.
+        errno = ENOENT;
+        slsm_check(inputFile.good(), "Cannot open file %s", fileName.str().c_str());
+
+        // Read the nodal signed distance fom file.
+        inputFile.read((char*)&levelSet.signedDistance[0], levelSet.mesh.nNodes*sizeof(double));
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+
 
     void InputOutput::saveBoundaryPointsTXT(const unsigned int& datapoint,
         const Boundary& boundary, const std::string& outputDirectory) const
