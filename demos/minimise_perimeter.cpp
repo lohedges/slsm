@@ -111,7 +111,7 @@ int main(int argc, char** argv)
     unsigned int nReinit = 0;
 
     // Running time.
-    double time = 0;
+    double runningTime = 0;
 
     // Time measurements.
     std::vector<double> times;
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
     printf("--------------------------\n");
 
     // Integrate until we exceed the maximum time.
-    while (time < maxTime)
+    while (runningTime < maxTime)
     {
         // Zero the mean curvature.
         double curvature = 0;
@@ -209,13 +209,13 @@ int main(int argc, char** argv)
         boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
-        time += timeStep;
+        runningTime += timeStep;
 
         // Check if the next sample time has been reached.
-        while (time >= nextSample)
+        while (runningTime >= nextSample)
         {
             // Record the time, boundary length, and mean curvature.
-            times.push_back(time);
+            times.push_back(runningTime);
             lengths.push_back(boundary.length);
             curvatures.push_back(curvature);
 
@@ -223,7 +223,7 @@ int main(int argc, char** argv)
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f %10.4f\n", time, boundary.length, curvature);
+            printf("%6.1f %8.1f %10.4f\n", runningTime, boundary.length, curvature);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), levelSet);

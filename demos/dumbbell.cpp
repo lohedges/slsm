@@ -33,7 +33,7 @@
     We construct two minima by making the perimeter (objective) sensitivities
     a function of the y coordinate of each boundary point. Sensitivities
     are linearly reduced between the centres of the upper and lower lobes,
-    hence within the lowesr lobe it's possible to form a circle with a smaller
+    hence within the lower lobe it's possible to form a circle with a smaller
     perimeter at the same cost.
 
     To reach the global minimum in the lower lobe the shape must pass through
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
     unsigned int nReinit = 0;
 
     // Running time.
-    double time = 0;
+    double runningTime = 0;
 
     // Time measurements.
     std::vector<double> times;
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
     printf("--------------------------\n");
 
     // Integrate until we exceed the maximum time.
-    while (time < maxTime)
+    while (runningTime < maxTime)
     {
         // Initialise the sensitivity object.
         slsm::Sensitivity sensitivity;
@@ -298,16 +298,16 @@ int main(int argc, char** argv)
         boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
-        time += timeStep;
+        runningTime += timeStep;
 
         // Check if the next sample time has been reached.
-        while (time >= nextSample)
+        while (runningTime >= nextSample)
         {
             // Compute the weighted boundary perimeter.
             double length = computePerimeter(boundary.points);
 
             // Record the time, length, and mismatch area.
-            times.push_back(time);
+            times.push_back(runningTime);
             lengths.push_back(length);
             mismatches.push_back(mismatch);
 
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f %10.4f\n", time, length, mismatch / meshArea);
+            printf("%6.1f %8.1f %10.4f\n", runningTime, length, mismatch / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), levelSet);

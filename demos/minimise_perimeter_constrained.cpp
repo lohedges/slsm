@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     unsigned int nReinit = 0;
 
     // Running time.
-    double time = 0;
+    double runningTime = 0;
 
     // Time measurements.
     std::vector<double> times;
@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     printf("-------------------------\n");
 
     // Integrate until we exceed the maximum time.
-    while (time < maxTime)
+    while (runningTime < maxTime)
     {
         // Initialise the sensitivity object.
         slsm::Sensitivity sensitivity;
@@ -209,19 +209,19 @@ int main(int argc, char** argv)
         boundary.computeNormalVectors(levelSet);
 
         // Increment the time.
-        time += timeStep;
+        runningTime += timeStep;
 
         // Check if the next sample time has been reached.
-        while (time >= nextSample)
+        while (runningTime >= nextSample)
         {
             // Record the time.
-            times.push_back(time);
+            times.push_back(runningTime);
 
             // Update the time of the next sample.
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%9.2f %8.1f %6.2f\n", time, boundary.length, levelSet.area / meshArea);
+            printf("%9.2f %8.1f %6.2f\n", runningTime, boundary.length, levelSet.area / meshArea);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), levelSet);

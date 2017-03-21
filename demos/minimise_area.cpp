@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     unsigned int nReinit = 0;
 
     // Running time.
-    double time = 0;
+    double runningTime = 0;
 
     // Time measurements.
     std::vector<double> times;
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     printf("---------------\n");
 
     // Integrate until we exceed the maximum time.
-    while (time < maxTime)
+    while (runningTime < maxTime)
     {
         // Assign boundary point sensitivities.
         for (unsigned int i=0;i<boundary.points.size();i++)
@@ -175,20 +175,20 @@ int main(int argc, char** argv)
         boundary.discretise(levelSet);
 
         // Increment the time.
-        time += timeStep;
+        runningTime += timeStep;
 
         // Check if the next sample time has been reached.
-        while (time >= nextSample)
+        while (runningTime >= nextSample)
         {
             // Record the time and boundary length.
-            times.push_back(time);
+            times.push_back(runningTime);
             lengths.push_back(boundary.length);
 
             // Update the time of the next sample.
             nextSample += sampleInterval;
 
             // Print statistics.
-            printf("%6.1f %8.1f\n", time, boundary.length);
+            printf("%6.1f %8.1f\n", runningTime, boundary.length);
 
             // Write level set and boundary segments to file.
             io.saveLevelSetVTK(times.size(), levelSet);
