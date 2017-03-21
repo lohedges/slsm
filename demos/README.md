@@ -201,4 +201,6 @@ To create the animation above, run the following in your terminal:
 ./utils/gif.sh bimodal
 ```
 
+(WARNING: This is a long simulation, taking approximately 2 days of CPU time.)
+
 The source code for this demo can be found in [bimodal.cpp](bimodal.cpp)
