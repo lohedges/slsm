@@ -263,7 +263,7 @@ int main(int argc, char** argv)
 
     // Print output header.
     printf("----------------------------------------------------\n");
-    printf("%9s %9s %10s %10s %10s\n", "Time", "Length", "Mismatch", "xPosition","yPosition");
+    printf("%9s %9s %10s %10s %10s\n", "Time", "Length", "Mismatch", "xPosition", "yPosition");
     printf("----------------------------------------------------\n");
 
     // Integrate until we exceed the maximum time.
