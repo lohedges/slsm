@@ -9,6 +9,7 @@ of various components of the algorithm, and reproduce the data in the
 - [Constrained Perimeter Minimisation](#constrained-perimeter-minimisation)
 - [Shape Matching](#shape-matching)
 - [Dumbbell](#dumbbell)
+- [Bimodal](#bimodal)
 
 ## Area Minimisation
 
@@ -170,3 +171,34 @@ To create the animation above, run the following in your terminal:
 ```
 
 The source code for this demo can be found in [dumbbell.cpp](dumbbell.cpp)
+
+## Bimodal
+
+We construct a simple bimodal objective function by flipping the dumbbell
+on its side and shifting the vertical centre of one of the lobes relative
+to the other. To produce two minima we make the perimeter (objective)
+sensitivities a function of the y coordinate of each boundary point, mimicking
+a gravitational field. Sensitivities are linearly reduced between the top and
+bottom of the left-hand lobe, hence within the left-hand lobe it's possible
+to form a circle with a smaller perimeter at the same cost (since the lobe
+descends slightly lower).
+
+When a long trajectory is run the shape (shown in red) explores both minima
+within the dumbbell, with the time spent in each lobe proportional to the
+vertical offset between the lobe centres. The lower the temperature (less
+noise) the longer the time that the shape spends in the left hand lobe
+(the deeper basin).
+
+<p align="center">
+<img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/bimodal.gif" alt="Bimodal dumbbell.">
+</p>
+
+To create the animation above, run the following in your terminal:
+
+```bash
+./demos/bimodal
+./utils/bimodal.gp
+./utils/gif.sh bimodal
+```
+
+The source code for this demo can be found in [bimodal.cpp](bimodal.cpp)
