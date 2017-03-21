@@ -179,7 +179,7 @@ int main(int argc, char** argv)
      */
 
     // The variable gravityMult is g.(upper-lower).
-    double reduce = 1.0 - gravityMult;
+    reduce = 1.0 - gravityMult;
 
     // Position and size of the initial trial circle.
     double initialHoleX = xCentre;
