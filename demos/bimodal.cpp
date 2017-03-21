@@ -368,7 +368,7 @@ int main(int argc, char** argv)
                 runningTime, length, mismatch / meshArea, xPos-(width/2.0), yPos-(height/2.0));
 
             // Write level set and boundary segments to file.
-            io.saveLevelSetTXT(times.size(), levelSet);
+            io.saveLevelSetVTK(times.size(), levelSet);
             io.saveBoundarySegmentsTXT(times.size(), boundary);
         }
     }
