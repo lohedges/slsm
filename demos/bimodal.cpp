@@ -47,7 +47,7 @@
     the dumbbell, with the time spent in each lobe proportional to the
     vertical offset between the lobe centres.
 
-    The output file, "bimodal_*.txt", contains the measured
+    The output file, "bimodal_*.txt", contains the measured x centre of mass,
     perimeter, mismatch, and centre of mass position vs time data for the
     optmisation run. Level set information for each sample interval is written
     to ParaView readable VTK files, "level-set_*.vtk". Boundary segment data
@@ -183,8 +183,8 @@ int main(int argc, char** argv)
 
     // Position and size of the initial trial circle.
     double initialHoleX = xCentre;
-    double initialHoleY = yCentre - xOffset;
-    double initialHoleRad = 0.9*radius;
+    double initialHoleY = 0.5*yCentre;
+    double initialHoleRad = 0.5*radius;
 
     // Push the trial shape into the vector.
     initialHoles.push_back(slsm::Hole(initialHoleX, initialHoleY, initialHoleRad));
@@ -493,7 +493,7 @@ double computePerimeter(const std::vector<slsm::BoundaryPoint>& points)
 }
 
 // Boundary "centre of mass" function definition.
-void computeCentreOfMass(const std::vector<slsm::BoundaryPoint>& points, double &x, double &y)
+void computeCentreOfMass(const std::vector<slsm::BoundaryPoint>& points, double& x, double& y)
 {
     // Zero variables.
     double length = 0;
