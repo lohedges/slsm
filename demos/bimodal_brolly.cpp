@@ -45,9 +45,9 @@
     a harmonic bias potential. By combining sampling data from different
     umbrella windows we can calculate the free energy profile for the
     transition between the left and right lobe. Our bias potential constrains
-    the x centre of mass of the shape <x>, i.e. the bias is (k/2)*(x_s - x_i)^2,
-    where k is the spring constant, x_s is the <x> for the current sample,
-    and x_i is the <x> for umbrella window i.
+    the x centre of mass of the shape \<x>, i.e. the bias is (k/2)*(x_s - x_i)^2,
+    where k is the spring constant, x_s is the \<x> for the current sample,
+    and x_i is the \<x> for umbrella window i.
 
     The output file, "brolly_*.txt", contains the measured x centre of mass,
     perimeter and mismatch vs time data for the umbrella sampling run. Level set

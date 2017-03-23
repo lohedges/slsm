@@ -204,3 +204,37 @@ To create the animation above, run the following in your terminal:
 (WARNING: This is a long simulation, taking approximately 2 days of CPU time.)
 
 The source code for this demo can be found in [bimodal.cpp](bimodal.cpp)
+
+[Umbrella sampling](https://en.wikipedia.org/wiki/Umbrella_sampling) is a
+fantastic technique that can aid sampling of complex free energy landscapes.
+By constraining the system using a bias potential it is possible to
+dramatically improve sampling in regions where the equilibrium probability
+density is low, i.e. rarely visited states. After performing many constrained
+simulations in different regions, data can then be recombined to recover the
+full equilibrium probability density, and hence the free energy.
+
+The following animation shows how umbrella sampling can be used to constrain
+the x coordinate of the shape's centre of mass to the origin using a harmonic
+bias potential. This allows us to sample many configurations that are
+constrained to the region around the neck of the dumbbell, which is rarely
+visited in equilibrium.
+
+<p align="center">
+<img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/bimodal_brolly.gif" alt="Umbrella sampling.">
+</p>
+
+To create the animation above, run the following in your terminal:
+
+```bash
+./demos/bimodal_brolly -c 0 -si 250 -n 200 -b
+./utils/bimodal_brolly.gp
+./utils/gif.sh bimodal_brolly
+```
+
+To get further help on using the umbrella sampling code, run:
+
+```bash
+./demos/bimodal_brolly -h
+```
+
+The source code for this demo can be found in [bimodal_brolly.cpp](bimodal_brolly.cpp)
