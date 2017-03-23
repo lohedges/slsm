@@ -83,8 +83,8 @@ double computeBiasPotential(double, double, double);
 bool isAccepted(double, double, double, slsm::MersenneTwister&);
 
 // Parse arguments from the command-line.
-void parseCommandLineArguments(int, char**, double&, double&,
-    double&, double&, double&, unsigned int&, unsigned int&, char*, bool&);
+void parseCommandLineArguments(int, char**, double&, double&, double&,
+    double&, double&, unsigned int&, unsigned int&, char*, bool&, bool&);
 
 // Print help message to stdout.
 void printHelpMessage();
@@ -144,9 +144,12 @@ int main(int argc, char** argv)
     // Whether a restart file is being used.
     bool isRestart = false;
 
+    // Whether to save boundary-segment file at each sample interval.
+    bool isBoundarySample = false;
+
 	// Read command-line arguments.
-    parseCommandLineArguments(argc, argv, temperature, gravityMult, centre,
-        spring, umbrellaInterval, sampleInterval, nSamples, restart, isRestart);
+    parseCommandLineArguments(argc, argv, temperature, gravityMult, centre, spring,
+        umbrellaInterval, sampleInterval, nSamples, restart, isRestart, isBoundarySample);
 
     // Print parameters.
     printf("\nParameters:\n");
@@ -495,6 +498,9 @@ int main(int argc, char** argv)
         // Write level set and boundary segments to file.
         io.saveLevelSetBIN(fileName2, levelSet);
         io.saveBoundarySegmentsTXT(fileName3, boundary);
+
+        if (isBoundarySample)
+            io.saveBoundarySegmentsTXT(i+1, boundary);
     }
 
     std::cout << "\nDone!\n";
@@ -692,87 +698,80 @@ bool isAccepted(double currentbias, double previousBias, double beta, slsm::Mers
 // Parse arguments from the command-line.
 void parseCommandLineArguments(int argc, char **argv, double& temperature,
     double& gravityMult, double& centre, double& spring, double& umbrellaInterval,
-    unsigned int& sampleInterval, unsigned int& nSamples, char* restart, bool& isRestart)
+    unsigned int& sampleInterval, unsigned int& nSamples, char* restart, bool& isRestart, bool& isBoundarySample)
 {
     unsigned int i = 1;
 
-    if (argc == 2)
+    while (i < argc)
     {
-        if (strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"--help") == 0)
+        if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--temperature") == 0)
+        {
+            i++;
+            temperature = atof(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gravity") == 0)
+        {
+            i++;
+            gravityMult = atof(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--centre") == 0)
+        {
+            i++;
+            centre = atof(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--spring") == 0)
+        {
+            i++;
+            spring = atof(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-ui") == 0 || strcmp(argv[i], "--unmbrella-interval") == 0)
+        {
+            i++;
+            umbrellaInterval = atof(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-si") == 0 || strcmp(argv[i], "--sample-interval") == 0)
+        {
+            i++;
+            sampleInterval = atoi(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--number-samples") == 0)
+        {
+            i++;
+            nSamples = atoi(argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--restart") == 0)
+        {
+            i++;
+            isRestart = true;
+            strcpy(restart, argv[i]);
+        }
+
+        else if (strcmp(argv[i], "-b") == 0 || strcmp(argv[i], "--boundary-sample") == 0)
+        {
+            isBoundarySample = true;
+        }
+
+        else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
         {
             printHelpMessage();
             exit(EXIT_SUCCESS);
         }
-    }
 
-    else
-    {
-        while (i < argc)
+        else
         {
-            if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--temperature") == 0)
-            {
-                i++;
-                temperature = atof(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "--gravity") == 0)
-            {
-                i++;
-                gravityMult = atof(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--centre") == 0)
-            {
-                i++;
-                centre = atof(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "--spring") == 0)
-            {
-                i++;
-                spring = atof(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-ui") == 0 || strcmp(argv[i], "--unmbrella-interval") == 0)
-            {
-                i++;
-                umbrellaInterval = atof(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-si") == 0 || strcmp(argv[i], "--sample-interval") == 0)
-            {
-                i++;
-                sampleInterval = atoi(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--number-samples") == 0)
-            {
-                i++;
-                nSamples = atoi(argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-r") == 0 || strcmp(argv[i], "--restart") == 0)
-            {
-                i++;
-                isRestart = true;
-                strcpy(restart, argv[i]);
-            }
-
-            else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
-            {
-                printHelpMessage();
-                exit(EXIT_SUCCESS);
-            }
-
-            else
-            {
-                fprintf(stderr, "\n[ERROR]: Unknown command-line option: %s\n", argv[i]);
-                fprintf(stderr, "For help run \"bimodal_brolly -h\"\n");
-                exit(EXIT_FAILURE);
-            }
-
-            i++;
+            fprintf(stderr, "\n[ERROR]: Unknown command-line option: %s\n", argv[i]);
+            fprintf(stderr, "For help run \"bimodal_brolly -h\"\n");
+            exit(EXIT_FAILURE);
         }
+
+        i++;
     }
 }
 
