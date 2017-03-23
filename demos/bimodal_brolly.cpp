@@ -789,5 +789,6 @@ void printHelpMessage()
          " -ui/--umbrella-interval <double>   : Length of trial trajectory\n"
          " -si/--sample-interval <int>        : Sampling frequency\n"
          " -n/--number-samples <int>          : Total number of samples\n"
-         " -r/--restart <string>              : Location of restart file\n");
+         " -r/--restart <string>              : Location of restart file\n"
+         " -b/--boundary-sample               : Record boundary-segments at each sample\n");
 }
