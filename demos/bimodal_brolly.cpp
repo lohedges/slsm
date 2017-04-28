@@ -700,7 +700,7 @@ void parseCommandLineArguments(int argc, char **argv, double& temperature,
     double& gravityMult, double& centre, double& spring, double& umbrellaInterval,
     unsigned int& sampleInterval, unsigned int& nSamples, char* restart, bool& isRestart, bool& isBoundarySample)
 {
-    unsigned int i = 1;
+    int i = 1;
 
     while (i < argc)
     {
