@@ -211,7 +211,7 @@ help:
 	$(call boldcolorecho, 4, "Dependencies")
 	@echo " Make sure that any external libraries are are accessible to your"
 	@echo " shell environment. The LIBS variable should be used for any linker"
-	@echo " flags, e.g. -lfftw3. Use the LDFLAGS environment variable for any"
+	@echo " flags, e.g. -lnlopt. Use the LDFLAGS environment variable for any"
 	@echo " non-standard paths. This can be set in your shell profile, on the"
 	@echo " command-line, or passed directly to make as an option. For example,"
 	@echo " if using MacPorts on OS X"
