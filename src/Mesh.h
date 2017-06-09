@@ -180,8 +180,8 @@ namespace slsm
          */
         unsigned int getElement(double, double) const;
 
-        std::vector<Element> elements;  //!< Fixed grid elements (cells).
-        std::vector<Node> nodes;        //!< Fixed grid nodes.
+        std::vector<Element> elements;  //!< Fixed-grid elements (cells).
+        std::vector<Node> nodes;        //!< Fixed-grid nodes.
 
         const unsigned int width;       //!< The grid width (number of elements in x).
         const unsigned int height;      //!< The grid height (number of elements in y).
