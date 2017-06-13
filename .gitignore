@@ -2,6 +2,8 @@ doc/
 lib/
 obj/
 src/slsm.h
+demos/bimodal
+demos/bimodal_brolly
 demos/minimise_area
 demos/minimise_perimeter
 demos/minimise_perimeter_constrained
