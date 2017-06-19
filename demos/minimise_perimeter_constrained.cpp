@@ -81,7 +81,7 @@ int main(int argc, char** argv)
         unsigned int y = int(levelSet.mesh.nodes[i].coord.y);
 
         // Cut out square hole.
-        if (x >= 80 && x <= 120 && y >= 80 && y <= 120)
+        if (x >= 90 && x <= 110 && y >= 90 && y <= 110)
             levelSet.signedDistance[i] = -1;
 
         // Fill with material.
