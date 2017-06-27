@@ -639,7 +639,7 @@ namespace slsm
 
         /* Calculate the derivative with respect to each lambda.
 
-           Note that this isn't strictly correct, since points lying close the
+           Note that this isn't strictly correct, since points lying close to the
            domain boundary might trigger a displacement cap if they are to move
            outside of the domain. This means that the change in the objective
            and constraint functions are no longer linear functions of the lambda
