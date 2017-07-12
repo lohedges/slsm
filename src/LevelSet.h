@@ -72,11 +72,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomainDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, double moveLimit_ = 0.5,
-            unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Constructor.
         /*! \param width
@@ -94,11 +94,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, double moveLimit_ = 0.5,
-            unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Constructor.
         /*! \param width
@@ -116,11 +116,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, const std::vector<Coord>&, double moveLimit_ = 0.5,
-            unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Constructor.
         /*! \param width
@@ -141,11 +141,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, const std::vector<Hole>&,
-            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Constructor.
         /*! \param width
@@ -166,11 +166,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, const std::vector<Hole>&, const std::vector<Coord>&,
-            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Constructor.
         /*! \param width
@@ -191,11 +191,11 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixed_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, const std::vector<Coord>&, const std::vector<Coord>&,
-            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixed_ = false);
+            double moveLimit_ = 0.5, unsigned int bandWidth_ = 6, bool isFixedDomain_ = false);
 
         //! Update the level set function.
         /*! \param timeStep
@@ -272,7 +272,7 @@ namespace slsm
 
     private:
         unsigned int bandWidth;                 //!< The width of the narrow band region.
-        bool isFixed;                           //!< Whether the domain boundary is fixed.
+        bool isFixedDomain;                     //!< Whether the domain boundary is fixed.
 
         //! Default initialisation of the level set function (Swiss cheese configuration).
         void initialise();

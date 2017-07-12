@@ -33,11 +33,11 @@
 namespace slsm
 {
     LevelSet::LevelSet(unsigned int width, unsigned int height,
-        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -68,11 +68,11 @@ namespace slsm
     }
 
     LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& holes,
-        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -103,11 +103,11 @@ namespace slsm
     }
 
     LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Coord>& points,
-        double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -138,11 +138,11 @@ namespace slsm
     }
 
     LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& initialHoles,
-        const std::vector<Hole>& targetHoles, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        const std::vector<Hole>& targetHoles, double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -181,11 +181,11 @@ namespace slsm
     }
 
     LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Hole>& holes,
-        const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        const std::vector<Coord>& points, double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -224,11 +224,11 @@ namespace slsm
     }
 
     LevelSet::LevelSet(unsigned int width, unsigned int height, const std::vector<Coord>& initialPoints,
-        const std::vector<Coord>& targetPoints, double moveLimit_, unsigned int bandWidth_, bool isFixed_) :
+        const std::vector<Coord>& targetPoints, double moveLimit_, unsigned int bandWidth_, bool isFixedDomain_) :
         moveLimit(moveLimit_),
         mesh(Mesh(width, height)),
         bandWidth(bandWidth_),
-        isFixed(isFixed_)
+        isFixedDomain(isFixedDomain_)
     {
         int size = 0.2*mesh.nNodes;
 
@@ -647,7 +647,7 @@ namespace slsm
                whether it lies on the domain boundary, and if it does then check that
                the boundary isn't fixed.
              */
-            if (!mesh.nodes[i].isMasked && (!mesh.nodes[i].isDomain || !isFixed))
+            if (!mesh.nodes[i].isMasked && (!mesh.nodes[i].isDomain || !isFixedDomain))
             {
                 // Absolute value of the signed distance function.
                 double absoluteSignedDistance = std::abs(signedDistance[i]);
