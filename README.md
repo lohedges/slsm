@@ -8,10 +8,10 @@
 
 ## About
 LibSLSM is a small C++ library that forms an accompaniment to the paper
-[Stochastic level-set method for shape optimisation](https://arxiv.org/abs/1612.04681).
+[Stochastic level-set method for shape optimisation](https://doi.org/10.1016/j.jcp.2017.07.010).
 The library provides a simple set of building blocks for implementing
 the method. Various example codes illustrate how to make make use of the
-library and reproduce the data in the [paper](https://arxiv.org/abs/1612.04681).
+library and reproduce the data in the [paper](https://doi.org/10.1016/j.jcp.2017.07.010).
 
 Unlike traditional level-set optimisation methods, which use a steepest
 descent approach, SLSM updates the level set using a stochastic differential
@@ -19,7 +19,7 @@ equation. The addition of thermal noise enables the exploration of design
 space during the optimisation process. In situations where the objective
 function is non-convex, this allows for the possibility of escaping local
 minima and converging to the true global optimum. See the
-[paper](https://arxiv.org/abs/1612.04681) for further details.
+[paper](https://doi.org/10.1016/j.jcp.2017.07.010) for further details.
 
 ## Using the Code
 

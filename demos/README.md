@@ -2,7 +2,7 @@
 
 Several example codes illustrate how to interface with LibSLSM, provide tests
 of various components of the algorithm, and reproduce the data in the
-[paper](https://arxiv.org/abs/1612.04681):
+[paper](https://doi.org/10.1016/j.jcp.2017.07.010):
 
 - [Area Minimisation](#area-minimisation)
 - [Perimeter Minimisation](#perimeter-minimisation)
