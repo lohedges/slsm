@@ -25,6 +25,12 @@
 
 namespace slsm
 {
+#ifdef PYBIND
+    Callback::Callback()
+    {
+    }
+#endif
+
     Sensitivity::Sensitivity(double delta_) : delta(delta_)
     {
     }

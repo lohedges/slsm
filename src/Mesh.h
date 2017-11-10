@@ -47,11 +47,11 @@ namespace slsm
          */
         enum NodeStatus
         {
-            NONE            = 0,                //!< No status.
-            INSIDE          = (1 << 0),         //!< Node lies inside the boundary.
-            OUTSIDE         = (1 << 1),         //!< Node lies outside the boundary.
-            BOUNDARY        = (1 << 2),         //!< Node lies on the boundary.
-            CUT             = (INSIDE|OUTSIDE), //!< Node pair is cut by the boundary.
+            NONE            = 0,                    //!< No status.
+            INSIDE          = (1 << 0),             //!< Node lies inside the boundary.
+            OUTSIDE         = (1 << 1),             //!< Node lies outside the boundary.
+            BOUNDARY        = (1 << 2),             //!< Node lies on the boundary.
+            CUT             = (INSIDE|OUTSIDE),     //!< Node pair is cut by the boundary.
         };
     }
 
@@ -61,39 +61,45 @@ namespace slsm
     {
         enum ElementStatus
         {
-            NONE            = 0,                //!< No status.
-            INSIDE          = (1 << 0),         //!< Element is entirely inside the structure.
-            OUTSIDE         = (1 << 1),         //!< Element is entirely outside the structure.
-            CENTRE_INSIDE   = (1 << 2),         //!< Element centre lies inside the structure.
-            CENTRE_OUTSIDE  = (1 << 3),         //!< Element centre lies outside the structure.
+            NONE            = 0,                    //!< No status.
+            INSIDE          = (1 << 0),             //!< Element is entirely inside the structure.
+            OUTSIDE         = (1 << 1),             //!< Element is entirely outside the structure.
+            CENTRE_INSIDE   = (1 << 2),             //!< Element centre lies inside the structure.
+            CENTRE_OUTSIDE  = (1 << 3),             //!< Element centre lies outside the structure.
         };
     }
 
     //! Structure containing attributes for an individual grid element.
     struct Element
     {
-        Coord coord;                            //!< Element coordinate (centre).
-        double area;                            //!< Material area fraction.
-        unsigned int nodes[4];                  //!< Indices for nodes of the element.
-        unsigned int boundarySegments[2];       //!< Indices for boundary segments associated with the element.
-        unsigned int nBoundarySegments;         //!< The number of boundary segments associated with the element.
-        ElementStatus::ElementStatus status;    //!< Whether the element (or its centre) lies inside or outside the structure.
+        //! Constructor.
+        Element();
+
+        Coord coord;                                //!< Element coordinate (centre).
+        double area;                                //!< Material area fraction.
+        std::vector<unsigned int> nodes;            //!< Indices for nodes of the element.
+        std::vector<unsigned int> boundarySegments; //!< Indices for boundary segments associated with the element.
+        unsigned int nBoundarySegments;             //!< The number of boundary segments associated with the element.
+        ElementStatus::ElementStatus status;        //!< Whether the element (or its centre) lies inside or outside the structure.
     };
 
     //! Structure containing attributes for an individual grid node.
     struct Node
     {
-        Coord coord;                            //!< Node coordinate.
-        unsigned int neighbours[4];             //!< Indices of nearest neighbour nodes.
-        unsigned int elements[4];               //!< Indices of elements the node is connected to.
-        unsigned int nElements;                 //!< Number of elements that the node is connected to.
-        unsigned int boundaryPoints[4];         //!< Indices of boundary points associated with the node.
-        unsigned int nBoundaryPoints;           //!< The number of boundary points associated with the node.
-        bool isActive;                          //!< Whether the node is active (part of narrow band, and not fixed).
-        bool isDomain;                          //!< Whether the node lies on the domain boundary.
-        bool isMasked;                          //!< Whether the node lies in a masked region.
-        bool isMine;                            //!< Whether the node lies on the edge of the narrow band.
-        NodeStatus::NodeStatus status;          //!< Whether node is outside, inside, or on the boundary.
+        //! Constructor.
+        Node();
+
+        Coord coord;                                //!< Node coordinate.
+        std::vector<unsigned int> neighbours;       //!< Indices of nearest neighbour nodes.
+        std::vector<unsigned int> elements;         //!< Indices of elements the node is connected to.
+        unsigned int nElements;                     //!< Number of elements that the node is connected to.
+        std::vector<unsigned int> boundaryPoints;   //!< Indices of boundary points associated with the node.
+        unsigned int nBoundaryPoints;               //!< The number of boundary points associated with the node.
+        bool isActive;                              //!< Whether the node is active (part of narrow band, and not fixed).
+        bool isDomain;                              //!< Whether the node lies on the domain boundary.
+        bool isMasked;                              //!< Whether the node lies in a masked region.
+        bool isMine;                                //!< Whether the node lies on the edge of the narrow band.
+        NodeStatus::NodeStatus status;              //!< Whether node is outside, inside, or on the boundary.
     };
 
     // MAIN CLASS

@@ -44,10 +44,10 @@ namespace slsm
         // of sets and simple bit masking operations.
         enum FMM_NodeStatus
         {
-            NONE            = 0,                //!< No status.
-            FROZEN          = (1 << 0),         //!< Node lies on boundary or has been frozen.
-            TRIAL           = (1 << 1),         //!< Node is adjacent to a frozen node.
-            MASKED          = (1 << 2),         //!< Node has been masked.
+            NONE   = 0,         //!< No status.
+            FROZEN = (1 << 0),  //!< Node lies on boundary or has been frozen.
+            TRIAL  = (1 << 1),  //!< Node is adjacent to a frozen node.
+            MASKED = (1 << 2),  //!< Node has been masked.
         };
     }
 

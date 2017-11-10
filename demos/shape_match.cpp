@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     // Set time of the next sample.
     double nextSample = 1;
 
-    // Create a hole at position (100, 100) with a radius of 80 grid units.
+    // Create a hole at position (200, 200) with a radius of 100 grid units.
     std::vector<slsm::Hole> holes;
     holes.push_back(slsm::Hole(200, 200, 100));
 

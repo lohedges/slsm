@@ -27,6 +27,29 @@
 
 namespace slsm
 {
+    BoundaryPoint::BoundaryPoint() :
+        length(0),
+        velocity(0),
+        negativeLimit(0),
+        positiveLimit(0),
+        isDomain(false),
+        isFixed(false),
+        nSegments(0),
+        segments(2, 0),
+        nNeighbours(0),
+        neighbours(2, 0),
+        sensitivities(2, 0)
+    {
+    }
+
+    BoundarySegment::BoundarySegment() :
+        start(0),
+        end(0),
+        length(0),
+        weight(0)
+    {
+    }
+
     Boundary::Boundary()
     {
     }
@@ -85,9 +108,9 @@ namespace slsm
 
                     // If not performing discretisation of a target structure check that at least
                     // one node lies in the narrow band region, or is masked.
-                    if (isTarget ||
-                    (levelSet.mesh.nodes[n1].isActive | levelSet.mesh.nodes[n1].isMasked) ||
-                    (levelSet.mesh.nodes[n2].isActive | levelSet.mesh.nodes[n2].isMasked))
+                    if (isTarget                                                             ||
+                       (levelSet.mesh.nodes[n1].isActive | levelSet.mesh.nodes[n1].isMasked) ||
+                       (levelSet.mesh.nodes[n2].isActive | levelSet.mesh.nodes[n2].isMasked))
                     {
                         // One node is inside, the other is outside. The edge is cut.
                         if ((levelSet.mesh.nodes[n1].status|levelSet.mesh.nodes[n2].status) == NodeStatus::CUT)
@@ -133,7 +156,7 @@ namespace slsm
 
                         // Both nodes lie on the boundary.
                         else if ((levelSet.mesh.nodes[n1].status & NodeStatus::BOUNDARY) &&
-                            (levelSet.mesh.nodes[n2].status & NodeStatus::BOUNDARY))
+                                 (levelSet.mesh.nodes[n2].status & NodeStatus::BOUNDARY))
                         {
                             // Initialise boundary point coordinate.
                             Coord coord;
@@ -333,7 +356,7 @@ namespace slsm
                     unsigned int node = levelSet.mesh.elements[i].nodes[0];
                     NodeStatus::NodeStatus status = levelSet.mesh.nodes[node].status;
 
-                    if (((status & NodeStatus::INSIDE) && (lsfSum > 0)) ||
+                    if (((status & NodeStatus::INSIDE) && (lsfSum > 0))  ||
                         ((status & NodeStatus::OUTSIDE) && (lsfSum < 0)))
                     {
                         segment.start = boundaryPoints[0];
@@ -782,16 +805,8 @@ namespace slsm
 
     void Boundary::initialisePoint(LevelSet& levelSet, BoundaryPoint& point, const Coord& coord)
     {
-        // Initialise position, length, number of segments, and isDomain.
+        // Set the boundary point coordinates.
         point.coord = coord;
-        point.length = 0;
-        point.nSegments = 0;
-        point.nNeighbours = 0;
-        point.isDomain = false;
-        point.isFixed = false;
-
-        // Assume two sensitivities to start with (objective and a single constraint).
-        point.sensitivities.resize(2);
 
         // Initialise movement limit (CFL condition).
         point.negativeLimit = -levelSet.moveLimit;

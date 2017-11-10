@@ -26,6 +26,25 @@
 
 namespace slsm
 {
+    Element::Element() :
+        area(0),
+        nodes(4, 0),
+        boundarySegments(2, 0)
+    {
+    }
+
+    Node::Node() :
+        neighbours(4, 0),
+        elements(4, 0),
+        boundaryPoints(4, 0),
+        nElements(0),
+        isActive(false),
+        isDomain(false),
+        isMasked(false),
+        isMine(false)
+    {
+    }
+
     Mesh::Mesh(unsigned int width_,
                unsigned int height_) :
 

@@ -33,21 +33,12 @@ installing MYSYS2 (following the instructions on the [website](http://msys2.gith
 you will need to install several additional packages:
 
 ```bash
-pacman -S diffutils gcc git make
+pacman -S cmake gcc git python3
 ```
-
-Before Compiling:
-* If you do not already have it, download and install [`git`](http://git-scm.com).
-To check if `git` is installed, try:
+* Clone the LibSLSM source via:
 
 ```bash
-git --version
-```
-
-* Download the LibSLSM source via:
-
-```bash
-git clone https://github.com/lohedges/slsm.git
+git clone --recursive https://github.com/lohedges/slsm.git
 ```
 
 (Alternatively, a zip file can be downloaded from
@@ -61,11 +52,25 @@ git clone https://github.com/lohedges/slsm.git
 cd slsm
 ```
 
-* Run `Make`
+* Create a fresh build directory:
 
 ```bash
-make build
-make install
+mkdir build
+cd build
+```
+(This is recommended, although in source builds are allowed.)
+
+* Configure, build, and install:
+
+```bash
+cmake .. && make -j${nproc} install
+```
+
+On macOS you may wish to use LLVM's `libc++` rather than `libstdc++`. If so,
+build as follows (this assumes a fresh build, or a clear cache):
+
+```bash
+CXXFLAGS=-stdlib=libc++ cmake .. && make -j${nproc} install
 ```
 
 By default, the library installs to `/usr/local`. Therefore, you may need admin
@@ -73,24 +78,12 @@ privileges for the final `make install` step above. An alternative is to change
 the install location:
 
 ```bash
-make PREFIX=MY_INSTALL_DIR install
+cmake -DCMAKE_INSTALL_PREFIX:PATH=MY_INSTALL_DIR .. && make -j${nproc} install
 ```
 
 (Note that there is no need to install the library in order to use it. You
 can always build locally and link against the library using whatever path
 is appropriate.)
-
-Further details on using the Makefile can be found by running make without
-a target, i.e.
-
-```bash
-make
-```
-
-Note that you will need a working installation of
-[NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt) in order to build LibSLSM.
-See the [dependencies](#external-dependencies) section for details of how to
-add the library to your path.
 
 ### Linking with C/C++
 
@@ -117,17 +110,27 @@ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
 Note that the `-std=c++11` compiler flag is needed for `std::function` and `std::random`.
 
 ### External Dependencies
-
-- LibSLSM uses the [Mersenne Twister](http://en.wikipedia.org/wiki/Mersenne_Twister)
-psuedorandom number generator. A C++11 implementation is included as a bundled
-header file, [MersenneTwister.h](src/MersenneTwister.h).
-
-- The Optimise class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
-Make sure that the library and header files are in your path. If not, do something like:
+To aid portability, dependencies are handled via git
+[submodlules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). If you are using
+LibSLSM for the first time, and didn't clone using the `--recursive` flag,
+then you'll need to initialise the submodules:
 
 ```bash
-make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
+git submodule update --init --recursive
 ```
+
+Existing submodules can be updated using:
+
+```bash
+git submodule update --recursive
+```
+
+Brief details of the submodules are given below:
+
+- The Optimise class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
+
+- Python bindings are generated using [pybind11](https://github.com/pybind/pybind11).
+See [Python](python/README.md) for details about using the Python module, pyslsm.
 
 ## Documentation
 
@@ -163,6 +166,11 @@ demonstration programs:
 
 A set of utility scripts are provided for processing the output data:
 - [Utils](utils/README.md)
+
+### Python
+Full Python bindings are generated using [pybind11](https://github.com/pybind/pybind11).
+For more details, and to learn more about the Python extension module pyslsm, see:
+- [Python](python/README.md)
 
 ## Acknowledgements
 - Parts of this library were based on code written by

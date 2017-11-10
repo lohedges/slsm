@@ -15,4 +15,10 @@ tests/heap_tests
 tests/level_set_tests
 tests/mesh_tests
 *.dSYM
+*.txt
+*.vtk
 .compiler_flags
+
+# Don't ignore these.
+!.gitignore
+CMakeLists.txt

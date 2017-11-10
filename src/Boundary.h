@@ -36,31 +36,39 @@ namespace slsm
     // ASSOCIATED DATA TYPES
 
     //! \brief A container for storing information associated with a boundary point.
-    struct BoundaryPoint
+    class BoundaryPoint
     {
-        Coord coord;                        //!< Coordinate of the boundary point.
-        Coord normal;                       //!< Inward pointing normal vector.
-        double length;                      //!< Integral length of the boundary point.
-        double velocity;                    //!< Normal velocity (positive acts inwards).
-        double negativeLimit;               //!< Movement limit in negative direction (inwards).
-        double positiveLimit;               //!< Movement limit in positive direction (outwards).
-        bool isDomain;                      //!< Whether the point lies close to the domain boundary.
-        bool isFixed;                       //!< Whether the point fixed.
-        unsigned int nSegments;             //!< The number of boundary segments that a point belongs to.
-        unsigned int segments[2];           //!< The indices of the two segments to which a point belongs.
-        unsigned int neighbours[2];         //!< The indices of the neighbouring points.
-        unsigned int nNeighbours;           //!< The number of neighbouring boundary points.
-        std::vector<double> sensitivities;  //!< Objective and constraint sensitivities.
+    public:
+        //! Constructor.
+        BoundaryPoint();
+
+        Coord coord;                            //!< Coordinate of the boundary point.
+        Coord normal;                           //!< Inward pointing normal vector.
+        double length;                          //!< Integral length of the boundary point.
+        double velocity;                        //!< Normal velocity (positive acts inwards).
+        double negativeLimit;                   //!< Movement limit in negative direction (inwards).
+        double positiveLimit;                   //!< Movement limit in positive direction (outwards).
+        bool isDomain;                          //!< Whether the point lies close to the domain boundary.
+        bool isFixed;                           //!< Whether the point is fixed.
+        unsigned int nSegments;                 //!< The number of boundary segments that a point belongs to.
+        std::vector<unsigned int> segments;     //!< The indices of the two segments to which a point belongs.
+        unsigned int nNeighbours;               //!< The number of neighbouring boundary points.
+        std::vector<unsigned int> neighbours;   //!< The indices of the neighbouring points.
+        std::vector<double> sensitivities;      //!< Objective and constraint sensitivities.
     };
 
     //! \brief A container for storing information associated with a boundary segment.
-    struct BoundarySegment
+    class BoundarySegment
     {
-        unsigned int start;                 //!< Index of start point.
-        unsigned int end;                   //!< Index of end point.
-        unsigned int element;               //!< The element cut by the boundary segment.
-        double length;                      //!< Length of the boundary segment.
-        double weight;                      //!< Weighting factor for boundary segment.
+    public:
+        //! Constructor.
+        BoundarySegment();
+
+        unsigned int start;                     //!< Index of start point.
+        unsigned int end;                       //!< Index of end point.
+        unsigned int element;                   //!< The element cut by the boundary segment.
+        double length;                          //!< Length of the boundary segment.
+        double weight;                          //!< Weighting factor for boundary segment.
     };
 
     // MAIN CLASS

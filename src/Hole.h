@@ -52,7 +52,7 @@ namespace slsm
             \param r
                 The radius of the hole.
          */
-        Hole(Coord&, double);
+        Hole(const Coord&, double);
 
         /// Coordinates.
         Coord coord;

@@ -28,7 +28,7 @@ namespace slsm
     struct Coord
     {
         //! Constructor.
-        Coord() {};
+        Coord() : x(0), y(0) {};
 
         //! Constructor.
         /*! \param x_
@@ -42,6 +42,23 @@ namespace slsm
         double x;   //!< The x coordinate.
         double y;   //!< The y coordinate.
     };
+
+#ifdef PYBIND
+    //! A mutable float to allow reference arguments from Python.
+    struct MutableFloat
+    {
+        //! Constructor.
+        MutableFloat() : value(0) {};
+
+        //! Constructor.
+        /*! \param value_
+                The value of the float.
+         */
+        MutableFloat(double value_) : value(value_) {};
+
+        double value;
+    };
+#endif
 }
 
 #endif  /* _COMMON_H */

@@ -72,7 +72,7 @@ namespace slsm
             \param isGradient
                 Whether to write gradient information to file (optional).
          */
-        void saveLevelSetVTK(const std::ostringstream&, const LevelSet&,
+        void saveLevelSetVTK(const std::string&, const LevelSet&,
             bool isVelocity = false, bool isGradient = false) const;
 
         //! Save the level set function as a plain text file.
@@ -114,7 +114,7 @@ namespace slsm
             \param isXY
                 Whether to also output the nodal x/y coordinates (optional).
          */
-        void saveLevelSetTXT(const std::ostringstream&, const LevelSet&, bool isXY = false) const;
+        void saveLevelSetTXT(const std::string&, const LevelSet&, bool isXY = false) const;
 
         //! Save the level-set signed distance function as a binary file.
         /*! \param fileName
@@ -123,7 +123,7 @@ namespace slsm
             \param levelSet
                 A reference to the level set object.
          */
-        void saveLevelSetBIN(const std::ostringstream&, const LevelSet&) const;
+        void saveLevelSetBIN(const std::string&, const LevelSet&) const;
 
         //! Load the level-set signed distance function from a plain text file.
         /*! \param datapoint
@@ -164,7 +164,7 @@ namespace slsm
             \param isXY
                 Whether the data file also contains nodal x/y coordinates (optional).
          */
-        void loadLevelSetTXT(const std::ostringstream&, LevelSet&, bool isXY = false) const;
+        void loadLevelSetTXT(const std::string&, LevelSet&, bool isXY = false) const;
 
         //! Load the level-set signed distance function from a binary file.
         /*! \param fileName
@@ -173,7 +173,7 @@ namespace slsm
             \param levelSet
                 A reference to the level set object.
          */
-        void loadLevelSetBIN(const std::ostringstream&, LevelSet&) const;
+        void loadLevelSetBIN(const std::string&, LevelSet&) const;
 
         //! Save boundary points as a plain text file.
         /*! \param datapoint
@@ -195,7 +195,7 @@ namespace slsm
             \param boundary
                 A reference to the boundary object.
          */
-        void saveBoundaryPointsTXT(const std::ostringstream&, const Boundary&) const;
+        void saveBoundaryPointsTXT(const std::string&, const Boundary&) const;
 
         //! Save boundary segments as a plain text file.
         /*! \param datapoint
@@ -217,7 +217,7 @@ namespace slsm
             \param boundary
                 A reference to the boundary object.
          */
-        void saveBoundarySegmentsTXT(const std::ostringstream&, const Boundary&) const;
+        void saveBoundarySegmentsTXT(const std::string&, const Boundary&) const;
 
         //! Save the element area fractions as a ParaView VTK file.
         /*! \param datapoint
@@ -239,7 +239,7 @@ namespace slsm
             \param mesh
                 A reference to the level set mesh.
          */
-        void saveAreaFractionsVTK(const std::ostringstream&, const Mesh&) const;
+        void saveAreaFractionsVTK(const std::string&, const Mesh&) const;
 
         //! Save element area fractions as a plain text file.
         /*! \param datapoint
@@ -267,7 +267,7 @@ namespace slsm
             \param isXY
                 Whether to also output the element x/y coordinates (optional).
          */
-        void saveAreaFractionsTXT(const std::ostringstream&, const Mesh&, bool isXY = false) const;
+        void saveAreaFractionsTXT(const std::string&, const Mesh&, bool isXY = false) const;
     };
 }
 

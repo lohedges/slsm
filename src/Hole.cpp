@@ -23,13 +23,15 @@
 
 namespace slsm
 {
-    Hole::Hole() {}
+    Hole::Hole() : r(0)
+    {
+    }
 
     Hole::Hole(double x, double y, double r) : coord(x, y), r(r)
     {
     }
 
-    Hole::Hole(Coord& coord_, double r) : coord(coord_), r(r)
+    Hole::Hole(const Coord& coord_, double r) : coord(coord_), r(r)
     {
     }
 }

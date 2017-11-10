@@ -69,7 +69,7 @@ namespace slsm
 
             http://ab-initio.mit.edu/wiki/index.php/NLopt_Algorithms#SLSQP
 
-        Support for alternative algorithms is provided through an optional constructor
+		Support for alternative algorithms is provided through an optional constructor
         argument. Note that the chosen algorithm must support the type of constraints
         that are imposed in the optimisation problem. Check the NLopt algorithms page
         for details:
@@ -114,6 +114,41 @@ namespace slsm
         Optimise(std::vector<BoundaryPoint>&, std::vector<double>, std::vector<double>&,
             double&, double maxDisplacement_ = 0.5, bool isMax_ = false,
             const std::vector<bool>& isEquality_ = {}, nlopt::algorithm algorithm_ = nlopt::LD_SLSQP);
+
+#ifdef PYBIND
+        //! Constructor.
+        /*! \param boundaryPoints_
+                A reference to a vector of boundary points.
+
+            \param constraintDistances_
+                Distance from each constraint (negative values indicate that the
+                constraint is satisfied).
+
+            \param lambdas_
+                The optimum lambda values. This array is modified.
+
+            \param timeStep_
+                The effective time step. The optimum boundary displacement vector is the
+                velocity vector multiplied by the time step. In many level set problems
+                the time step is assumed to be one, i.e. the displacement and velocity
+                vectors are equivalent. The effective time step is taken as the absolute
+                value of the lambda for the objective, i.e. abs(lambdas[0]). (Note that
+                for minimisation problems lambdas[0] is negative by construction so
+                abs(lambdas[0]) is the same as -lambdas[0].)
+
+            \param maxDisplacement_
+                (Optional) The maximum displacement (default = 0.5).
+
+            \param isMax_
+                (Optional) Whether to maximise the objective function (default = minimise).
+
+            \param isEquality_
+                (Optional) Whether each constraint is an equality (default = inequality).
+         */
+        Optimise(std::vector<BoundaryPoint>&, std::vector<double>, std::vector<double>&,
+            MutableFloat&, double maxDisplacement_ = 0.5, bool isMax_ = false,
+            const std::vector<bool>& isEquality_ = {});
+#endif
 
         //! Execute the NLopt solver.
         /*! \return

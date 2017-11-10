@@ -15,18 +15,12 @@ successfully build LibSLSM on Windows 7 and 10. After installing MSYS2
 you will need to install several additional packages:
 
 \code
-pacman -S diffutils gcc git make
+pacman -S cmake gcc git python3
 \endcode
 
-Before Compiling:
--# If you do not already have it, download and install <a href="http://git-scm.com">
-`git`</a>. To check if `git` is installed, try:
+-# Clone the LibSLSM source via:
 \code
-git --version
-\endcode
--# Download the LibSLSM source via:
-\code
-git clone https://github.com/lohedges/slsm.git
+git clone --recursive https://github.com/lohedges/slsm.git
 \endcode
 
 (Alternatively, a zip file can be downloaded from
@@ -37,30 +31,19 @@ Compiling and Installing:
 \code
 cd slsm
 \endcode
--# Run <a href="https://www.gnu.org/software/make">`Make`</a>:
+-# Creata fresh build directory:
 \code
-make build
-make install
+mkdir build
+cd build
 \endcode
-By default, the library installs to `/usr/local`. Therefore, you may need admin
-privileges for the final `"make install"` step above. An alternative is to change
-the install location:
+(This is recommended, although in source builds are allowed.)
+-# Configure, build, and install:
 \code
-make PREFIX=MY_INSTALL_DIR install
+cmake .. && make -j${nproc} install
 \endcode
 (Note that there is no need to install the library in order to use it. You
 can always build locally and link against the library using whatever path
 is appropriate.)
-<br>Further details on using the Makefile can be found by running make without
-a target, i.e.
-\code
-make
-\endcode
-
-Note that you will need a working installation of
-<a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a> in order
-to build LibSLSM. See the \ref Compiling-Dependencies section for details of
-how to add the library to your path.
 
 \section Compiling-Linking Linking with C/C++
 
@@ -86,15 +69,25 @@ g++ -std=c++11 example.cpp -I/my/path/include -L/my/path/lib -lslsm -lnlopt
 Note that the `-std=c++11` compiler flag is needed for `std::function` and `std::random`.
 
 \section Compiling-Dependencies External Dependencies
+To aid portability, dependencies are handled via git
+<a href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">submodules</a>.
+If you are using LibSLSM for the first time, and didn't clone using the `--recursive` flag,
+then you'll need to initialise the submodules:
 
-- LibSLSM uses the <a href="http://en.wikipedia.org/wiki/Mersenne_Twister">
-Mersenne Twister</a> psuedorandom number generator. A C++11 implementation
-is included as a bundled header file, MersenneTwister.h.
-
-- The Optimise class makes use of <a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a>.
-Make sure that the library and header files are in your path. If not, do something like:
 \code
-make OPTFLAGS="-I PATH_TO_NLOPT_HEADER -L PATH_TO_NLOPT_LIB" release
+git submodule update --init --recursive
 \endcode
+
+Existing submodules can be updated using:
+
+\code
+git submodule update --recursive
+\endcode
+
+Brief details of the submodules are given below:
+
+-# The Optimise class makes use of <a href="http://ab-initio.mit.edu/wiki/index.php/NLopt">NLopt</a>.
+
+-# Python bindings are generated using <a href="https://github.com/pybind/pybind11">pybind11</a>.
 
 */

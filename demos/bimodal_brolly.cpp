@@ -247,7 +247,7 @@ int main(int argc, char** argv)
     if (isRestart)
     {
         std::ostringstream restartFile(restart);
-        io.loadLevelSetBIN(restartFile, levelSet);
+        io.loadLevelSetBIN(restartFile.str(), levelSet);
     }
 
     // Reinitialise the level set to a signed distance function.
@@ -496,8 +496,8 @@ int main(int argc, char** argv)
         fclose(pFile);
 
         // Write level set and boundary segments to file.
-        io.saveLevelSetBIN(fileName2, levelSet);
-        io.saveBoundarySegmentsTXT(fileName3, boundary);
+        io.saveLevelSetBIN(fileName2.str(), levelSet);
+        io.saveBoundarySegmentsTXT(fileName3.str(), boundary);
 
         if (isBoundarySample)
             io.saveBoundarySegmentsTXT(i+1, boundary);

@@ -45,18 +45,18 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "level-set_" << num.str() << ".vtk";
 
-        saveLevelSetVTK(fileName, levelSet);
+        saveLevelSetVTK(fileName.str(), levelSet);
     }
 
-    void InputOutput::saveLevelSetVTK(const std::ostringstream& fileName,
+    void InputOutput::saveLevelSetVTK(const std::string& fileName,
         const LevelSet& levelSet, bool isVelocity, bool isGradient) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -117,18 +117,18 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "level-set_" << num.str() << ".txt";
 
-        saveLevelSetTXT(fileName, levelSet, isXY);
+        saveLevelSetTXT(fileName.str(), levelSet, isXY);
     }
 
-    void InputOutput::saveLevelSetTXT(const std::ostringstream& fileName,
+    void InputOutput::saveLevelSetTXT(const std::string& fileName,
         const LevelSet& levelSet, bool isXY) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Write the nodal signed distance to file.
         for (unsigned int i=0;i<levelSet.mesh.nNodes;i++)
@@ -159,17 +159,17 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "level-set_" << num.str() << ".bin";
 
-        saveLevelSetBIN(fileName, levelSet);
+        saveLevelSetBIN(fileName.str(), levelSet);
     }
 
-    void InputOutput::saveLevelSetBIN(const std::ostringstream& fileName,
+    void InputOutput::saveLevelSetBIN(const std::string& fileName,
         const LevelSet& levelSet) const
     {
-        std::ofstream outputFile(fileName.str().c_str(), std::ios::out | std::ios::binary);
+        std::ofstream outputFile(fileName.c_str(), std::ios::out | std::ios::binary);
 
         // Check file is valid.
         errno = ENOENT;
-        slsm_check(outputFile.good(), "Cannot open file %s", fileName.str().c_str());
+        slsm_check(outputFile.good(), "Cannot open file %s", fileName.c_str());
 
         outputFile.write((char*)&levelSet.signedDistance[0], levelSet.mesh.nNodes*sizeof(double));
 
@@ -193,19 +193,19 @@ namespace slsm
         if (!inputDirectory.empty()) fileName << inputDirectory << "/";
         fileName << "level-set_" << num.str() << ".txt";
 
-        loadLevelSetTXT(fileName, levelSet, isXY);
+        loadLevelSetTXT(fileName.str(), levelSet, isXY);
     }
 
-    void InputOutput::loadLevelSetTXT(const std::ostringstream& fileName,
+    void InputOutput::loadLevelSetTXT(const std::string& fileName,
         LevelSet& levelSet, bool isXY) const
     {
         unsigned int nLines = 0;
         std::string line;
-        std::ifstream inputFile(fileName.str().c_str());
+        std::ifstream inputFile(fileName.c_str());
 
         // Check file is valid.
         errno = ENOENT;
-        slsm_check(inputFile.good(), "Cannot open file %s", fileName.str().c_str());
+        slsm_check(inputFile.good(), "Cannot open file %s", fileName.c_str());
 
         while (std::getline(inputFile, line))
             nLines++;
@@ -259,17 +259,17 @@ namespace slsm
         if (!inputDirectory.empty()) fileName << inputDirectory << "/";
         fileName << "level-set_" << num.str() << ".bin";
 
-        loadLevelSetBIN(fileName, levelSet);
+        loadLevelSetBIN(fileName.str(), levelSet);
     }
 
-    void InputOutput::loadLevelSetBIN(const std::ostringstream& fileName,
+    void InputOutput::loadLevelSetBIN(const std::string& fileName,
         LevelSet& levelSet) const
     {
-        std::ifstream inputFile(fileName.str().c_str(), std::ios::in | std::ios::binary);
+        std::ifstream inputFile(fileName.c_str(), std::ios::in | std::ios::binary);
 
         // Check file is valid.
         errno = ENOENT;
-        slsm_check(inputFile.good(), "Cannot open file %s", fileName.str().c_str());
+        slsm_check(inputFile.good(), "Cannot open file %s", fileName.c_str());
 
         // Read the nodal signed distance fom file.
         inputFile.read((char*)&levelSet.signedDistance[0], levelSet.mesh.nNodes*sizeof(double));
@@ -295,17 +295,17 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "boundary-points_" << num.str() << ".txt";
 
-        saveBoundaryPointsTXT(fileName, boundary);
+        saveBoundaryPointsTXT(fileName.str(), boundary);
     }
 
-    void InputOutput::saveBoundaryPointsTXT(const std::ostringstream& fileName, const Boundary& boundary) const
+    void InputOutput::saveBoundaryPointsTXT(const std::string& fileName, const Boundary& boundary) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nPoints;i++)
@@ -334,17 +334,17 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "boundary-segments_" << num.str() << ".txt";
 
-        saveBoundarySegmentsTXT(fileName, boundary);
+        saveBoundarySegmentsTXT(fileName.str(), boundary);
     }
 
-    void InputOutput::saveBoundarySegmentsTXT(const std::ostringstream& fileName, const Boundary& boundary) const
+    void InputOutput::saveBoundarySegmentsTXT(const std::string& fileName, const Boundary& boundary) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Write the boundary points to file.
         for (unsigned int i=0;i<boundary.nSegments;i++)
@@ -393,17 +393,17 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "area_" << num.str() << ".vtk";
 
-        saveAreaFractionsVTK(fileName, mesh);
+        saveAreaFractionsVTK(fileName.str(), mesh);
     }
 
-    void InputOutput::saveAreaFractionsVTK(const std::ostringstream& fileName, const Mesh& mesh) const
+    void InputOutput::saveAreaFractionsVTK(const std::string& fileName, const Mesh& mesh) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Set up ParaView header information.
         fprintf(pFile, "# vtk DataFile Version 3.0\n");
@@ -446,17 +446,17 @@ namespace slsm
         if (!outputDirectory.empty()) fileName << outputDirectory << "/";
         fileName << "area_" << num.str() << ".txt";
 
-        saveAreaFractionsTXT(fileName, mesh, isXY);
+        saveAreaFractionsTXT(fileName.str(), mesh, isXY);
     }
 
-    void InputOutput::saveAreaFractionsTXT(const std::ostringstream& fileName, const Mesh& mesh, bool isXY) const
+    void InputOutput::saveAreaFractionsTXT(const std::string& fileName, const Mesh& mesh, bool isXY) const
     {
         FILE *pFile;
 
-        pFile = fopen(fileName.str().c_str(), "w");
+        pFile = fopen(fileName.c_str(), "w");
 
         errno = ENOENT;
-        slsm_check(pFile != NULL, "Cannot open file %s", fileName.str().c_str());
+        slsm_check(pFile != NULL, "Cannot open file %s", fileName.c_str());
 
         // Write the element area fractions to file.
         for (unsigned int i=0;i<mesh.nElements;i++)

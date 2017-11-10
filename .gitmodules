@@ -1,0 +1,6 @@
+[submodule "external/nlopt"]
+	path = external/nlopt
+	url = https://github.com/stevengj/nlopt
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11

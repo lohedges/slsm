@@ -432,6 +432,14 @@ namespace slsm
         return scale;
     }
 
+#ifdef PYBIND
+    double LevelSet::computeVelocities(std::vector<BoundaryPoint>& boundaryPoints,
+        MutableFloat& timeStep, const double temperature, MersenneTwister& rng)
+    {
+        return computeVelocities(boundaryPoints, timeStep.value, temperature, rng);
+    }
+#endif
+
     void LevelSet::computeGradients()
     {
         // Compute gradient of the signed distance function using upwind finite difference.

@@ -39,6 +39,19 @@ namespace slsm
      */
     typedef std::function<double (const BoundaryPoint&)> SensitivityCallback;
 
+#ifdef PYBIND
+    //! Wrapper structure to expose the callback function to Python.
+    class Callback
+    {
+    public:
+        //! Constructor.
+        Callback();
+
+        /// The callback function.
+        SensitivityCallback callback;
+    };
+#endif
+
     /*! \brief A class for calculating finite-difference boundary point sensitivities.
     */
     class Sensitivity

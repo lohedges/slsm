@@ -1,16 +1,10 @@
 # Tests
 
-A test suite is provided in the `tests` directory. To run all unit tests:
+A test suite is provided in the `tests` directory. Once LibSLSM has been built,
+unit tests can be run as follows:
 
 ```cpp
-make test
-```
-
-Note that this will compile the tests (and library) using the default compilation
-flags (`release`). To build the library and tests in a specific mode, run, e.g.
-
-```cpp
-make devel test
+./tests/runtests
 ```
 
 The testing framework uses a modified version of [MinUnit.h](../src/MinUnit.h)

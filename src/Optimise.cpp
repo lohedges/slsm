@@ -42,7 +42,7 @@ namespace slsm
                        double maxDisplacement_,
                        bool isMax_,
                        const std::vector<bool>& isEquality_,
-                       nlopt::algorithm algorithm_) :
+					   nlopt::algorithm algorithm_) :
                        boundaryPoints(boundaryPoints_),
                        constraintDistances(constraintDistances_),
                        lambdas(lambdas_),
@@ -81,6 +81,54 @@ namespace slsm
     error:
         exit(EXIT_FAILURE);
     }
+
+#ifdef PYBIND
+    Optimise::Optimise(std::vector<BoundaryPoint>& boundaryPoints_,
+                       std::vector<double> constraintDistances_,
+                       std::vector<double>& lambdas_,
+                       MutableFloat& timeStep_,
+                       double maxDisplacement_,
+                       bool isMax_,
+                       const std::vector<bool>& isEquality_) :
+                       boundaryPoints(boundaryPoints_),
+                       constraintDistances(constraintDistances_),
+                       lambdas(lambdas_),
+                       timeStep(timeStep_.value),
+                       maxDisplacement(maxDisplacement_),
+                       isMax(isMax_),
+                       isEquality(isEquality_),
+                       algorithm(nlopt::LD_SLSQP)
+    {
+        errno = EINVAL;
+        slsm_check(((maxDisplacement > 0) && (maxDisplacement_ < 1)), "Move limit must be between 0 and 1.");
+        slsm_check(boundaryPoints.size() > 0, "There are no boundary points.");
+
+        // Store the initial number of constraints.
+        nConstraints = lambdas.size() - 1;
+        nConstraintsInitial = nConstraints;
+
+        // Check for empty or mismatched constraint distances vector.
+        errno = EINVAL;
+        slsm_check(!((nConstraints > 0) && constraintDistances.empty()), "Empty constraint distance vector.");
+        slsm_check(nConstraints == constraintDistances.size(), "Incorrect number of constraints.");
+
+        // Resize data structures.
+        negativeLambdaLimits.resize(nConstraints + 1);
+        positiveLambdaLimits.resize(nConstraints + 1);
+        scaleFactors.resize(nConstraints + 1);
+
+        // Copy constraint distances.
+        constraintDistancesScaled = constraintDistances;
+
+        // Set default as inequality constraints.
+        if (isEquality.size() == 0) isEquality.resize(nConstraints, false);
+
+        return;
+
+    error:
+        exit(EXIT_FAILURE);
+    }
+#endif
 
     double Optimise::callback(const std::vector<double>& lambda, std::vector<double>& gradient, unsigned int index)
     {

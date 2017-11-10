@@ -101,9 +101,6 @@ int main(int argc, char** argv)
     // Perform initial boundary discretisation.
     boundary.discretise(levelSet);
 
-    // Compute the initial element area fractions.
-    levelSet.computeAreaFractions(boundary);
-
     // Compute the initial boundary point normal vectors.
     boundary.computeNormalVectors(levelSet);
 
@@ -201,9 +198,6 @@ int main(int argc, char** argv)
 
         // Compute the new discretised boundary.
         boundary.discretise(levelSet);
-
-        // Compute the element area fractions.
-        levelSet.computeAreaFractions(boundary);
 
         // Compute the boundary point normal vectors.
         boundary.computeNormalVectors(levelSet);

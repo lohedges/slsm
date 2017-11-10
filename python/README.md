@@ -1,8 +1,10 @@
-# Demos
+# Python
 
-Several example codes illustrate how to interface with LibSLSM, provide tests
-of various components of the algorithm, and reproduce the data in the
-[paper](https://arxiv.org/abs/1612.04681):
+Full Python bindings to LibSLSM are generated using [pybind11](https://github.com/pybind/pybind11).
+Several example Python scripts show how to interact with the Python extension
+module, pyslsm. These reproduce the C++ example programs described [here](../demos/README.md).
+
+More details about the binding code can be found [here](bindings/README.md).
 
 - [Area Minimisation](#area-minimisation)
 - [Perimeter Minimisation](#perimeter-minimisation)
@@ -31,7 +33,7 @@ velocity.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/minimise_area
+python python/minimise_area.py
 ./utils/minimise_area.gp
 ./utils/gif.sh minimise_area
 ```
@@ -40,7 +42,7 @@ To create the animation above, run the following in your terminal:
 See the [Utils](../utils/README.md) section for more details on running the
 scripts.
 
-The source code for this demo can be found in [minimise_area.cpp](minimise_area.cpp)
+The source code for this demo can be found in [minimise_area.py](minimise_area.py)
 
 ## Perimeter Minimisation
 
@@ -62,13 +64,13 @@ analytical curvature). The three time series show excellent agreement.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/minimise_perimeter
+python python/minimise_perimeter.py
 ./utils/minimise_perimeter.gp
 ./utils/gif.sh minimise_perimeter
 ```
 
 The source code for this demo can be found in
-[minimise_perimeter.cpp](minimise_perimeter.cpp)
+[minimise_perimeter.py](minimise_perimeter.py)
 
 ## Constrained Perimeter Minimisation
 
@@ -90,13 +92,13 @@ equilibrium distribution.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/minimise_perimeter_constrained
+python python/minimise_perimeter_constrained.py
 ./utils/minimise_perimeter_constrained.gp
 ./utils/gif.sh minimise_perimeter_constrained
 ```
 
 The source code for this demo can be found in
-[minimise_perimeter_constrained.cpp](minimise_perimeter_constrained.cpp)
+[minimise_perimeter_constrained.py](minimise_perimeter_constrained.py)
 
 ## Shape Matching
 
@@ -117,13 +119,13 @@ converging towards a piecewise linear representation of the
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/shape_match
+python python/shape_match.py
 ./utils/shape_match.gp
 ./utils/gif.sh shape_match
 ```
 
 The source code for this demo can be found in
-[shape_match.cpp](shape_match.cpp)
+[shape_match.py](shape_match.py)
 
 ## Dumbbell
 
@@ -149,7 +151,7 @@ in the dumbbell's neck.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/dumbbell 0 0.65
+python python/dumbbell.py 0 0.65
 ./utils/dumbbell.gp
 ./utils/gif.sh dumbbell
 ```
@@ -165,12 +167,12 @@ the dumbbell and reaches the global minimum at the bottom of the lower lobe.
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/dumbbell 0.002 0.65
+python python/dumbbell.py 0.002 0.65
 ./utils/dumbbell_noise.gp
 ./utils/gif.sh dumbbell_noise
 ```
 
-The source code for this demo can be found in [dumbbell.cpp](dumbbell.cpp)
+The source code for this demo can be found in [dumbbell.py](dumbbell.py)
 
 ## Bimodal
 
@@ -196,45 +198,9 @@ noise) the longer the time that the shape spends in the left hand lobe
 To create the animation above, run the following in your terminal:
 
 ```bash
-./demos/bimodal
+python python/bimodal.py
 ./utils/bimodal.gp
 ./utils/gif.sh bimodal
 ```
 
-(WARNING: This is a long simulation, taking approximately 2 days of CPU time.)
-
-The source code for this demo can be found in [bimodal.cpp](bimodal.cpp)
-
-[Umbrella sampling](https://en.wikipedia.org/wiki/Umbrella_sampling) is a
-fantastic technique that can aid sampling of complex free energy landscapes.
-By constraining the system using a bias potential it is possible to
-dramatically improve sampling in regions where the equilibrium probability
-density is low, i.e. rarely visited states. After performing many constrained
-simulations in different regions, data can then be recombined to recover the
-full equilibrium probability density, and hence the free energy.
-
-The following animation shows how umbrella sampling can be used to constrain
-the x coordinate of the shape's centre of mass to the origin using a harmonic
-bias potential. This allows us to sample many configurations that are
-constrained to the region around the neck of the dumbbell, which is rarely
-visited in equilibrium.
-
-<p align="center">
-<img width="800" src="https://raw.githubusercontent.com/lohedges/assets/master/slsm/animations/bimodal_brolly.gif" alt="Umbrella sampling.">
-</p>
-
-To create the animation above, run the following in your terminal:
-
-```bash
-./demos/bimodal_brolly -c 0 -si 250 -n 200 -b
-./utils/bimodal_brolly.gp
-./utils/gif.sh bimodal_brolly
-```
-
-To get further help on using the umbrella sampling code, run:
-
-```bash
-./demos/bimodal_brolly -h
-```
-
-The source code for this demo can be found in [bimodal_brolly.cpp](bimodal_brolly.cpp)
+(WARNING: This is a long simulation!)

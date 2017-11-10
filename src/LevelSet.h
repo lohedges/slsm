@@ -72,7 +72,7 @@ namespace slsm
             \param bandWidth_
                 The width of the narrow band region.
 
-            \param isFixedDomainDomain_
+            \param isFixedDomain_
                 Whether the domain boundary is fixed.
          */
         LevelSet(unsigned int, unsigned int, double moveLimit_ = 0.5,
@@ -245,6 +245,26 @@ namespace slsm
          */
         double computeVelocities(std::vector<BoundaryPoint>&, double&, const double, MersenneTwister&);
 
+#ifdef PYBIND
+        //! Extend boundary point velocities to the level set nodes.
+        /*! \param boundaryPoints
+                A reference to a vector of boundary points.
+
+            \param timeStep
+                The time step for the level set update.
+
+            \param temperature
+                The temperature of the thermal bath.
+
+            \param rng
+                A reference to the random number generator.
+
+            \return
+                The time step scaling factor.
+         */
+        double computeVelocities(std::vector<BoundaryPoint>&, MutableFloat&, const double, MersenneTwister&);
+#endif
+
         //! Compute the modulus of the gradient of the signed distance function.
         void computeGradients();
 
@@ -258,7 +278,7 @@ namespace slsm
         double computeAreaFractions(const Boundary&);
 
         std::vector<double> signedDistance;     //!< The nodal signed distance function (level set).
-        std::vector<double> velocity;           //!< The nodal signed normal velocity.
+        std::vector<double> velocity;           //!< The nodal normal velocity.
         std::vector<double> gradient;           //!< The nodal gradient of the level set function (modulus).
         std::vector<double> target;             //!< Signed distance target (for shape matching).
         std::vector<unsigned int> narrowBand;   //!< Indices of nodes in the narrow band.
