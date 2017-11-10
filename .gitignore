@@ -1,6 +1,7 @@
 doc/
 lib/
 obj/
+build/
 src/slsm.h
 demos/bimodal
 demos/bimodal_brolly
