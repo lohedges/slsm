@@ -37,8 +37,23 @@ IF(NOT EXISTS ${CMAKE_SOURCE_DIR}/external)
     MESSAGE("Unable to find submodules.")
 
     # Clones submodules.
-    EXECUTE_PROCESS(COMMAND git submodule update --init --recursive
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    EXECUTE_PROCESS(
+        COMMAND git submodule update --init --recursive
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
+ENDIF()
+
+# Fix NLopt cmake_minimum_required.
+IF(EXISTS ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt)
+    IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        EXECUTE_PROCESS(
+            COMMAND sed -i "" "s#VERSION 3.0#VERSION 2.8#g" ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt
+        )
+    ELSE()
+        EXECUTE_PROCESS(
+            COMMAND sed -i "s#VERSION 3.0#VERSION 2.8#g" ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt
+        )
+    ENDIF()
 ENDIF()
 
 # Make sure demos folder exists in build directory.
@@ -51,7 +66,7 @@ if (NOT EXISTS ${CMAKE_BINARY_DIR}/demos)
 ENDIF()
 
 # Make sure tests folder exists in build directory.
-if (NOT EXISTS ${CMAKE_BINARY_DIR}/tests)
+IF(NOT EXISTS ${CMAKE_BINARY_DIR}/tests)
     MESSAGE("Making directory for test programs.")
     EXECUTE_PROCESS(
         COMMAND
@@ -60,7 +75,7 @@ if (NOT EXISTS ${CMAKE_BINARY_DIR}/tests)
 ENDIF()
 
 # Copy demo input files to build directory.
-if (NOT ${CMAKE_SOURCE_DIR} EQUAL ${CMAKE_BINARY_DIR})
+IF(NOT ${CMAKE_SOURCE_DIR} EQUAL ${CMAKE_BINARY_DIR})
     MESSAGE("Copying files to build directory.")
     EXECUTE_PROCESS(
         COMMAND
@@ -89,7 +104,7 @@ ADD_DEFINITIONS(-DCOMMIT="${GIT_COMMIT}")
 ADD_DEFINITIONS(-DBRANCH="${GIT_BRANCH}")
 
 # Disable parallelistion.
-IF (PARALLEL)
+IF(PARALLEL)
     ADD_DEFINITIONS(-DPARALLEL)
 ENDIF()
 
@@ -142,8 +157,8 @@ ADD_LIBRARY(slsm
     ${SLSM_SRC}
 )
 
-# Make sure NLopt is built first
-ADD_DEPENDENCIES(slsm nlopt)
+# Library should be lined against NLopt.
+TARGET_LINK_LIBRARIES(slsm nlopt)
 
 # Install.
 FILE(GLOB _FILES "${CMAKE_SOURCE_DIR}/src/*.h")
@@ -171,10 +186,10 @@ FOREACH(TEST ${TESTS})
     MESSAGE(STATUS "Found test: " ${NAME})
     ADD_EXECUTABLE(${NAME} ${TEST})
     TARGET_LINK_LIBRARIES(${NAME} slsm nlopt)
-	SET_TARGET_PROPERTIES(${NAME}
-		PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-	)
+    SET_TARGET_PROPERTIES(${NAME}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+    )
 ENDFOREACH(TEST ${TESTS})
 
 # Generate a list of demo source files.
@@ -190,10 +205,10 @@ FOREACH(DEMO ${DEMOS})
     INSTALL(TARGETS ${NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/share/slsm-demo
     )
-	SET_TARGET_PROPERTIES(${NAME}
-		PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/demos"
-	)
+    SET_TARGET_PROPERTIES(${NAME}
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/demos"
+    )
 ENDFOREACH(DEMO ${DEMOS})
 
 # Build Python bindings.

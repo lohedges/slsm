@@ -25,16 +25,17 @@ minima and converging to the true global optimum. See the
 
 LibSLSM is intended to be used on a [Unix-like](https://en.wikipedia.org/wiki/Unix-like)
 operating system and has been extensively tested on macOS (formerly OS X) and
-Linux. Windows users are advised to use [MinGW](http://www.mingw.org) to
-build LibSLSM and its [dependencies](#external-dependencies). For modern, 64-bit
-Windows systems, we recommend using [MYSYS2](http://msys2.github.io). This
-has been used to successfully build LibSLSM on Windows 7 and 10. After
-installing MYSYS2 (following the instructions on the [website](http://msys2.github.io))
-you will need to install several additional packages:
+Linux. Windows users are advised to use the Ubuntu Bash shell on WIndows 10, or
+[MinGW](http://www.mingw.org) to build LibSLSM. For modern, 64-bit Windows systems,
+we recommend using [MYSYS2](http://msys2.github.io). This has been used to successfully
+build LibSLSM on Windows 7 and 10. After installing MYSYS2 (following the instructions
+on the [website](http://msys2.github.io)) you will need to install several additional
+packages:
 
 ```bash
-pacman -S cmake gcc git python3
+pacman -S cmake gcc git make python3
 ```
+
 * Clone the LibSLSM source via:
 
 ```bash
