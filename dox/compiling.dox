@@ -39,7 +39,7 @@ cd build
 (This is recommended, although in source builds are allowed.)
 -# Configure, build, and install:
 \code
-cmake .. && make -j${nproc} install
+cmake .. && make -j4 install
 \endcode
 (Note that there is no need to install the library in order to use it. You
 can always build locally and link against the library using whatever path

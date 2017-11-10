@@ -63,22 +63,22 @@ cd build
 * Configure, build, and install:
 
 ```bash
-cmake .. && make -j${nproc} install
+cmake .. && make -j4 install
 ```
+(Here we use four cores for the build.)
 
 On macOS you may wish to use LLVM's `libc++` rather than `libstdc++`. If so,
 build as follows (this assumes a fresh build, or a clear cache):
 
 ```bash
-CXXFLAGS=-stdlib=libc++ cmake .. && make -j${nproc} install
+CXXFLAGS=-stdlib=libc++ cmake .. && make -j4 install
 ```
-
 By default, the library installs to `/usr/local`. Therefore, you may need admin
 privileges for the final `make install` step above. An alternative is to change
 the install location:
 
 ```bash
-cmake -DCMAKE_INSTALL_PREFIX:PATH=MY_INSTALL_DIR .. && make -j${nproc} install
+cmake -DCMAKE_INSTALL_PREFIX:PATH=MY_INSTALL_DIR .. && make -j4 install
 ```
 
 (Note that there is no need to install the library in order to use it. You
