@@ -65,7 +65,7 @@ cd build
 ```bash
 cmake .. && make -j4 install
 ```
-(Here we use four cores for the build.)
+(Here we use four cores for the build. If you have a lot of cores, try `make -j${nproc}`.)
 
 On macOS you may wish to use LLVM's `libc++` rather than `libstdc++`. If so,
 build as follows (this assumes a fresh build, or a clear cache):
