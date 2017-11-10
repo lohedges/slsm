@@ -17,6 +17,8 @@ you will need to install several additional packages:
 pacman -S cmake gcc git make python3
 \endcode
 
+\section Compiling-Downloading Getting the code
+
 -# Clone the LibSLSM source via:
 \code
 git clone --recursive https://github.com/lohedges/slsm.git
@@ -25,7 +27,7 @@ git clone --recursive https://github.com/lohedges/slsm.git
 (Alternatively, a zip file can be downloaded from
 <a href="https://github.com/lohedges/slsm/archive/master.zip">here</a>.)
 
-Compiling and Installing:
+Compiling and Installing
 -# Change to the newly created `slsm` directory:
 \code
 cd slsm

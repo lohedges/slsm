@@ -38,6 +38,8 @@ pacman -S cmake gcc git make python3
 
 * Clone the LibSLSM source via:
 
+### Getting the code
+
 ```bash
 git clone --recursive https://github.com/lohedges/slsm.git
 ```
@@ -45,7 +47,7 @@ git clone --recursive https://github.com/lohedges/slsm.git
 (Alternatively, a zip file can be downloaded from
 [here](https://github.com/lohedges/slsm/archive/master.zip).)
 
-### Compiling and Installing:
+### Compiling and Installing
 
 * Change to the newly created `slsm` directory:
 
@@ -131,7 +133,7 @@ Brief details of the submodules are given below:
 - The Optimise class makes use of [NLopt](http://ab-initio.mit.edu/wiki/index.php/NLopt).
 
 - Python bindings are generated using [pybind11](https://github.com/pybind/pybind11).
-See [Python](python/README.md) for details about using the Python module, pyslsm.
+See [here](python/README.md) for details about using the Python module, pyslsm.
 
 ## Documentation
 
