@@ -25,7 +25,8 @@ git clone --recursive https://github.com/lohedges/slsm.git
 \endcode
 
 (Alternatively, a zip file can be downloaded from
-<a href="https://github.com/lohedges/slsm/archive/master.zip">here</a>.)
+<a href="https://github.com/lohedges/slsm/archive/master.zip">here</a>.
+Note, however, that you'll need to download the \ref Compiling-Dependencies separately.)
 
 Compiling and Installing
 -# Change to the newly created `slsm` directory:

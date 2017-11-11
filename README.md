@@ -45,7 +45,8 @@ git clone --recursive https://github.com/lohedges/slsm.git
 ```
 
 (Alternatively, a zip file can be downloaded from
-[here](https://github.com/lohedges/slsm/archive/master.zip).)
+[here](https://github.com/lohedges/slsm/archive/master.zip). Note, however,
+that you'll need to download the [submodules](#external-dependencies) separately.)
 
 ### Compiling and Installing
 
