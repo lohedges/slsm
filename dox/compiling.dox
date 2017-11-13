@@ -17,7 +17,7 @@ you will need to install several additional packages:
 pacman -S cmake gcc git make python3
 \endcode
 
-\section Compiling-Downloading Getting the code
+\section Compiling-Downloading Downloading
 
 -# Clone the LibSLSM source via:
 \code

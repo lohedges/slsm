@@ -38,7 +38,7 @@ pacman -S cmake gcc git make python3
 
 * Clone the LibSLSM source via:
 
-### Getting the code
+### Downloading
 
 ```bash
 git clone --recursive https://github.com/lohedges/slsm.git
