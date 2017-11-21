@@ -1267,6 +1267,9 @@ namespace slsm
            distance from p to w.
 
            (Where v = vertex1, w = vertex2, and p = point)
+
+           Adapted from:
+            https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
          */
         else
         {
