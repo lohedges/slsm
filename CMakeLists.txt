@@ -14,9 +14,6 @@ options are: None(CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release
 RelWithDebInfo MinSizeRel." FORCE)
 ENDIF()
 
-# Allow user to enable/disable parallelisation.
-OPTION(PARALLEL "Enable parallelisation." ON)
-
 # Get Git commit and branch information.
 EXECUTE_PROCESS(
     COMMAND
@@ -102,11 +99,6 @@ ENDIF()
 # Add Git information.
 ADD_DEFINITIONS(-DCOMMIT="${GIT_COMMIT}")
 ADD_DEFINITIONS(-DBRANCH="${GIT_BRANCH}")
-
-# Disable parallelistion.
-IF(PARALLEL)
-    ADD_DEFINITIONS(-DPARALLEL)
-ENDIF()
 
 # Output some useful info.
 SITE_NAME(COMPUTER_NAME)
