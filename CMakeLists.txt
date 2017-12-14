@@ -71,7 +71,7 @@ IF(NOT EXISTS ${CMAKE_BINARY_DIR}/tests)
     )
 ENDIF()
 
-# Copy demo input files to build directory.
+# Copy demo input files and test runner script to build directory.
 IF(NOT ${CMAKE_SOURCE_DIR} EQUAL ${CMAKE_BINARY_DIR})
     MESSAGE("Copying files to build directory.")
     EXECUTE_PROCESS(
