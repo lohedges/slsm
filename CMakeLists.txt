@@ -30,7 +30,9 @@ EXECUTE_PROCESS(
 )
 
 # Make sure the submodules have been initialised.
-IF(NOT EXISTS ${CMAKE_SOURCE_DIR}/external)
+FILE(GLOB RESULT DIR ${CMAKE_SOURCE_DIR}/external/nlopt/)
+LIST(LENGTH RESULT RES_LEN)
+IF(RES_LEN EQUAL 0)
     MESSAGE("Unable to find submodules.")
 
     # Clone submodules.
@@ -38,19 +40,6 @@ IF(NOT EXISTS ${CMAKE_SOURCE_DIR}/external)
         COMMAND git submodule update --init --recursive
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
-ENDIF()
-
-# Fix NLopt cmake_minimum_required.
-IF(EXISTS ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt)
-    IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        EXECUTE_PROCESS(
-            COMMAND sed -i "" "s#VERSION 3.0#VERSION 2.8#g" ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt
-        )
-    ELSE()
-        EXECUTE_PROCESS(
-            COMMAND sed -i "s#VERSION 3.0#VERSION 2.8#g" ${CMAKE_SOURCE_DIR}/external/nlopt/CMakeLists.txt
-        )
-    ENDIF()
 ENDIF()
 
 # Make sure demos folder exists in build directory.
