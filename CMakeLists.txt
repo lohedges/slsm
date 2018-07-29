@@ -33,7 +33,7 @@ EXECUTE_PROCESS(
 IF(NOT EXISTS ${CMAKE_SOURCE_DIR}/external)
     MESSAGE("Unable to find submodules.")
 
-    # Clones submodules.
+    # Clone submodules.
     EXECUTE_PROCESS(
         COMMAND git submodule update --init --recursive
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
