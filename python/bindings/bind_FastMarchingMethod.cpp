@@ -39,11 +39,11 @@ void bind_FastMarchingMethod(py::module &m)
         // Member functions.
 
         .def("march", (void (FastMarchingMethod::*)(std::vector<double>&)) &FastMarchingMethod::march,
-            "Reinitialise a signed distance function.",
+            "Execute Fast Marching for reinitialisation of the signed distance function.",
             py::arg("signedDistance"))
 
         .def("march", (void (FastMarchingMethod::*)(std::vector<double>&,
             std::vector<double>&)) &FastMarchingMethod::march,
-            "Extend boundary point velocities to nodes within the narrow band region.",
+            "Execute Fast Marching for velocity extension.",
             py::arg("signedDistance"), py::arg("velocity"));
 }
