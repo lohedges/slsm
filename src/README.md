@@ -556,7 +556,7 @@ io.saveLevelSetVTK(1, levelSet);
 io.saveBoundarySegmentsTXT(1, boundary);
 
 // Save area fraction information in VTK format.
-io.saveAreaFractions(1, levelSet.mesh);
+io.saveAreaFractionsVTK(1, levelSet.mesh);
 ```
 
 Here the first argument specifies the index of the data file, which is used to
